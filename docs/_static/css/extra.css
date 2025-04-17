@@ -96,3 +96,9 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 
 
 .md-typeset .footnote hr { margin-top: 0.2em; }
+
+.md-typeset .admonition,
+.md-typeset details {
+  border-width: 0;
+  border-left-width: 4px;
+}

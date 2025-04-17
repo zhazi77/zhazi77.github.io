@@ -14,6 +14,10 @@ authors:
 
 > 有趣的行文风格，参考一下
 
+!!! info "参考文献"
+
+    - [A plain english introduction to CAP Theorem](http://ksat.me/a-plain-english-introduction-to-cap-theorem)
+
 你经常会听到 CAP 定理，该定理在设计分布式系统时指定了某种上限。与我的大多数其他介绍教程一样，让我们尝试将 CAP 与现实世界的情况进行比较来理解 CAP。
 
 ## 第 1 章：“记忆公司” - 你的新事业
@@ -146,5 +150,5 @@ authors:
 
 尽管如此，你们认为这并不是一个坏主意。毕竟，这种情况很少发生，客户不会在短时间内频繁打电话，因此这种最终一致性是可以接受的。
 
-以上就是关于 CAP 原则和最终一致性的通俗解释~ :)
+以上就是关于 CAP 原则和最终一致性的通俗解释 :)
 

@@ -81,6 +81,9 @@ markdown_extensions:
   - markdown.extensions.def_list
   - pymdownx.highlight
   - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
   - pymdownx.arithmatex:

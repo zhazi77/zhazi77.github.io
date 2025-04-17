@@ -15,7 +15,7 @@ authors:
 
 !!! info "文献"
 
-    - https://arxiv.org/abs/2303.09105
+    - [Rethinking Model Ensemble in Transfer-based Adversarial Attacks](https://arxiv.org/abs/2303.09105)
 
 > 阅读最新论文，找点灵感
 
