@@ -13,7 +13,11 @@ authors:
 
 # 翻译：Rethinking Model Ensemble in Transfer-based Adversarial Attacks
 
-**阅读最新论文，寻找灵感。**
+!!! info "文献"
+
+    - https://arxiv.org/abs/2303.09105
+
+> 阅读最新论文，找点灵感
 
 ## Abstract
 

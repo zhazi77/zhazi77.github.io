@@ -13,7 +13,11 @@ authors:
 
 # 翻译：From Points to Parts: 3D Object Detection from Point Cloud with Part-aware and Part-aggregation Network
 
-**在自定义数据集上测试时，Part-A<sup>2</sup> 的结果很奇怪。排除代码问题，希望能从论文中找到原因。**
+!!! info "文献"
+
+    - https://arxiv.org/abs/1907.03670
+
+> **在自定义数据集上测试时，Part-A<sup>2</sup> 的结果很奇怪。排除代码问题，希望能从论文中找到原因。**
 
 ## Abstract
 

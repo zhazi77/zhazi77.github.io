@@ -138,8 +138,10 @@ nav:
     - ACE: paper/ACE.md
     - GradCraft: paper/GradCraft.md
     - Occupancy Network: paper/occupancy_network.md
-    - PartA2（翻译）: paper/PartA2.md
-    - CWA（翻译）: paper/CWA.md
-    - BUILDING CONTROLLERS FOR TETRIS（翻译）: paper/tetris.md
+  - 文献翻译:
+    - PartA2: translation/PartA2.md
+    - CWA: translationpaper/CWA.md
+    - BUILDING CONTROLLERS FOR TETRIS: translationpaper/tetris.md
+    - CAP 定理的简明介绍: translation/A-plain-english-introduction-to-CAP-Theorem.md
   - 算法:
     - algorithm/index.md
