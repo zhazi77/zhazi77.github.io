@@ -137,7 +137,7 @@ optim = customized_optimizer(method=method, optimizer=optim, num_tasks=self.num_
   optim.step()
 ```
 
-使用自定义的 `backward` 方法接管方向传播过程。该方法在 `GradCraft/solvers/global_pc_grad_magnitude_positive.py` 中定义，见 42 行：
+实际上使用了自定义的 `backward` 方法接管方向传播过程。该方法在 `GradCraft/solvers/global_pc_grad_magnitude_positive.py` 中定义，见 42 行：
 
 ```python linenums="42", hl_lines="14 16", title="global_pc_grad_magnitude_positive.py"
 def backward(self, objectives):
