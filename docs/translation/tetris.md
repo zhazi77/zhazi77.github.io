@@ -6,6 +6,7 @@ categories:
   - Reading
 tags:
   - Reinforcement Learning
+  - Tetris
 authors:
   - zhazi
 ---

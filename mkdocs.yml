@@ -70,6 +70,8 @@ markdown_extensions:
   - admonition
   - footnotes
   - attr_list
+  - md_in_html
+  - pymdownx.superfences
   - def_list
   - pymdownx.details
   - pymdownx.inlinehilite
@@ -142,9 +144,12 @@ nav:
     - GradCraft: paper/GradCraft.md
     - Occupancy Network: paper/occupancy_network.md
   - 文献翻译:
+    - translation/index.md
     - PartA2: translation/PartA2.md
     - CWA: translation/CWA.md
     - BUILDING CONTROLLERS FOR TETRIS: translation/tetris.md
+    - Learning Tetris Using the Noisy Cross-Entropy Method: translation/tetris2.md
     - CAP 定理的简明介绍: translation/A-plain-english-introduction-to-CAP-Theorem.md
+    - 使用 Redis 集群进行扩展: translation/Scale-with-Redis-Cluster.md
   - 算法:
     - algorithm/index.md
