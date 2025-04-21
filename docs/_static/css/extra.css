@@ -102,3 +102,14 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
   border-width: 0;
   border-left-width: 4px;
 }
+
+.md-typeset p a, .md-typeset ul a { 
+  color: black; /* 设置链接颜色 */ 
+  text-decoration: underline; /* 保留下划线 */ 
+}
+
+.md-typeset p > code .md-typeset ul > code {
+  font-weight: bold;
+}
+
+
