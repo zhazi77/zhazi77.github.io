@@ -154,15 +154,17 @@ rsync [OPTION...] SRC... rsync://[USER@]HOST[:PORT]/DEST
 
         基本思路是将 `ss` 映射为同步操作，自动切换命令模式并执行本地到远端的同步命令。就像下面这样：
 
-        ```lua title='nvim/lua/config/keymaps.lua' linenums="1" hl_lines="4"
+        ```lua title='nvim/lua/config/keymaps.lua' linenums="1" hl_lines="3-5"
         -- 定义一个函数来执行 rsync 命令
-        function sync_to_remote()
-          local remote_path = "{User name}@{Server IP}:/path/to/myblog/" 
-          local command = "rsync -aqz -e 'ssh -p xxx' /path/to/myblog/ " .. remote_path
+        function sync_to_remote(use_delete)
+          local remote_path = "<User Name>@<Server Ip>:/path/to/myblog/" -- 替换为你的实际远端路径
+          local delete_option = use_delete and "--delete " or ""
+          local command = "rsync -aqz " .. delete_option .. "-e 'ssh -p 517' /path/to/myblog/ " .. remote_path
           vim.fn.system(command)
         end
 
         vim.api.nvim_set_keymap("n", "ss", ":lua sync_to_remote()", { noremap = true, silent = false })
+        vim.api.nvim_set_keymap("n", "ssd", ":lua sync_to_remote(true)", { noremap = true, silent = false })
         ```
 
         不过这么做的话要求本地的 `myblog` 和服务器上的 `myblog` 都要固定路径，不能随意移动。所以这只是一个不成熟的方案，但目前够用。
