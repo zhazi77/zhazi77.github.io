@@ -68,8 +68,6 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
   overflow: visible;
 }
 
-.md-typeset p.caption { text-align: center; font-size: 0.94em; color: grey; margin: -0.7em 0 0; }
-
 .md-typeset #references, .md-typeset .no-underline { margin-bottom: 0; padding-bottom: 0; border: none; }
 
 .md-typeset h2 { border-bottom: 1px solid #d3d3d3; }
@@ -95,6 +93,9 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 .md-typeset .admonition, .md-typeset details { font-size: 0.9em; }
 
 
+.md-typeset p.caption { text-align: center; font-size: 0.94em; color: grey; margin: -0.7em 0 0; }
+.md-typeset p.caption_table { text-align: center; font-size: 0.94em; color: grey; margin: +1.0em 0 -0.7em; }
+
 .md-typeset .footnote hr { margin-top: 0.2em; }
 
 .md-typeset .admonition,
@@ -108,8 +109,7 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
   text-decoration: underline; /* 保留下划线 */ 
 }
 
-.md-typeset p > code .md-typeset ul > code {
+.md-typeset p > code, .md-typeset li > code {
   font-weight: bold;
 }
-
 
