@@ -77,7 +77,7 @@ $$
 其中 \( L \) 是损失函数，例如负交叉熵损失 \( L(f(x), y) = -\log(\text{softmax}(f(x))) \)，我们研究 \( l_\infty \) 范数。公式 1 可以通过几个“训练”分类器 \( f_i, i=1,\ldots,n \)（称为集成）来近似，如 \( L(f(x), y) \) 的平均值或 \( f_i(x) \) 的对数和的平均值。之前的工作提出了基于这种经验损失的梯度计算或输入变换方法以提高可迁移性。例如，动量迭代（MI）方法执行梯度更新（如图 2(a) 所示）作为
 
 $$
-\mathbf{m} = \mu \cdot \mathbf{m} + \dfrac{\nabla_\mathbf{x} L(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y)}{\Vert \nabla_\mathbf{x} L(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y)\Vert_1};\quad 
+\mathbf{m} = \mu \cdot \mathbf{m} + \dfrac{\nabla_\mathbf{x} L\left(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y\right)}{\left\Vert \nabla_\mathbf{x} L\left(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y\right)\right\Vert_1};\quad 
 \mathbf{x}_{t+1} = \text{clip}_{\mathbf{x}_{nat},\epsilon}(\mathbf{x}_t + \alpha \cdot \text{sign}(\mathbf{m})),
 $$
 
@@ -147,7 +147,7 @@ $$
 
 ### 3.4 Cosine Similarity Encourager
 
-然后我们开发了一种算法，使对抗性示例收敛到每个模型的局部最优解附近。我们不直接优化 $ \dfrac{1}{n} \sum_{i=1}^{n}\left\Vert\mathbf{x}-\mathbf{p}_{i}\right\Vert_2^2$ ，因为计算相对于 $\mathbf{x}$ 的梯度是困难的，所以我们推导出这个损失的上界。
+然后我们开发了一种算法，使对抗性示例收敛到每个模型的局部最优解附近。我们不直接优化 \(\dfrac{1}{n} \sum_{i=1}^{n}\left\Vert\mathbf{x}-\mathbf{p}_{i}\right\Vert_2^2\) ，因为计算相对于 $\mathbf{x}$ 的梯度是困难的，所以我们推导出这个损失的上界。
 
 
 !!! info "定理 3.2."
