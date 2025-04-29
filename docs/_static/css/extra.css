@@ -94,7 +94,7 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 
 
 .md-typeset p.caption { text-align: center; font-size: 0.94em; color: grey; margin: -0.7em 0 0; }
-.md-typeset p.caption_table { text-align: center; font-size: 0.94em; color: grey; margin: +1.0em 0 -0.7em; }
+.md-typeset p.caption_table { text-align: center; font-size: 0.94em; color: grey; margin: +1.0em 0 -1.2em; }
 
 .md-typeset .footnote hr { margin-top: 0.2em; }
 
@@ -113,3 +113,10 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
   font-weight: bold;
 }
 
+.md-typeset .admonition.half.end {
+  max-width: 50%;
+  margin-inline: auto;
+  float: right;
+  border: none;
+  margin: 0 0 .1rem .8rem;
+}
