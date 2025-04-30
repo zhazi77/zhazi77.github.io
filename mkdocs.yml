@@ -138,7 +138,9 @@ nav:
     - rsync 笔记: note/rsync.md
     - ModelNet40 归纳: note/modelnet40.md
     - Linux 有用软件归纳: note/useful_linux_app.md
-    - 三维点云对抗攻击反思录(一) —— C&W Attack:  note/CW-Attack.md
+    - 三维点云对抗攻击反思录(一) —— C&W Attack:  note/3D-Adv-01-CW-Attack.md
+    - 三维点云对抗攻击反思录(二) —— C&W Attack 框架:  note/3D-Adv-02-CW-Attack-framework.md
+    - "三维点云对抗攻击反思录(三) —— 物理域攻击: 无用的对抗样本" :  note/3D-Adv-03-phisical-domain-attack.md
   - 论文阅读:
     - ACE: paper/ACE.md
     - GradCraft: paper/GradCraft.md
