@@ -15,7 +15,7 @@ authors:
 
 # Occupancy Networks: Learning 3D Reconstruction in Function Space
 
-**阅读 IF-Defense 遇到占据网络的概念，在此记录相关内容。**
+> 阅读 IF-Defense 遇到占据网络的概念，在此记录相关内容。
 
 在对抗攻防中，防御方发展出一类基于输入净化的方法，通过将对抗样本恢复为良性样本来实现防御。**IF-Defense** ---一项点云对抗防御中的经典工作---正属于这类方法。它先将点云重建为网格，然后在网格层面消除异常的形变，从而实现防御。而 IF-Defense 所使用的曲面重建方法是这篇论文所提出的占据网络。因此，为了更好的理解 IF-Defense 的方法和代码实现，特在此记录相关内容。
 

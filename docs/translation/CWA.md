@@ -14,11 +14,11 @@ authors:
 
 # 翻译：Rethinking Model Ensemble in Transfer-based Adversarial Attacks
 
+> 阅读最新论文，找点灵感
+
 !!! info "文献"
 
     - [Rethinking Model Ensemble in Transfer-based Adversarial Attacks](https://arxiv.org/abs/2303.09105)
-
-> 阅读最新论文，找点灵感
 
 ## Abstract
 
@@ -191,26 +191,29 @@ $$
 
 
 $$
-\begin{array}{ll}
-& \textbf{Algorithm 1.} \quad \text{MI-CWA 算法} \\
-& \textbf{Input. } \text{自然图像 } \mathbf{x}_{nat}, \text{ 标签 } y, \text{ 扰动预算 } \epsilon, \text{ 迭代次数 } T, \text{ 损失函数 } L, \text{ 模型集合 } \\
-& F_t (f_i, i \in [1, n]), \text{ 衰减因子 } \mu, \text{ 步长 } r, \beta \text{ 和 } \alpha. \\
-& \textbf{Output. } \text{对抗样本 } \mathbf{x}_T. \\
-& \textbf{Method. } \\
-& 1 \quad \mathbf{m}_0 \gets 0, \hat{\mathbf{m}}_0 \gets 0, \mathbf{x}_0 \gets \mathbf{x}_{nat}; \\
-& 2 \quad \textbf{for} t = 0 \textbf{to} T-1 \textbf{do} \\
-& 3 \quad \qquad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L \left( \dfrac{1}{n} \sum_{i=1}^n f_i(x_t), y \right); \\
-& 4 \quad \qquad \text{ 更新 } \mathbf{x}_t \gets \text{clip}(\mathbf{x}_{nat}, \epsilon (x_t + r \cdot \text{sign}(g))); \\
-& 5 \quad \qquad \textbf{for} i = 1 \textbf{to} n \textbf{do} \\
-& 6 \quad \qquad \qquad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L(f_i(\mathbf{x}_t^{i-1}), y); \\
-& 7 \quad \qquad \qquad \text{ 更新内部动量 } \hat{\mathbf{m}} \gets \mu \cdot \hat{\mathbf{m}} + \dfrac{g}{\Vert\mathbf{g}\Vert_2}; \\
-& 8 \quad \qquad \qquad \text{ 更新 } \mathbf{x}_t^i \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (x_t^{i-1} - \beta \cdot \hat{m}); \\
-& 9 \quad \qquad \textbf{end for} \\
-& 10 \quad \qquad \text{ 计算更新方向 } \mathbf{g} \gets \mathbf{x}_t^n - \mathbf{x}_t; \\
-& 11 \quad \qquad \text{ 更新外部动量 } \mathbf{m} \gets \mu \cdot \mathbf{m} + \mathbf{g}; \\
-& 12 \quad \qquad \text{ 更新 } \mathbf{x}_{t+1} \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (\mathbf{x}_t + \alpha \cdot \text{sign}(\mathbf{m})); \\
-& 13 \quad \textbf{end for} \\
-& 14 \quad \textbf{return } \mathbf{x}_T. \\
+\begin{array}{rl}
+\hline
+- & \textbf{Algorithm 1.} \quad \text{MI-CWA 算法} \\
+\hline
+- & \textbf{Input. } \text{自然图像 } \mathbf{x}_{nat}, \text{ 标签 } y, \text{ 扰动预算 } \epsilon, \text{ 迭代次数 } T, \text{ 损失函数 } L, \text{ 模型集合 } \\
+  & F_t (f_i, i \in [1, n]), \text{ 衰减因子 } \mu, \text{ 步长 } r, \beta \text{ 和 } \alpha. \\
+- & \textbf{Output. } \text{对抗样本 } \mathbf{x}_T. \\
+\hline
+1 & \mathbf{m}_0 \gets 0, \hat{\mathbf{m}}_0 \gets 0, \mathbf{x}_0 \gets \mathbf{x}_{nat}; \\
+2 & \textbf{for}\ t = 0\ \text{to}\ T-1\ \textbf{do} \\
+3 & \quad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L \left( \dfrac{1}{n} \sum_{i=1}^n f_i(x_t), y \right); \\
+4 & \quad \text{ 更新 } \mathbf{x}_t \gets \text{clip}(\mathbf{x}_{nat}, \epsilon (x_t + r \cdot \text{sign}(g))); \\
+5 & \quad \textbf{for}\ i = 1\ \text{to}\ n\ \textbf{do} \\
+6 & \quad \quad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L(f_i(\mathbf{x}_t^{i-1}), y); \\
+7 & \quad \quad \text{ 更新内部动量 } \hat{\mathbf{m}} \gets \mu \cdot \hat{\mathbf{m}} + \dfrac{g}{\Vert\mathbf{g}\Vert_2}; \\
+8 & \quad \quad \text{ 更新 } \mathbf{x}_t^i \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (x_t^{i-1} - \beta \cdot \hat{m}); \\
+9 & \quad \textbf{end for} \\
+10 &  \quad \text{ 计算更新方向 } \mathbf{g} \gets \mathbf{x}_t^n - \mathbf{x}_t; \\
+11 &  \quad \text{ 更新外部动量 } \mathbf{m} \gets \mu \cdot \mathbf{m} + \mathbf{g}; \\
+12 &  \quad \text{ 更新 } \mathbf{x}_{t+1} \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (\mathbf{x}_t + \alpha \cdot \text{sign}(\mathbf{m})); \\
+13 &  \textbf{end for} \\
+14 &  \textbf{return } \mathbf{x}_T. \\
+\hline
 \end{array}
 $$
 
@@ -290,16 +293,6 @@ $$
 
 - **测试模型**：我们在谷歌的Bard[^2]上测试生成的对抗样本的攻击成功率。  
 - **超参数**：我们使用的超参数与第 4.1 节中的完全相同。  
-
-<style>
-.md-typeset .admonition.half.end {
-  max-width: 50%;
-  margin-inline: auto;
-  float: right;
-  border: none;
-  margin: 0 0 .1rem .8rem;
-}
-</style>
 
 !!! info half end ""
 

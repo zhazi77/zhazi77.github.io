@@ -12,6 +12,10 @@ authors:
 
 # 翻译：SR-Adv: Salient Region Adversarial Attacks on 3D Point Clouds for Autonomous Driving
 
+!!! info "文献"
+
+    - [SR-Adv: Salient Region Adversarial Attacks on 3D Point Clouds for Autonomous Driving](https://ieeexplore.ieee.org/document/10552176)
+
 ## Abstract 
 
 基于激光雷达感知的自动驾驶安全问题日益成为研究热点。具体而言，3D 对抗样本常常使深度神经网络模型的预测结果变得不可预测，这给自动驾驶系统带来了重大安全风险。然而，3D 神经网络模型对对抗样本的脆弱性研究较少。目前，现有的对抗攻击方法通常通过扰动整个点云来获取 3D 对抗样本，这需要大量的扰动点，即需要较大的扰动预算。在本文中，我们提出了一种显著区域对抗攻击方法（SR-Adv），通过扰动更少的区域和更少的点来生成对抗性点云。据我们所知，我们是首次针对 3D 点云提出基于区域的攻击方法。首先，所提出的 SR-Adv 采用博弈论来提取点云的显著区域。该机制为每个区域赋予一个值，以衡量其对 3D 神经网络模型预测结果的重要性，并实现对 3D 模型的脆弱性分析。其次，我们提出了一种基于优化的新型梯度攻击算法，以实现对显著区域的对抗攻击。我们在合成数据集 ModelNet40 和 ShapeNetPart 以及真实世界数据集 KITTI 和 NuScenes 上对所提出的 SR-Adv 攻击方法进行了评估。实验结果表明，所提出的 SR-Adv 通过在 3D 点云上扰动更少的点，实现了当前最优的攻击成功率和更好的不可感知性。
