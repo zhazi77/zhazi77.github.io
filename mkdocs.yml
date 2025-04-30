@@ -147,8 +147,11 @@ nav:
     - translation/index.md
     - CWA: translation/CWA.md
     - SR-Adv: translation/SR-Adv.md
+    - AL-Adv: translation/AL-Adv.md
     - PartA2: translation/PartA2.md
     - Kafka: translation/kafka.md
+    - "SoK: On the Semantic AI Security in Autonomous Driving": translation/sok-semantic-ai-security-in-ad.md
+    - "SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection": translation/sok-adv-for-network-intrusion-detection.md
     - BUILDING CONTROLLERS FOR TETRIS: translation/tetris.md
     - Learning Tetris Using the Noisy Cross-Entropy Method: translation/tetris2.md
     - CAP 定理的简明介绍: translation/A-plain-english-introduction-to-CAP-Theorem.md
