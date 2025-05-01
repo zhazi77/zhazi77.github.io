@@ -12,6 +12,8 @@ authors:
 
 # 翻译：SR-Adv: Salient Region Adversarial Attacks on 3D Point Clouds for Autonomous Driving
 
+> 点云局部攻击二则（其一）
+
 !!! info "文献"
 
     - [SR-Adv: Salient Region Adversarial Attacks on 3D Point Clouds for Autonomous Driving](https://ieeexplore.ieee.org/document/10552176)
