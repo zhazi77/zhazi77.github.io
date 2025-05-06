@@ -152,6 +152,7 @@ nav:
     - AL-Adv: translation/AL-Adv.md
     - PartA2: translation/PartA2.md
     - Kafka: translation/kafka.md
+    - Cyber-Physical Systems Security—A Survey: translation/Cyber-Physical-Systems-Security-A-Survey.md
     - "SoK: On the Semantic AI Security in Autonomous Driving": translation/sok-semantic-ai-security-in-ad.md
     - "SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection": translation/sok-adv-for-network-intrusion-detection.md
     - BUILDING CONTROLLERS FOR TETRIS: translation/tetris.md
