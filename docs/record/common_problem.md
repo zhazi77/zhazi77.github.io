@@ -82,7 +82,7 @@ authors:
 
     **问题描述：**
 
-    显卡被某各进程占用，但通过 nvitop、nvidia-smi 等方式查找进程时显示：Not Such Process。使用 kill 命令无法杀死进程，因为它不存在，像是一个幽灵进程。
+    显卡被某各进程占用，但通过 nvitop、nvidia-smi 等方式查找进程时显示：Not Such Process。使用 kill 命令无法杀死 nvitop 显示的进程，因为它不存在，就像是一个幽灵进程。
 
     ![](./images/幽灵进程.png)
 
