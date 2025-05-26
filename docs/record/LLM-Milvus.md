@@ -4,6 +4,7 @@ date:
   created: 2025-01-03
   updated: 2025-01-12
   updated: 2025-01-13
+  updated: 2025-05-26
 categories:
   - Learning
 tags:
@@ -42,4 +43,101 @@ Milvus 是一个高性能、高扩展性的**向量数据库**，Milvus 支持�
 
 
 ## 升级 TinyRAG 的存储方案
-**TODO: 有空写一下**
+
+这里需要改动两个逻辑：1. 处理文档库然后存到向量数据库中（创建数据库）的逻辑；2. 访问数据库查找相关的文本片段（使用数据库）的逻辑。
+
+### 创建数据库
+
+在 `config.yml` 中添加 Milvus 相关的配置：
+
+```yaml title="config.yml"
+milvus:
+  db_name: local_knowledge
+  collection:
+    name: myblog
+    docs: ../../myblog/docs/blog/
+  search_limit: 2
+```
+
+新建 `create_vector.py` 文件，存放创建数据库的逻辑：
+
+```python title="create_vector.py" linenums="1"
+from omegaconf import OmegaConf
+from pymilvus import MilvusClient
+
+from TinyRAG.utils import ReadFiles
+from TinyRAG.Embeddings import ZhipuEmbedding
+
+
+# NOTE: 读取配置文件
+cfg = OmegaConf.load('./config.yml')
+
+# NOTE: 创建数据库 (如果存在则重建)
+client = MilvusClient(cfg.milvus.db_name + ".db")
+if client.has_collection(collection_name=cfg.milvus.collection.name):
+    client.drop_collection(collection_name=cfg.milvus.collection.name)
+
+client.create_collection(
+    collection_name=cfg.milvus.collection.name,
+    dimension=cfg.vec_dimension,
+)
+
+# NOTE: 读取文档库，使用智谱的 API 把文档片段编码为向量
+docs = ReadFiles(cfg.milvus.collection.docs).get_content(max_token_len=600, cover_content=150) 
+embedding_model = ZhipuEmbedding(dimensions=cfg.vec_dimension)
+vectors = embedding_model(docs)
+
+# NOTE: 把数据插入数据库
+data = [
+    {"id": i, "vector": vectors[i], "text": docs[i], "subject": 'blog'}
+    for i in range(len(vectors))
+]
+res = client.insert(collection_name=cfg.milvus.collection.name, data=data)
+print(f"插入了 {res['insert_count']} 篇文档，ID 为: {res['ids']}。操作耗时: {res['cost']} 毫秒")
+```
+
+### 使用数据库
+
+在 `main.py` 中增加连接数据库和检索数据库的逻辑：
+
+```python title="main.py" linenums="12"
+# NOTE: 连接数据库
+client = MilvusClient(cfg.milvus.db_name + ".db")
+if client.has_collection(collection_name=cfg.milvus.collection.name):
+    client.create_collection(
+        collection_name=cfg.milvus.collection.name,
+        dimension=cfg.vec_dimension,
+    )
+else:
+    print(f"警告: 集合 {cfg.milvus.collection.name} 不存在")
+
+embedding_model = ZhipuEmbedding(dimensions = cfg.vec_dimension) # 创建EmbeddingModel
+
+def handle_client(conn):
+    try:
+        question = conn.recv(1024).decode('utf-8').strip()
+        if not question:
+            return
+
+        # NOTE: 检索数据库
+        result = client.search(
+            collection_name=cfg.milvus.collection.name,
+            data=embedding_model([question]),
+            filter="subject == 'blog'",
+            limit=cfg.milvus.search_limit,
+            output_fields=["text", "subject"],
+        )
+        if len(result) == 0:
+            content = "知识库中未查询到结果"
+        else:
+            content = (
+                "知识库中查询到如下结果:\n"
+                + "\n".join([f"{item['entity']['text']}" for item in result[0]])
+                + "\n"
+            )
+        model = DeepSeekChat()
+        response = model.chat(question, [], content) + '\n'
+        conn.send(response.encode('utf-8'))
+    finally:
+        conn.close()
+```

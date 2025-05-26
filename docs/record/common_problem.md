@@ -101,3 +101,16 @@ authors:
     ```
     之后手动 kill 进程即可。
 
+???+ question "wandb error: failed to upsert bucket"
+
+    **问题描述：**
+
+    wandb.errors.errors.CommError: failed to upsert bucket: returned error 403: {"data":{"upsertBucket":null},"errors":[{"message":"permission denied","path":["upsertBucket"],"extensions":{"code":"PERMISSION_ERROR"}}]}
+
+    **参考资料：**
+
+    - [[Q]: ERROR failed to upsert bucket: returned error 403 Forbidden](https://github.com/wandb/wandb/issues/8609)
+
+    **解决方案：**
+
+    使用 team 的名称。wandb 主页右上角点开 `Teams` 选项，找到团队名称。`!python wandb.init(project=project-name, entity=<使用团队名称>)`
