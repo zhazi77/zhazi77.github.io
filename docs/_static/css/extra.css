@@ -70,9 +70,9 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 
 .md-typeset #references, .md-typeset .no-underline { margin-bottom: 0; padding-bottom: 0; border: none; }
 
-.md-typeset h2 { border-bottom: 1px solid #d3d3d3; }
+.md-typeset h2 { border-bottom: 1px solid #d3d3d3; font-weight: bold }
 
-.md-typeset h3 { border-bottom: 1px dashed #d3d3d3; }
+.md-typeset h3 { border-bottom: 1px dashed #d3d3d3; font-weight: bold }
 
 .md-typeset h4 { font-size: 1.17em; }
 
@@ -119,4 +119,10 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
   float: right;
   border: none;
   margin: 0 0 .1rem .8rem;
+}
+
+
+.md-typeset ul li {
+    margin-top: 0.2em;    /* 顶部间距 */
+    margin-bottom: 0.2em; /* 底部间距 */
 }
