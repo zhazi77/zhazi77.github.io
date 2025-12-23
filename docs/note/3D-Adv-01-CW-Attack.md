@@ -308,9 +308,9 @@ C&W Attack 的目标是获得全局最优解，而为了获得全局最优解，
 ??? note "225 行可以使用更简单的条件"
 
     实际上 225 行只需要判断 `#!python bestscore[e] != -1` 就足够了。因为如果条件成立，就说明本轮有进入过 217 行的更新（内循环中只有这一处更新），而每次进入时必然有 `#!python l2 < bestl2[e] and compare(sc, np.argmax(batchlab[e]))` 成立，因此 `#!python bestscore[e] != -1` 成立时，225 行的中左半边的条件一定也成立。
-
+    
     **补充**：记命题 $A$ 为 `#!python compare(bestscore[e], np.argmax(batchlab[e]))`, 命题 $B$ 为 `#!python bestscore[e] != -1`，依据上面的分析，我们有 $A \rightarrow B$ 因此有 $A \land B \equiv A$。也即 225 行使用的条件与 `#!python bestscore[e] != -1` 等价。
-
+    
     ``` python title="l2_attack.py" linenums="213" hl_lines="5"
                     # adjust the best result found so far
                     for e,(l2,sc,ii) in enumerate(zip(l2s,scores,nimg)):
@@ -329,111 +329,164 @@ C&W Attack 的目标是获得全局最优解，而为了获得全局最优解，
 ??? note "attack_batch 代码(带注释)"
 
     **TODO: 加上注释** 
-
+    
     ```python title="l2_attack.py"
-
-        def attack_batch(self, imgs, labs):
-            """
-            Run the attack on a batch of images and labels.
-            """
-            def compare(x,y):
-                if not isinstance(x, (float, int, np.int64)):
-                    x = np.copy(x)
-                    if self.TARGETED:
-                        x[y] -= self.CONFIDENCE
-                    else:
-                        x[y] += self.CONFIDENCE
-                    x = np.argmax(x)
-                if self.TARGETED:
-                    return x == y
-                else:
-                    return x != y
-
-            batch_size = self.batch_size
-
-            # convert to tanh-space
-            imgs = np.arctanh((imgs - self.boxplus) / self.boxmul * 0.999999)
-
-            # set the lower and upper bounds accordingly
-            lower_bound = np.zeros(batch_size)
-            CONST = np.ones(batch_size)*self.initial_const
-            upper_bound = np.ones(batch_size)*1e10
-
-            # the best l2, score, and image attack
-            o_bestl2 = [1e10]*batch_size
-            o_bestscore = [-1]*batch_size
-            o_bestattack = [np.zeros(imgs[0].shape)]*batch_size
-            
-            for outer_step in range(self.BINARY_SEARCH_STEPS):
-                print(o_bestl2)
-                # completely reset adam's internal state.
-                self.sess.run(self.init)
-                batch = imgs[:batch_size]
-                batchlab = labs[:batch_size]
+    
+    def attack_batch(self, imgs, labs):
+        """
+        对一批输入图像执行 C&W L2 对抗攻击。
         
-              bestl2 = [1e10]*batch_size
-              bestscore = [-1]*batch_size
-
-              # The last iteration (if we run many steps) repeat the search once.
-              if self.repeat == True and outer_step == self.BINARY_SEARCH_STEPS-1:
-                  CONST = upper_bound
-
-              # set the variables so that we don't have to send them over again
-              self.sess.run(self.setup, {self.assign_timg: batch,
-                                        self.assign_tlab: batchlab,
-                                        self.assign_const: CONST})
-              
-              prev = np.inf
-              for iteration in range(self.MAX_ITERATIONS):
-                  # perform the attack 
-                  _, l, l2s, scores, nimg = self.sess.run([self.train, self.loss, 
-                                                          self.l2dist, self.output, 
-                                                          self.newimg])
-
-                  if np.all(scores>=-.0001) and np.all(scores <= 1.0001):
-                      if np.allclose(np.sum(scores,axis=1), 1.0, atol=1e-3):
-                          if not self.I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK:
-                              raise Exception("The output of model.predict should return the pre-softmax layer. It looks like you are returning the probability vector (post-softmax). If you are sure you want to do that, set attack.I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK = True")
-                  
-                  # print out the losses every 10%
-                  if iteration%(self.MAX_ITERATIONS//10) == 0:
-                      print(iteration,self.sess.run((self.loss,self.loss1,self.loss2)))
-
-                  # check if we should abort search if we're getting nowhere.
-                  if self.ABORT_EARLY and iteration%(self.MAX_ITERATIONS//10) == 0:
-                      if l > prev*.9999:
-                          break
-                      prev = l
-
-                  # adjust the best result found so far
-                  for e,(l2,sc,ii) in enumerate(zip(l2s,scores,nimg)):
-                      if l2 < bestl2[e] and compare(sc, np.argmax(batchlab[e])):
-                          bestl2[e] = l2
-                          bestscore[e] = np.argmax(sc)
-                      if l2 < o_bestl2[e] and compare(sc, np.argmax(batchlab[e])):
-                          o_bestl2[e] = l2
-                          o_bestscore[e] = np.argmax(sc)
-                          o_bestattack[e] = ii
-
-              # adjust the constant as needed
-              for e in range(batch_size):
-                  if compare(bestscore[e], np.argmax(batchlab[e])) and bestscore[e] != -1:
-                      # success, divide const by two
-                      upper_bound[e] = min(upper_bound[e],CONST[e])
-                      if upper_bound[e] < 1e9:
-                          CONST[e] = (lower_bound[e] + upper_bound[e])/2
-                  else:
-                      # failure, either multiply by 10 if no solution found yet
-                      #          or do binary search with the known upper bound
-                      lower_bound[e] = max(lower_bound[e],CONST[e])
-                      if upper_bound[e] < 1e9:
-                          CONST[e] = (lower_bound[e] + upper_bound[e])/2
-                      else:
-                          CONST[e] *= 10
-
-          # return the best solution found
-          o_bestl2 = np.array(o_bestl2)
-          return o_bestattack
+        参数:
+            imgs: 原始输入数据（如图像），形状为 [batch_size, ...]，值域通常为 [0, 1] 或 [-1, 1]
+            labs: 对应的真实标签（one-hot 或整数形式）
+    
+        返回:
+            o_bestattack: 成功生成的对抗样本列表，每个样本在满足攻击成功的前提下具有最小 L2 扰动
+        """
+    
+        def compare(x, y):
+            """
+            判断模型输出 x 是否满足攻击成功条件（针对目标类 y）。
+            
+            - 若为非目标攻击（默认）：要求预测结果 ≠ 真实标签
+            - 若为目标攻击（TARGETED=True）：要求预测结果 == 目标标签
+            
+            此外，若启用了 CONFIDENCE（置信度 margin），则需确保预测分数差超过该阈值。
+            """
+            if not isinstance(x, (float, int, np.int64)):
+                # x 是 logits 向量（未经过 softmax）
+                x = np.copy(x)
+                if self.TARGETED:
+                    # 目标攻击：目标类得分需比其他所有类高至少 CONFIDENCE
+                    x[y] -= self.CONFIDENCE
+                else:
+                    # 非目标攻击：真实类得分需比次高类低至少 CONFIDENCE
+                    x[y] += self.CONFIDENCE
+                x = np.argmax(x)  # 取 argmax 作为最终预测
+            if self.TARGETED:
+                return x == y
+            else:
+                return x != y
+    
+        batch_size = self.batch_size
+    
+        # === 步骤1：将输入映射到 tanh 空间 ===
+        # C&W 使用 tanh 变换约束输出在合法像素/坐标范围内（如 [0,1]）
+        # 公式反推：x = boxmul * tanh(w) + boxplus，其中 w 是优化变量
+        imgs = np.arctanh((imgs - self.boxplus) / self.boxmul * 0.999999)
+    
+        # === 初始化二分搜索边界 ===
+        lower_bound = np.zeros(batch_size)          # 每个样本的 c 下界
+        CONST = np.ones(batch_size) * self.initial_const  # 当前轮次使用的权重 c
+        upper_bound = np.ones(batch_size) * 1e10    # 每个样本的 c 上界
+    
+        # === 全局最优解记录（跨所有 outer_step）===
+        o_bestl2 = [1e10] * batch_size              # 最小 L2 距离（全局）
+        o_bestscore = [-1] * batch_size             # 对应的模型预测结果（-1 表示尚未成功）
+        o_bestattack = [np.zeros(imgs[0].shape)] * batch_size  # 对抗样本本身
+    
+        # === 外层循环：二分搜索最优权重 c ===
+        for outer_step in range(self.BINARY_SEARCH_STEPS):
+            print("当前全局最优 L2 距离:", o_bestl2)
+    
+            # 重置优化器（如 Adam）的状态，避免历史梯度干扰
+            self.sess.run(self.init)
+    
+            # 获取当前 batch 数据（支持动态 batch）
+            batch = imgs[:batch_size]
+            batchlab = labs[:batch_size]
+    
+            # === 局部最优解记录（仅限当前 c 值下的 inner loop）===
+            bestl2 = [1e10] * batch_size
+            bestscore = [-1] * batch_size
+    
+            # 特殊处理：最后一轮使用上界 c 再尝试一次（提高成功率）
+            if self.repeat and outer_step == self.BINARY_SEARCH_STEPS - 1:
+                CONST = upper_bound
+    
+            # 将当前 batch、标签、c 值注入计算图
+            self.sess.run(self.setup, {
+                self.assign_timg: batch,
+                self.assign_tlab: batchlab,
+                self.assign_const: CONST
+            })
+    
+            prev_loss = np.inf  # 用于早停判断
+    
+            # === 内层循环：固定 c，用梯度下降优化对抗样本 ===
+            for iteration in range(self.MAX_ITERATIONS):
+                # 执行一次优化步，返回：
+                # - train: 优化操作（如 Adam 更新）
+                # - loss: 总损失 c*L_adv + L_dist
+                # - l2s: 当前扰动的 L2 范数
+                # - scores: 模型 logits 输出
+                # - nimg: 当前对抗样本（已从 tanh 空间映射回原始空间）
+                _, total_loss, l2s, scores, nimg = self.sess.run([
+                    self.train, self.loss, self.l2dist, self.output, self.newimg
+                ])
+    
+                # === 安全检查：确保输入的是 logits（而非 softmax 概率）===
+                if (np.all(scores >= -0.0001) and np.all(scores <= 1.0001) and
+                    np.allclose(np.sum(scores, axis=1), 1.0, atol=1e-3)):
+                    if not self.I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK:
+                        raise Exception(
+                            "模型输出应为 softmax 前的 logits！\n"
+                            "当前输出看起来是概率分布（post-softmax）。若确定要这样，请设置：\n"
+                            "attack.I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK = True"
+                        )
+    
+                # 每 10% 的迭代打印一次损失（调试用）
+                if iteration % (self.MAX_ITERATIONS // 10) == 0:
+                    loss1, loss2 = self.sess.run([self.loss1, self.loss2])  # L_adv 和 L_dist
+                    print(f"迭代 {iteration}: 总损失={total_loss:.4f}, 对抗损失={loss1:.4f}, 距离损失={loss2:.4f}")
+    
+                # === 早停机制：若损失不再显著下降，则提前终止 ===
+                if self.ABORT_EARLY and iteration % (self.MAX_ITERATIONS // 10) == 0:
+                    if total_loss > prev_loss * 0.9999:
+                        break
+                    prev_loss = total_loss
+    
+                # === 更新局部与全局最优解 ===
+                for e, (l2, sc, ii) in enumerate(zip(l2s, scores, nimg)):
+                    current_label = np.argmax(batchlab[e])
+                    is_success = compare(sc, current_label)
+    
+                    # 更新局部最优（当前 c 下的最佳）
+                    if l2 < bestl2[e] and is_success:
+                        bestl2[e] = l2
+                        bestscore[e] = np.argmax(sc)
+    
+                    # 更新全局最优（所有 c 中的最佳）
+                    if l2 < o_bestl2[e] and is_success:
+                        o_bestl2[e] = l2
+                        o_bestscore[e] = np.argmax(sc)
+                        o_bestattack[e] = ii
+    
+            # === 根据本轮攻击结果更新二分搜索区间 ===
+            for e in range(batch_size):
+                # 判断本轮是否成功（注意：bestscore[e] == -1 表示从未成功）
+                attack_succeeded = (bestscore[e] != -1)
+    
+                if attack_succeeded:
+                    # 攻击成功：尝试减小 c（追求更小扰动）
+                    upper_bound[e] = min(upper_bound[e], CONST[e])
+                    if upper_bound[e] < 1e9:
+                        # 已有有效上界，进行标准二分
+                        CONST[e] = (lower_bound[e] + upper_bound[e]) / 2
+                    # 否则保持 CONST 不变（但上界已更新）
+                else:
+                    # 攻击失败：需增大 c（放宽扰动限制）
+                    lower_bound[e] = max(lower_bound[e], CONST[e])
+                    if upper_bound[e] < 1e9:
+                        # 已知上界，进行二分
+                        CONST[e] = (lower_bound[e] + upper_bound[e]) / 2
+                    else:
+                        # 尚未找到成功案例，指数级放大 c
+                        CONST[e] *= 10
+    
+        # === 返回最终结果 ===
+        o_bestl2 = np.array(o_bestl2)
+        return o_bestattack
     ```
 ## 总结
 C&W Attack 作为一种经典的对抗攻击方法，通过将对抗样本的生成问题建模为双目标优化问题，并引入超参数搜索技术，有效地平衡了对抗性和不可感知性之间的关系。本文从算法设计的角度详细剖析了 C&W Attack 的设计思想和代码实现，旨在帮助读者清晰理解其核心思想和实现细节。后续我将从算法框架的角度分析 C&W Attack 在点云对抗领域的应用，并介绍一些常见的改进。
