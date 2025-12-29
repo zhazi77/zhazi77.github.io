@@ -123,6 +123,6 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 
 
 .md-typeset ul li {
-    margin-top: 0.2em;    /* 顶部间距 */
-    margin-bottom: 0.2em; /* 底部间距 */
-}
+    margin-top: 0.0em;    /* 顶部间距 */
+    margin-bottom: 0.0em; /* 底部间距 */
+  }
