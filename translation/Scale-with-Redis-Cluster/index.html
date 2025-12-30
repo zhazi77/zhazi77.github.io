@@ -1,0 +1,3405 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A personal knowledge base for storing notes, research, and technical documentation">
+      
+      
+        <meta name="author" content="Zhazi">
+      
+      
+      
+        <link rel="prev" href="../The-Laws-of-Reflection/">
+      
+      
+        <link rel="next" href="../A-plain-english-introduction-to-CAP-Theorem/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>使用 Redis 集群进行扩展 - Zhazi's Memo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Fira Sans";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../_static/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#scale-with-redis-cluster" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Zhazi's Memo" class="md-header__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Zhazi's Memo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              使用 Redis 集群进行扩展
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red" aria-label="切换至深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue" aria-label="切换至浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  浅入浅出
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../record/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  实践记录
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../note/go-reflection/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习笔记
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../paper/ACE/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  论文阅读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  文献翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algorithm/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  算法
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Zhazi's Memo" class="md-nav__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Zhazi's Memo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浅入浅出
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    浅入浅出
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    为什么有的下载能接着下，有的断了就得重来？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/how-clash-for-linux-provides-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clash for Linux 是怎么提供网关代理的？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../record/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实践记录
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实践记录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/common_problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    普通问题归档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/waymo_perprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    waymo 数据预处理遇到的问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于 OpenPCDet 在 Waymo 数据集上训练模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对 Waymo 数据集做加工
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/luogu-U207568/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    杂记：洛谷 U207568
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-TinyRAG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-Milvus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：Milvus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/go-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言基础：反射
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/rsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rsync 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/modelnet40/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ModelNet40 归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_linux_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 有用软件归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    优质博客归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-01-CW-Attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-02-CW-Attack-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(二) —— C&amp;W Attack 框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文阅读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文阅读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/ACE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/GradCraft/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GradCraft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/occupancy_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Occupancy Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文献翻译
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    文献翻译
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Go-Data-Structures-Interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言数据结构：接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../The-Laws-of-Reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言的反射定律
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster 101
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Cluster 101">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-tcp-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster TCP ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-data-sharding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster data sharding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Cluster data sharding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-master-replica-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster master-replica model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-consistency-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster consistency guarantees
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster configuration parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-and-use-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create and use a Redis Cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create and use a Redis Cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements-to-create-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements to create a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interact-with-the-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interact with the Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-an-example-app-with-redis-rb-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write an Example App with redis-rb-cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reshard-the-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reshard the Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-more-interesting-example-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A More Interesting Example Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test the Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manual Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a New Node
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a New Node">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node-as-a-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new node as a master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node-as-a-replica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new node as a replica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove a Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replica-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replica Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-nodes-in-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Nodes in a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migrate-to-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrate to Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../A-plain-english-introduction-to-CAP-Theorem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAP 定理的简明介绍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Tetris Using the Noisy Cross-Entropy Method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CWA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SR-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SR-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AL-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PartA2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PartA2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Cyber-Physical-Systems-Security-A-Survey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cyber-Physical Systems Security—A Survey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-semantic-ai-security-in-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: On the Semantic AI Security in Autonomous Driving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-adv-for-network-intrusion-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algorithm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    算法
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    算法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    归档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    归档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三月 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分类
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分类
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/algorithm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-101" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster 101
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Cluster 101">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-tcp-ports" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster TCP ports
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-data-sharding" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster data sharding
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Redis Cluster data sharding">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-master-replica-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster master-replica model
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redis-cluster-consistency-guarantees" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster consistency guarantees
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-cluster-configuration-parameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis Cluster configuration parameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#create-and-use-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create and use a Redis Cluster
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Create and use a Redis Cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#requirements-to-create-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requirements to create a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Create a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interact-with-the-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interact with the Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#write-an-example-app-with-redis-rb-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Write an Example App with redis-rb-cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reshard-the-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reshard the Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#a-more-interesting-example-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A More Interesting Example Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test-the-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Test the Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-failover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manual Failover
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a New Node
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Add a New Node">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node-as-a-master" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new node as a master
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add-a-new-node-as-a-replica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Add a new node as a replica
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Remove a Node
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#replica-migration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Replica Migration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrade-nodes-in-a-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrade Nodes in a Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#migrate-to-redis-cluster" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Migrate to Redis Cluster
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags">
+    
+      
+      
+      
+      
+        <span class="md-tag">Distributed Systems</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">Redis</span>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/the-full/the-full.github.io/edit/master/docs/translation/Scale-with-Redis-Cluster.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/the-full/the-full.github.io/raw/master/docs/translation/Scale-with-Redis-Cluster.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+    </a>
+  
+
+
+<h1 id="scale-with-redis-cluster">翻译：Scale with Redis Cluster<a class="headerlink" href="#scale-with-redis-cluster" title="Permanent link">¶</a></h1>
+<blockquote>
+<p>使用 Redis 集群进行水平扩展</p>
+</blockquote>
+<div class="admonition info">
+<p class="admonition-title">文献</p>
+<ul>
+<li><a href="https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/#learn-more">Scale with Redis Cluster</a></li>
+</ul>
+</div>
+<p class="annotate">Redis 通过一种称为 Redis 集群的部署拓扑结构(1)实现横向扩展。本主题将指导你如何在生产环境中搭建、测试并运行 Redis Cluster。你将从终端用户的角度了解 Redis Cluster 在可用性和一致性方面的特性。</p>
+<ol>
+<li><img alt="🤓" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f913.svg" title=":nerd:"><img alt="☝" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/261d.svg" title=":point_up:">: <strong>部署拓扑结构（Deployment Topology）</strong>是指在分布式系统或应用程序部署过程中，用于描述系统组件如何分布和连接的架构设计。它涵盖了硬件、软件、网络资源等的布局，以及它们之间的交互方式。</li>
+</ol>
+<p>如果你计划在生产环境中部署 Redis Cluster，或希望更深入了解 Redis Cluster 的内部工作原理，请参考 <a href="https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/">Redis Cluster specification</a>。若想了解 Redis Enterprise 如何实现扩展，请参阅 <a href="https://redis.com/redis-enterprise/technology/linear-scaling-redis-enterprise/?_gl=1*15ds9b9*_gcl_au*MTM0OTI2MDczNy4xNzQyNjIyMTU5">Linear Scaling with Redis Enterprise</a>。</p>
+<h2 id="redis-cluster-101">Redis Cluster 101<a class="headerlink" href="#redis-cluster-101" title="Permanent link">¶</a></h2>
+<p>Redis 集群提供了一种运行 Redis 实例的方法，其可以将数据自动分片到多个 Redis 节点上。Redis 集群还在出现网络分区时提供一定程度的可用性——也就是说，在部分节点故障或无法通信的情况下，集群仍能继续运行。然而，当发生更大范围的故障（例如多数主节点不可用）时，整个集群将变得不可用。</p>
+<p>因此，使用 Redis 集群，你可以：</p>
+<ul>
+<li>在多个节点之间自动拆分数据集。</li>
+<li>当一部分节点遇到故障或无法与集群的其余部分通信时，请继续作。(分区容错性)</li>
+</ul>
+<h3 id="redis-cluster-tcp-ports">Redis Cluster TCP ports<a class="headerlink" href="#redis-cluster-tcp-ports" title="Permanent link">¶</a></h3>
+<p>每个 Redis 集群节点都需要开放两个 TCP 端口：一个是用于服务客户端的 Redis TCP 端口，例如 6379，另一个是称为<strong>集群总线端口（cluster bus port）</strong>的端口。默认情况下，集群总线端口是在数据端口的基础上加上 10000（例如 16379）；不过，你也可以在配置中通过 <code>cluster-port</code> 参数来自定义该端口。</p>
+<p class="annotate"><strong>集群总线（cluster bus）</strong>是一个（节点之间）点对点的通信通道，采用的是一种二进制协议，由于其带宽占用少、处理开销低，更适合用于节点间的信息交换。节点通过集群总线(1)进行故障检测、配置更新、故障转移授权等操作。客户端不应尝试与集群总线端口通信，而应始终使用 Redis 命令端口。然而，你仍需确保在防火墙中打开这两个端口，否则 Redis 集群节点将无法相互通信。</p>
+<ol>
+<li><img alt="🤓" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f913.svg" title=":nerd:"><img alt="☝" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/261d.svg" title=":point_up:">: 为了完成各自的任务，所有集群节点通过一个称为 <strong>Redis 集群总线（Redis Cluster Bus）</strong>的 TCP 总线和二进制协议进行连接。集群中的每个节点都通过集群总线与其他所有节点相连接。节点使用一种 gossip 协议来传播集群信息，以发现新的节点，发送 ping 包以确保其他节点运行正常，以及发送用于标识特定状态的集群消息。集群总线还用于在集群中传播 Pub/Sub 消息，并在用户发起请求时协调手动故障转移（手动故障转移是由系统管理员手动触发的，而不是由 Redis Cluster 的故障检测机制自动发起的）。</li>
+</ol>
+<p>为了使 Redis Cluster 正常运行，每个节点都需要满足以下条件：</p>
+<ul>
+<li>客户端通信端口（通常为 6379）必须开放，用于与客户端通信，需对所有需要访问集群的客户端开放，同时也需对其他集群节点开放，因为这些节点会通过该端口进行键迁移操作；</li>
+<li>集群总线端口必须对所有其他集群节点可达；</li>
+</ul>
+<p>如果未同时开放这两个 TCP 端口，集群将无法正常工作。</p>
+<h2 id="redis-cluster-data-sharding">Redis Cluster data sharding<a class="headerlink" href="#redis-cluster-data-sharding" title="Permanent link">¶</a></h2>
+<p>Redis 集群并不使用一致性哈希，而是采用另一种分片方式，其中每个键在概念上属于一个称为<strong>哈希槽（hash slot）</strong>的部分。</p>
+<p>在 Redis 集群中共有 16384 个哈希槽，计算某个键对应的哈希槽的方法是：对该键进行 CRC16 运算，然后对 16384 取模。</p>
+<p>在 Redis 集群中，每个节点负责一部分哈希槽。例如，你可能有一个包含 3 个节点的集群，其中：</p>
+<ul>
+<li>节点 A 负责哈希槽 0 到 5500；</li>
+<li>节点 B 负责哈希槽 5501 到 11000；</li>
+<li>节点 C 负责哈希槽 11001 到 16383。</li>
+</ul>
+<p>这种机制使得添加或移除集群节点变得非常简单。例如，如果想添加一个新的节点 D，只需将部分哈希槽从 A、B、C 迁移到 D 即可。类似地，如果想从集群中移除节点 A，只需将它负责的哈希槽迁移到 B 和 C，当节点 A 的哈希槽都迁出后，就可以将它从集群中完全移除。</p>
+<p>将哈希槽从一个节点迁移到另一个节点的过程中无需中断任何操作，因此，添加或移除节点，或调整某个节点所持有的哈希槽比例，都不需要停机。</p>
+<p>Redis 集群支持多键操作，只要在一次命令执行（或整个事务，或 Lua 脚本执行）中所涉及的所有键都属于同一个哈希槽即可。用户可以通过一种称为<strong>哈希标签（hash tags）</strong>的功能，强制多个键被映射到同一个哈希槽中。</p>
+<p>哈希标签在 Redis 集群规范中有详细说明，其核心原理是：如果一个键中包含一对大括号 <code>{}</code>，则只有括号中的内容会被用于计算哈希值。例如，键 <code>user:{123}:profile</code> 和 <code>user:{123}:account</code> 因为具有相同的哈希标签 <code>{123}</code>，所以它们一定会被映射到同一个哈希槽中。这样，你就可以在一次多键操作中同时操作这两个键。</p>
+<h3 id="redis-cluster-master-replica-model">Redis Cluster master-replica model<a class="headerlink" href="#redis-cluster-master-replica-model" title="Permanent link">¶</a></h3>
+<p>为了在部分主节点发生故障或无法与大多数节点通信的情况下仍保持可用性，Redis 集群使用了<strong>主从模型（master-replica model）</strong>：每个哈希槽除了由主节点负责外，还可以有 1 个或多个副本节点（即 N 个副本，其中包括 1 个主节点和 N-1 个副本节点）。</p>
+<p>以上面提到的 Redis 集群（节点 A、B、C）为例，如果节点 B 发生故障，整个集群将无法继续运行，因为哈希槽范围 5501–11000 无法被访问。</p>
+<p>为了解决这个问题，在集群创建时（或之后的某个时间点），我们可以为每个主节点添加一个副本节点，从而形成一个包含 A、B、C（主节点）和 A1、B1、C1（对应的副本节点）的完整集群结构。这样，即使节点 B 故障，系统也能继续正常运行。</p>
+<p>当节点 B 的副本节点 B1 侦测到 B 故障后，集群会将 B1 提升为新的主节点，从而维持集群的正常运行。</p>
+<p>但需要注意的是，如果 B 和 B1 同时故障，Redis Cluster 将无法继续工作。</p>
+<h3 id="redis-cluster-consistency-guarantees">Redis Cluster consistency guarantees<a class="headerlink" href="#redis-cluster-consistency-guarantees" title="Permanent link">¶</a></h3>
+<p>Redis 集群不保证<strong>强一致性（strong consistency）</strong>。这意味着在某些情况下，Redis 集群可能会丢失那些已经向客户端确认成功的写入操作。</p>
+<p>Redis 集群可能丢失写入的第一个原因是它采用<strong>异步复制</strong>机制。也就是说，在写操作过程中，会发生如下流程：</p>
+<ol>
+<li>客户端向主节点 B 发起写请求；</li>
+<li>主节点 B 向客户端返回 OK，表示写入成功；</li>
+<li>主节点 B 将该写操作异步地传播给其副本节点 B1、B2 和 B3。</li>
+</ol>
+<p>如你所见，主节点 B 在向客户端确认写入成功之前，并不会等待来自 B1、B2、B3 的副本确认，这是因为等待副本确认会带来 Redis 无法接受的高延迟。因此，如果客户端向 B 写入数据，B 向客户端返回成功，但随后在将写入同步到副本之前崩溃了，此时某个未收到该写入的副本可能会被提升为新的主节点，从而导致该写入永久丢失。</p>
+<p>这种情况与大多数数据库设置为每秒将数据刷新到磁盘一次的行为非常类似，因此你可能已经在使用传统数据库系统（非分布式系统）时遇到过类似问题。类似地，如果希望提升一致性，可以要求数据库在向客户端确认写入成功之前先将数据刷新到磁盘，但这通常会带来极大的性能损失。在 Redis 集群中，这种做法就相当于采用<strong>同步复制</strong>机制。</p>
+<p>本质上，这是一个在<strong>性能</strong>和<strong>一致性</strong>之间进行权衡的问题。</p>
+<p>Redis 集群在确实需要时也支持<strong>同步写入</strong>，通过 <code>WAIT</code> 命令来实现。使用该机制可以大幅降低写入丢失的可能性。但是，请注意，即使采用了同步复制，Redis 集群也<strong>并不提供强一致性</strong>：在一些复杂的故障场景下，仍有可能将未接收到写入的副本选举为主节点。</p>
+<p>还有另一种比较典型的场景也可能导致 Redis Cluster 丢失写入，那就是<strong>网络分区（network partition）</strong>，并且客户端与包括至少一个主节点在内的少数节点处于同一分区中。</p>
+<p>举例来说，假设我们有一个由 6 个节点组成的集群：A、B、C 是主节点，A1、B1、C1 是各自对应的副本节点。同时存在一个客户端 Z1。</p>
+<p>当网络发生分区时，可能出现以下情况：一侧分区包含 A、C、A1、B1、C1，另一侧分区只包含 B 和客户端 Z1。</p>
+<p>这时，Z1 仍然可以向 B 写入数据，而 B 也会接受这些写入。如果网络分区很快恢复，整个集群可以正常继续运行。但如果分区持续时间较长，导致多数节点的一侧将 B 的副本 B1 提升为新的主节点，那么在此期间 Z1 向 B 写入的数据就会<strong>永久丢失</strong>。</p>
+<div class="admonition tip">
+<p class="admonition-title">注意</p>
+<p>Z1 能够向 B 发送写操作的数量有一个<strong>最大窗口</strong>：如果经过了足够长的时间，使得分区中的多数侧能够选举出一个副本作为主节点，那么少数侧中的每一个主节点都将停止接受写操作。</p>
+</div>
+<p>这个足够长的时间被称为<strong>节点超时时间（node timeout）</strong>，是 Redis 集群的一个关键配置选项。</p>
+<p>当节点超时时间到期后，主节点会被视为故障节点，可被它的某个副本取代。同样，若主节点在超时时间内无法感知到大多数其他主节点的存在，则该节点将进入错误状态并停止接受写请求。</p>
+<h2 id="redis-cluster-configuration-parameters">Redis Cluster configuration parameters<a class="headerlink" href="#redis-cluster-configuration-parameters" title="Permanent link">¶</a></h2>
+<p>我们即将创建一个示例集群部署。不过在那之前，让我们先了解一下 <code>redis.conf</code> 文件中与 Redis Cluster 相关的一些配置参数：</p>
+<div class="annotate">
+<ul>
+<li>
+<p><strong>cluster-enabled <yes no></yes></strong>：如果设置为 <code>yes</code>，则启用该 Redis 实例的集群功能。否则，该实例将以普通的单机模式启动。</p>
+</li>
+<li>
+<p><strong>cluster-config-file <filename></filename></strong>：尽管这个选项的名称中带有 "config"，但它实际上不是供用户手动编辑的配置文件，而是 Redis Cluster 节点在每次集群状态发生变化时自动持久化其状态信息的文件。这个文件中记录了集群中其他节点的信息、节点状态、持久化变量等内容。该文件通常会在接收到某些集群消息后被重写并刷新到磁盘。</p>
+</li>
+<li>
+<p><strong>cluster-node-timeout &lt;毫秒数&gt;</strong>：这是允许一个 Redis Cluster 节点不可达的最长时间。如果一个主节点在这个时间内都无法被访问，它将被其副本节点<strong>故障转移（failover）</strong>(1)。这个参数还控制其他重要行为，比如：当某个节点在该时间内无法联系到大多数主节点时，它将停止接受客户端请求。</p>
+</li>
+<li>
+<p><strong>cluster-slave-validity-factor &lt;因子&gt;</strong>：如果设置为 0，副本节点将始终认为自己是有效的，并在主节点不可用时始终尝试进行故障转移，无论主从连接中断了多长时间。如果该值为正数，最大断开时间将由 <code>cluster-node-timeout</code> 乘以该因子计算得到。如果副本节点与主节点的连接中断超过该时间限制，它将不再尝试进行故障转移。例如，如果 <code>cluster-node-timeout</code> 设置为 5 秒，而有效性因子设置为 10，那么断开连接超过 50 秒的副本将不会尝试故障转移。需要注意的是，非零值可能会导致在主节点故障时，集群无法完成故障转移，从而导致整个集群不可用，直到原主节点重新加入集群。</p>
+</li>
+</ul>
+<blockquote>
+<p>为便于理解，有修改</p>
+</blockquote>
+<ul>
+<li>
+<p><strong>cluster-migration-barrier &lt;数量&gt;</strong>： 当一个主节点（目标主节点）没有任何副本时，要将一个其他主节点（源主节点）的副本迁移到这个主节点时，源主节点必须保持连接的最小副本数量。有关副本迁移的更多信息，请参阅本教程中的相关部分。</p>
+</li>
+<li>
+<p><strong>cluster-require-full-coverage <yes no></yes></strong>：如果设置为 <code>yes</code>（默认值），当集群中某些哈希槽没有被任何节点覆盖时，集群将停止接受写请求。如果设置为 <code>no</code>，即使只有部分键空间可以被处理，集群仍将继续提供服务。</p>
+</li>
+<li>
+<p><strong>cluster-allow-reads-when-down <yes no></yes></strong>：如果设置为 <code>no</code>（默认值），当集群处于失败状态（比如节点无法达成主节点多数，或者集群没有被完全覆盖）时，该节点将停止提供所有服务，以避免返回可能不一致的数据。如果设置为 <code>yes</code>，即使在集群失败状态下也允许读取操作。这对于优先考虑读可用性（而不太在意写一致性）的应用场景是有用的，比如使用只有一个或两个分片的 Redis Cluster，可以在主节点宕机且无法自动故障转移时继续提供读服务。</p>
+</li>
+</ul>
+</div>
+<ol>
+<li><img alt="🤓" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/1f913.svg" title=":nerd:"><img alt="☝" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@16.0.1/assets/svg/261d.svg" title=":point_up:">: 故障转移是指当主节点（Master）因故障无法提供服务时，系统自动选择一个从节点（Slave）作为新的主节点，并重新分配数据和服务的过程。这一机制可以确保系统的高可用性和数据一致性。在集群模式下，集群节点之间会相互监控，当某个节点故障时，其他节点会检测到。此时，故障节点的数据（槽位）会被迁移到其他节点,集群会重新平衡数据，并继续提供服务。</li>
+</ol>
+<h2 id="create-and-use-a-redis-cluster">Create and use a Redis Cluster<a class="headerlink" href="#create-and-use-a-redis-cluster" title="Permanent link">¶</a></h2>
+<p>要创建和使用Redis集群，请按照以下步骤操作：</p>
+<style>
+.md-typeset ul li {
+    margin-top: 0.2em;    /* 顶部间距 */
+    margin-bottom: 0.2em; /* 底部间距 */
+}
+</style>
+
+<ul>
+<li><a href="#create-a-redis-cluster">创建 Redis 集群</a></li>
+<li><a href="#interact-with-the-cluster">与集群交互</a></li>
+<li><a href="#write-an-example-app-with-redis-rb-cluster">使用 redis-rb-cluster 编写示例应用</a></li>
+<li><a href="#reshard-the-cluster">重新分片集群</a></li>
+<li><a href="#a-more-interesting-example-application">一个更有趣的示例应用</a></li>
+<li><a href="#test-the-failover">测试故障转移</a></li>
+<li><a href="#manual-failover">手动故障转移</a></li>
+<li><a href="#add-a-new-node">添加新节点</a></li>
+<li><a href="#remove-a-node">移除节点</a></li>
+<li><a href="#replica-migration">副本迁移</a></li>
+<li><a href="#upgrade-nodes-in-a-redis-cluster">升级 Redis 集群中的节点</a></li>
+<li><a href="#migrate-to-redis-cluster">迁移到 Redis 集群</a></li>
+<li><a href="#create-a-redis-cluster">创建 Redis 集群</a></li>
+</ul>
+<p>不过在那之前，你需要先熟悉创建集群的要求。</p>
+<h3 id="requirements-to-create-a-redis-cluster">Requirements to create a Redis Cluster<a class="headerlink" href="#requirements-to-create-a-redis-cluster" title="Permanent link">¶</a></h3>
+<p>要创建一个 Redis 集群，首先需要启动几个处于集群模式下的空 Redis 实例。</p>
+<p>至少需要在 redis.conf 文件中设置以下指令：</p>
+<div class="language-text highlight"><span class="filename">redis.conf</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>port 7000
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>cluster-enabled yes
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>cluster-config-file nodes.conf
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>cluster-node-timeout 5000
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>appendonly yes
+</span></code></pre></div>
+<p>要启用集群模式，请将<code>cluster-enabled</code>指令设置为<code>yes</code>。每个实例还包含一个文件的路径，该文件存储了此节点的配置，默认情况下为<code>nodes.conf</code>。这个文件永远不会被人工修改；它仅在启动时由 Redis 集群实例生成，并在需要时更新。</p>
+<p>注意，一个能正常工作的最小集群必须包含至少三个主节点。对于生产部署，我们强烈建议使用六节点集群，其中包含三个主节点和三个副本节点。</p>
+<p>你可以通过以下方式在本地测试：在任一目录下创建以实例端口号命名的子目录。</p>
+<p>例如：</p>
+<p></p><div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>cluster-test
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">cd</span><span class="w"> </span>cluster-test
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>mkdir<span class="w"> </span><span class="m">7000</span><span class="w"> </span><span class="m">7001</span><span class="w"> </span><span class="m">7002</span><span class="w"> </span><span class="m">7003</span><span class="w"> </span><span class="m">7004</span><span class="w"> </span><span class="m">7005</span>
+</span></code></pre></div>
+然后在每个目录（7000 到 7005）内创建一个 <code>redis.conf</code> 文件。配置文件可以直接使用上面的简单示例模板，但记得根据目录名称修改端口号（比如 <code>7000</code> 要改成对应目录的端口号）。  <p></p>
+<p>你可以像这样启动每个实例（每个实例运行在单独的终端标签页中）：</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">cd</span><span class="w"> </span><span class="m">7000</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>redis-server<span class="w"> </span>./redis.conf
+</span></code></pre></div>
+<p>从日志中你会看到，每个节点都会给自己分配一个新的 ID：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="go">[82462] 26 Nov 11:56:55.329 * No cluster configuration found, I'm 97a3a64667477371c4479320d683e4c8db5858b1</span>
+</span></code></pre></div>
+这个 ID 会被该实例永久使用，以确保它在集群中拥有唯一的名称。每个节点都通过这个 ID（而不是 IP 或端口）来识别其他节点。IP 地址和端口可能会变，但节点的唯一标识符在整个生命周期内都不会改变。我们把这个标识符简称为 <strong>节点 ID（Node ID）</strong>。<p></p>
+<h3 id="create-a-redis-cluster">Create a Redis Cluster<a class="headerlink" href="#create-a-redis-cluster" title="Permanent link">¶</a></h3>
+<p>现在我们已经运行了多个 Redis 实例，接下来需要通过向节点写入有效的配置来创建集群。</p>
+<p>你可以手动配置并逐个启动实例，也可以使用 <code>create-cluster</code> 脚本。我们先来看看如何手动操作。</p>
+<p>要创建集群，请运行以下命令：</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>redis-cli<span class="w"> </span>--cluster<span class="w"> </span>create<span class="w"> </span><span class="m">127</span>.0.0.1:7000<span class="w"> </span><span class="m">127</span>.0.0.1:7001<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="m">127</span>.0.0.1:7002<span class="w"> </span><span class="m">127</span>.0.0.1:7003<span class="w"> </span><span class="m">127</span>.0.0.1:7004<span class="w"> </span><span class="m">127</span>.0.0.1:7005<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>--cluster-replicas<span class="w"> </span><span class="m">1</span>
+</span></code></pre></div>
+<p>这里使用的命令是 <code>create</code>，因为我们要创建一个新集群。选项 <code>--cluster-replicas 1</code> 表示我们希望为每个主节点分配一个副本节点。</p>
+<p>其余参数是用于创建新集群的实例地址列表。</p>
+<p><code>redis-cli</code> 会提供一个配置方案。输入 <code>yes</code> 接受提议的配置后，集群将开始配置并建立连接，这意味着各个实例会开始相互通信。如果一切顺利，你最终会看到类似这样的消息：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="go">[OK] All 16384 slots covered</span>
+</span></code></pre></div>
+<p>这表明集群中至少有一个主节点正在处理 16384 个可用哈希槽中的每一个。</p>
+<p>如果你不想按照上述方式手动配置并逐个启动实例来创建 Redis 集群，还有一个更简单的方案（不过这样你就学不到那么多操作细节了）。</p>
+<p>在 Redis 发行版的 <code>utils/create-cluster</code> 目录下，有一个名为 <code>create-cluster</code> 的 bash 脚本（与所在目录同名）。要快速创建一个包含 3 个主节点和 3 个副本节点的 6 节点集群，只需执行以下命令：</p>
+<p></p><div class="language-bash highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>create-cluster<span class="w"> </span>start
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>create-cluster<span class="w"> </span>create
+</span></code></pre></div></td></tr></tbody></table></div>
+在第二步中，当 <code>redis-cli</code> 工具提示你确认集群布局时，请回复 <code>yes</code>。  <p></p>
+<p>现在你可以与集群进行交互了（默认情况下第一个节点会运行在 30001 端口）。完成后，使用以下命令停止集群：  </p>
+<div class="language-bash highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a>create-cluster<span class="w"> </span>stop
+</span></code></pre></div></td></tr></tbody></table></div>
+<p>更多关于脚本运行方式的详细信息，请阅读该目录下的 README 文件。</p>
+<h3 id="interact-with-the-cluster">Interact with the Cluster<a class="headerlink" href="#interact-with-the-cluster" title="Permanent link">¶</a></h3>
+<p>要连接 Redis 集群，你需要使用支持集群模式的 Redis 客户端。请根据所选客户端文档确认其集群支持情况。  </p>
+<p>也可以使用 <code>redis-cli</code> 命令行工具测试 Redis 集群：  </p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-c<span class="w"> </span>-p<span class="w"> </span><span class="m">7000</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="go">redis 127.0.0.1:7000&gt; set foo bar</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="go">-&gt; Redirected to slot [12182] located at 127.0.0.1:7002</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="go">OK</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="go">redis 127.0.0.1:7002&gt; set hello world</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="go">-&gt; Redirected to slot [866] located at 127.0.0.1:7000</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="go">OK</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="go">redis 127.0.0.1:7000&gt; get foo</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="go">-&gt; Redirected to slot [12182] located at 127.0.0.1:7002</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="go">"bar"</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="go">redis 127.0.0.1:7002&gt; get hello</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="go">-&gt; Redirected to slot [866] located at 127.0.0.1:7000</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="go">"world"</span>
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">注意</p>
+<p>如果使用脚本创建集群，节点默认会从 30001 端口开始监听（具体端口号可能有所不同）。</p>
+</div>
+<p><code>redis-cli</code> 的集群支持较为基础，始终依赖集群节点的重定向机制引导客户端连接正确节点。专业的客户端会缓存哈希槽与节点地址的映射关系，直接建立与目标节点的连接。该映射仅在集群配置变化时刷新，例如发生故障转移，或管理员通过增删节点调整集群布局时。</p>
+<h3 id="write-an-example-app-with-redis-rb-cluster">Write an Example App with redis-rb-cluster<a class="headerlink" href="#write-an-example-app-with-redis-rb-cluster" title="Permanent link">¶</a></h3>
+<p>在继续演示如何操作 Redis 集群（例如进行故障转移或重新分片）之前，我们需要创建示例应用或至少理解 Redis 集群客户端交互的基本语义。  </p>
+<p>通过这种方式，我们既能运行示例，又可以模拟节点故障或启动重新分片，观察 Redis 集群在真实场景下的行为。若没有数据写入集群，单纯观察其行为意义不大。<br>
+本节通过两个示例说明<a href="https://github.com/antirez/redis-rb-cluster">redis-rb-cluster</a> 的基本用法。第一个示例是 redis-rb-cluster 发行版中的 <code>example.rb</code> 文件：  </p>
+<p></p><div class="language-bash highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">example.rb</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-9-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-9-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-9-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-9-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-9-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-9-10">10</a></span>
+<span class="normal"><a href="#__codelineno-9-11">11</a></span>
+<span class="normal"><a href="#__codelineno-9-12">12</a></span>
+<span class="normal"><a href="#__codelineno-9-13">13</a></span>
+<span class="normal"><a href="#__codelineno-9-14">14</a></span>
+<span class="normal"><a href="#__codelineno-9-15">15</a></span>
+<span class="normal"><a href="#__codelineno-9-16">16</a></span>
+<span class="normal"><a href="#__codelineno-9-17">17</a></span>
+<span class="normal"><a href="#__codelineno-9-18">18</a></span>
+<span class="normal"><a href="#__codelineno-9-19">19</a></span>
+<span class="normal"><a href="#__codelineno-9-20">20</a></span>
+<span class="normal"><a href="#__codelineno-9-21">21</a></span>
+<span class="normal"><a href="#__codelineno-9-22">22</a></span>
+<span class="normal"><a href="#__codelineno-9-23">23</a></span>
+<span class="normal"><a href="#__codelineno-9-24">24</a></span>
+<span class="normal"><a href="#__codelineno-9-25">25</a></span>
+<span class="normal"><a href="#__codelineno-9-26">26</a></span>
+<span class="normal"><a href="#__codelineno-9-27">27</a></span>
+<span class="normal"><a href="#__codelineno-9-28">28</a></span>
+<span class="normal"><a href="#__codelineno-9-29">29</a></span>
+<span class="normal"><a href="#__codelineno-9-30">30</a></span>
+<span class="normal"><a href="#__codelineno-9-31">31</a></span>
+<span class="normal"><a href="#__codelineno-9-32">32</a></span>
+<span class="normal"><a href="#__codelineno-9-33">33</a></span>
+<span class="normal"><a href="#__codelineno-9-34">34</a></span>
+<span class="normal"><a href="#__codelineno-9-35">35</a></span>
+<span class="normal"><a href="#__codelineno-9-36">36</a></span>
+<span class="normal"><a href="#__codelineno-9-37">37</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1"></a>require<span class="w"> </span><span class="s1">'./cluster'</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2"></a>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3"></a><span class="k">if</span><span class="w"> </span>ARGV.length<span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="m">2</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="w">    </span><span class="nv">startup_nodes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">        </span><span class="o">{</span>:host<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="s2">"127.0.0.1"</span>,<span class="w"> </span>:port<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="m">7000</span><span class="o">}</span>,
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">        </span><span class="o">{</span>:host<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="s2">"127.0.0.1"</span>,<span class="w"> </span>:port<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="m">7001</span><span class="o">}</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7"></a><span class="w">    </span><span class="o">]</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8"></a><span class="k">else</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9"></a><span class="w">    </span><span class="nv">startup_nodes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10"></a><span class="w">        </span><span class="o">{</span>:host<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>ARGV<span class="o">[</span><span class="m">0</span><span class="o">]</span>,<span class="w"> </span>:port<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>ARGV<span class="o">[</span><span class="m">1</span><span class="o">]</span>.to_i<span class="o">}</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11"></a><span class="w">    </span><span class="o">]</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12"></a>end
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13"></a>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14"></a><span class="hll"><span class="nv">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>RedisCluster.new<span class="o">(</span>startup_nodes,32,:timeout<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="m">0</span>.1<span class="o">)</span>
+</span></span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15"></a>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16"></a><span class="nv">last</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17"></a>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18"></a><span class="hll"><span class="k">while</span><span class="w"> </span>not<span class="w"> </span>last
+</span></span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19"></a><span class="hll"><span class="w">    </span>begin
+</span></span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20"></a><span class="hll"><span class="w">        </span><span class="nv">last</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>rc.get<span class="o">(</span><span class="s2">"__last__"</span><span class="o">)</span>
+</span></span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21"></a><span class="hll"><span class="w">        </span><span class="nv">last</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="k">if</span><span class="w"> </span>!last
+</span></span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22"></a><span class="hll"><span class="w">    </span><span class="nv">rescue</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>e
+</span></span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23"></a><span class="hll"><span class="w">        </span>puts<span class="w"> </span><span class="s2">"error #{e.to_s}"</span>
+</span></span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24"></a><span class="hll"><span class="w">        </span>sleep<span class="w"> </span><span class="m">1</span>
+</span></span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25"></a><span class="hll"><span class="w">    </span>end
+</span></span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26"></a><span class="hll">end
+</span></span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27"></a>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28"></a><span class="hll"><span class="o">((</span>last.to_i+1<span class="o">)</span>..1000000000<span class="o">)</span>.each<span class="o">{</span><span class="p">|</span>x<span class="p">|</span>
+</span></span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29"></a><span class="hll"><span class="w">    </span>begin
+</span></span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30"></a><span class="hll"><span class="w">        </span>rc.set<span class="o">(</span><span class="s2">"foo#{x}"</span>,x<span class="o">)</span>
+</span></span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31"></a><span class="hll"><span class="w">        </span>puts<span class="w"> </span>rc.get<span class="o">(</span><span class="s2">"foo#{x}"</span><span class="o">)</span>
+</span></span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32"></a><span class="hll"><span class="w">        </span>rc.set<span class="o">(</span><span class="s2">"__last__"</span>,x<span class="o">)</span>
+</span></span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33"></a><span class="hll"><span class="w">    </span><span class="nv">rescue</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>e
+</span></span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34"></a><span class="hll"><span class="w">        </span>puts<span class="w"> </span><span class="s2">"error #{e.to_s}"</span>
+</span></span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35"></a><span class="hll"><span class="w">    </span>end
+</span></span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36"></a><span class="hll"><span class="w">    </span>sleep<span class="w"> </span><span class="m">0</span>.1
+</span></span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37"></a><span class="hll"><span class="o">}</span>
+</span></span></code></pre></div></td></tr></tbody></table></div>
+这个程序看起来比通常需要的更复杂，因为它被设计成在屏幕上显示错误而不是直接抛出异常退出，所以每个集群操作都被包裹在 <code>begin rescue</code> 代码块中。<p></p>
+<p>第 14 行是程序中第一个值得关注的地方。它创建了 Redis 集群对象，参数包括：启动节点列表（<em>startup_nodes</em>）、允许对不同节点建立的最大连接数，以及操作超时判定时间。</p>
+<p>启动节点不需要包含集群所有节点，关键是要确保至少有一个节点可达。请注意 redis-rb-cluster 在成功连接第一个节点后就会立即更新这个启动节点列表，这是所有专业客户端都应具备的行为。</p>
+<p>现在我们将Redis集群对象实例存储在变量 <code>rc</code> 中，之后就可以像使用普通 Redis 对象实例一样操作它。</p>
+<p>18 到 26 行演示了这一点：当重启示例时，我们不希望从 <code>foo0</code> 重新开始，所以将计数器存储在 Redis 内部。这段代码专门用于读取该计数器，若不存在则将其初始化为零。</p>
+<p>注意这里使用了 while 循环，因为即使集群宕机返回错误，我们也希望不断重试。普通应用不需要如此谨慎。</p>
+<p>28 到 37 行开始了主循环，要么执行键值设置，要么显示错误信息。</p>
+<p>注意循环末尾的 <code>sleep</code> 调用。在测试中若想尽快写入集群可以移除这个 <code>sleep</code> （当然这只是个没有真正并发的忙循环，最佳情况下通常能达到每秒 1 万次操作）。</p>
+<p>通常情况下我们会放慢写入速度，这是为了让示例应用程序更便于人类观察和理解。</p>
+<p>启动应用程序会产生以下输出：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="go">ruby ./example.rb</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="go">1</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="go">2</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="go">3</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="go">4</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="go">5</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="go">6</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="go">7</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="go">8</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="go">9</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="go">^C (I stopped the program here)</span>
+</span></code></pre></div>
+<h3 id="reshard-the-cluster">Reshard the Cluster<a class="headerlink" href="#reshard-the-cluster" title="Permanent link">¶</a></h3>
+<p>现在我们可以尝试进行集群的<strong>重新分片（resharding）</strong>了。在操作期间，请保持 <code>example.rb</code> 程序持续运行，以便观察重新分片是否会对正在运行的程序产生影响。此外，您也可以考虑注释掉 <code>sleep</code> 调用，以便在重新分片过程中产生更高的写入负载。  </p>
+<p>重新分片的核心操作是将哈希槽（hash slots）从一组节点迁移到另一组节点。与集群创建类似，这一过程可以通过 <code>redis-cli</code> 工具完成。  </p>
+<p>要启动重新分片，只需输入以下命令：</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>redis-cli<span class="w"> </span>--cluster<span class="w"> </span>reshard<span class="w"> </span><span class="m">127</span>.0.0.1:7000
+</span></code></pre></div>
+<p>你只需指定一个节点即可，redis-cli 会自动发现其他节点。  </p>
+<p>目前 redis-cli 仅支持在管理员协助下进行重新分片，无法直接指定“将此节点的 5% 槽迁移到另一个节点”（不过实现这一功能应该很简单）。因此，它会以提问的方式开始。第一个问题是你想迁移多少哈希槽:</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="go">How many slots do you want to move (from 1 to 16384)?</span>
+</span></code></pre></div>
+<p>我们可以尝试迁移 1000 个哈希槽。如果示例程序仍在运行且未包含 <code>sleep</code> 调用，那么这些槽中应该已经包含了相当数量的键。  </p>
+<p>接下来，redis-cli 需要知道迁移的目标节点，即接收这些哈希槽的节点。这里我们选择第一个主节点 <code>127.0.0.1:7000</code>，但需要指定该实例的 <strong>Node ID</strong>。虽然 redis-cli 之前输出的节点列表中已包含此信息，但如果需要，我们始终可以通过以下命令查询任意节点的 ID：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-p<span class="w"> </span><span class="m">7000</span><span class="w"> </span>cluster<span class="w"> </span>nodes<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>myself
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="go">97a3a64667477371c4479320d683e4c8db5858b1 :0 myself,master - 0 0 0 connected 0-5460</span>
+</span></code></pre></div>
+OK，我的目标节点是 <code>97a3a64667477371c4479320d683e4c8db5858b1</code>。  <p></p>
+<p>接下来，系统会询问你想从哪些节点转移这些哈希槽。我将输入 <code>all</code>，表示从所有其他主节点中各取一部分槽。  </p>
+<p>在最终确认后，你会看到 redis-cli 针对每个待迁移槽的提示信息，并且每实际迁移一个键时会打印一个点作为进度标识。  </p>
+<p>在重新分片过程中，你的示例程序应该能持续正常运行而不受影响。如果需要，你甚至可以多次停止并重启程序来验证这一点。  </p>
+<p>重新分片完成后，可以通过以下命令检查集群的健康状态：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="go">redis-cli --cluster check 127.0.0.1:7000</span>
+</span></code></pre></div>
+所有槽位仍会像往常一样被覆盖，但这次主节点 <code>127.0.0.1:7000</code> 将拥有更多的哈希槽，大约为 6461 个。  <p></p>
+<p>重新分片操作也可以自动执行，无需以交互方式手动输入参数。通过以下命令行即可实现：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="go">redis-cli --cluster reshard &lt;host&gt;:&lt;port&gt; --cluster-from &lt;node-id&gt; --cluster-to &lt;node-id&gt; --cluster-slots &lt;number of slots&gt; --cluster-yes</span>
+</span></code></pre></div>
+<p>这样就能构建一些自动化流程（如果您需要频繁进行重新分片的话）。不过目前 redis-cli 还无法自动检查集群节点间的键分布情况，并智能地按需迁移槽位来实现集群再平衡。该功能将在未来版本中添加。  </p>
+<p><code>--cluster-yes</code> 选项会让集群管理器自动对操作提示回答 <code>yes</code>，从而以非交互模式运行。需要注意的是，您也可以通过设置 <code>REDISCLI_CLUSTER_YES</code> 环境变量来启用这一功能。</p>
+<h3 id="a-more-interesting-example-application">A More Interesting Example Application<a class="headerlink" href="#a-more-interesting-example-application" title="Permanent link">¶</a></h3>
+<p>我们之前编写的示例程序并不完善。它只是简单地写入集群，甚至不会校验写入内容是否正确。  </p>
+<p>从我们的角度来看，接收写入的集群可能每次都将键 <code>foo</code> 的值设为 <code>42</code>，而我们可能完全察觉不到异常。  </p>
+<p>因此在 redis-rb-cluster 代码库中，有一个更有趣的应用程序 <code>consistency-test.rb</code>。它默认使用 1000 个计数器，通过发送 <code>INCR</code> 命令来递增这些计数器。  </p>
+<p>但这个程序不仅仅是写入数据，还做了两件事：  </p>
+<ul>
+<li>当使用 <code>INCR</code> 更新计数器时，程序会记录这次写入操作  </li>
+<li>每次写入前，程序还会随机读取一个计数器，检查其值是否符合预期（与内存中记录的值进行对比）  </li>
+</ul>
+<p>这意味着这个程序是一个简单的<strong>一致性检查器（consistency checker）</strong>，能够判断集群是否丢失了某些写入，或者是否接受了未收到确认的写入。第一种情况我们会发现计数器的值比记录的要小，而第二种情况值会比记录的更大。  </p>
+<p>运行 <code>consistency-test</code> 程序每秒会输出一行日志：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="gp">$ </span>ruby<span class="w"> </span>consistency-test.rb
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="go">925 R (0 err) | 925 W (0 err) |</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="go">5030 R (0 err) | 5030 W (0 err) |</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="go">9261 R (0 err) | 9261 W (0 err) |</span>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="go">13517 R (0 err) | 13517 W (0 err) |</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="go">17780 R (0 err) | 17780 W (0 err) |</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="go">22025 R (0 err) | 22025 W (0 err) |</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="go">25818 R (0 err) | 25818 W (0 err) |</span>
+</span></code></pre></div>
+<p>日志行会显示已执行的<strong>读取次数</strong>和<strong>写入次数</strong>，以及<strong>错误数量</strong>（因系统不可用而被拒绝的查询）。  </p>
+<p>如果发现数据不一致，输出中会追加新的提示行。例如，当程序正在运行时，如果我手动重置某个计数器，会出现以下情况：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-h<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span>-p<span class="w"> </span><span class="m">7000</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>key_217<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="go">OK</span>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="gp gp-VirtualEnv">(in the other tab I see...)</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="go">94774 R (0 err) | 94774 W (0 err) |</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="go">98821 R (0 err) | 98821 W (0 err) |</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="go">102886 R (0 err) | 102886 W (0 err) | 114 lost |</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="go">107046 R (0 err) | 107046 W (0 err) | 114 lost |</span>
+</span></code></pre></div>
+<p>当我将计数器重置为 0 时，其实际值应为 114，因此程序会报告 114 次写入丢失（即集群未记录的 INCR 命令）。  </p>
+<p>这个测试程序能更有趣地验证集群行为，因此我们将用它来测试 Redis 集群的故障转移功能。</p>
+<h3 id="test-the-failover">Test the Failover<a class="headerlink" href="#test-the-failover" title="Permanent link">¶</a></h3>
+<p>要触发故障转移，最简单的方式（也是分布式系统中最基础的故障场景）就是让其中一个进程崩溃——在我们的场景中即终止一个主节点。</p>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>在此测试过程中，你应该开启一个（终端）标签页运行着一致性测试应用程序。</p>
+</div>
+<p>我们可以通过以下命令识别主节点并使其崩溃：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-p<span class="w"> </span><span class="m">7000</span><span class="w"> </span>cluster<span class="w"> </span>nodes<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>master
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="go">3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 127.0.0.1:7001 master - 0 1385482984082 0 connected 5960-10921</span>
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="go">2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 master - 0 1385482983582 0 connected 11423-16383</span>
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="go">97a3a64667477371c4479320d683e4c8db5858b1 :0 myself,master - 0 0 0 connected 0-5959 10922-11422</span>
+</span></code></pre></div>
+<p>OK，7000、7001 和 7002 都是主节点。现在我们用 <code>DEBUG SEGFAULT</code> 命令让节点 7002 崩溃：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-p<span class="w"> </span><span class="m">7002</span><span class="w"> </span>debug<span class="w"> </span>segfault
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="go">Error: Server closed the connection</span>
+</span></code></pre></div>
+<p>现在我们可以查看一致性测试的输出，看看它报告了什么。</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="go">18849 R (0 err) | 18849 W (0 err) |</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="go">23151 R (0 err) | 23151 W (0 err) |</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="go">27302 R (0 err) | 27302 W (0 err) |</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="go">... many error warnings here ...</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="go">29659 R (578 err) | 29660 W (577 err) |</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="go">33749 R (578 err) | 33750 W (577 err) |</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="go">37918 R (578 err) | 37919 W (577 err) |</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="go">42077 R (578 err) | 42078 W (577 err) |</span>
+</span></code></pre></div>
+<p>可以看到，在故障转移过程中，系统有 578 次读取和 577 次写入未能执行，但数据库中没有产生任何不一致。这可能听起来有些意外，因为在本教程第一部分我们说过，Redis 集群在故障转移期间可能会丢失写入，因为它使用的是异步复制。但我们没有说明的是，这种情况实际上不太容易发生，因为 Redis 几乎会同时向客户端发送响应和向副本节点发送复制命令，所以出现数据丢失的时间窗口非常小。不过虽然很难触发，但这并非完全不可能，因此这并不会改变 Redis 集群提供的一致性保证。</p>
+<p>现在我们可以检查故障转移后的集群状态（注意，在此期间我已经重启了之前崩溃的实例，使其作为副本重新加入集群）：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="gp">$ </span>redis-cli<span class="w"> </span>-p<span class="w"> </span><span class="m">7000</span><span class="w"> </span>cluster<span class="w"> </span>nodes
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="go">3fc783611028b1707fd65345e763befb36454d73 127.0.0.1:7004 slave 3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 0 1385503418521 0 connected</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="go">a211e242fc6b22a9427fed61285e85892fa04e08 127.0.0.1:7003 slave 97a3a64667477371c4479320d683e4c8db5858b1 0 1385503419023 0 connected</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="go">97a3a64667477371c4479320d683e4c8db5858b1 :0 myself,master - 0 0 0 connected 0-5959 10922-11422</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="go">3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7005 master - 0 1385503419023 3 connected 11423-16383</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="go">3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 127.0.0.1:7001 master - 0 1385503417005 0 connected 5960-10921</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="go">2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385503418016 3 connected</span>
+</span></code></pre></div>
+现在主节点运行在 7000、7001 和 7005 端口上。原先作为主节点运行在 7002 端口的 Redis 实例，现在成为了 7005 的副本。<p></p>
+<p><code>CLUSTER NODES</code> 命令的输出看起来可能很复杂，但其实非常简单，由以下几个部分组成：</p>
+<div class="annotate">
+<ul>
+<li>节点ID （Node ID）</li>
+<li>IP 地址:端口号 （ip:port）</li>
+<li>状态标识：master（主节点）、replica（副本节点，旧版本称为 <strong>slave</strong>）、myself（当前节点）、fail（故障节点）等</li>
+<li>如果是副本节点，会显示其主节点的 ID</li>
+<li>最后一次待应答的 <code>PING</code> 命令的等待时间</li>
+<li>最后一次收到 <code>PONG</code> 回复的时间戳</li>
+<li>该节点的配置版本号(1)（详见集群规范）</li>
+<li>与该节点的连接状态</li>
+<li>负责的哈希槽(2)...</li>
+</ul>
+</div>
+<ol>
+<li>原文用词为 epoch，推测是版本号的意思，因为配置会自动更新，所以会有多个版本的配置。</li>
+<li>似乎只有主节点显示</li>
+</ol>
+<h3 id="manual-failover">Manual Failover<a class="headerlink" href="#manual-failover" title="Permanent link">¶</a></h3>
+<p>有时候，在不影响主节点正常运行的情况下强制进行故障转移是有用的。例如，为了升级某个主节点的 Redis 进程，可以将其故障转移为副本节点，从而最大限度地减少对可用性的影响。  </p>
+<p>Redis 集群支持通过 <code>CLUSTER FAILOVER</code> 命令执行手动故障转移，该命令必须在目标主节点的某个副本节点上执行。  </p>
+<p>手动故障转移是特殊的，相比因主节点真正故障而触发的故障转移，它更加安全。这种方式能确保在切换过程中不会丢失数据——只有当系统确认新主节点已处理完来自旧主节点的所有复制流后，才会将客户端从原主节点切换到新主节点。  </p>
+<p>执行手动故障转移时，你会在副本日志中看到如下信息：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="gp"># </span>Manual<span class="w"> </span>failover<span class="w"> </span>user<span class="w"> </span>request<span class="w"> </span>accepted.
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="gp"># </span>Received<span class="w"> </span>replication<span class="w"> </span>offset<span class="w"> </span><span class="k">for</span><span class="w"> </span>paused<span class="w"> </span>master<span class="w"> </span>manual<span class="w"> </span>failover:<span class="w"> </span><span class="m">347540</span>
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="gp"># </span>All<span class="w"> </span>master<span class="w"> </span>replication<span class="w"> </span>stream<span class="w"> </span>processed,<span class="w"> </span>manual<span class="w"> </span>failover<span class="w"> </span>can<span class="w"> </span>start.
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="gp"># </span>Start<span class="w"> </span>of<span class="w"> </span>election<span class="w"> </span>delayed<span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>milliseconds<span class="w"> </span><span class="o">(</span>rank<span class="w"> </span><span class="c1">#0, offset 347540).</span>
+</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="gp"># </span>Starting<span class="w"> </span>a<span class="w"> </span>failover<span class="w"> </span>election<span class="w"> </span><span class="k">for</span><span class="w"> </span>epoch<span class="w"> </span><span class="m">7545</span>.
+</span><span id="__span-22-6"><a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="gp"># </span>Failover<span class="w"> </span>election<span class="w"> </span>won:<span class="w"> </span>I<span class="err">'</span>m<span class="w"> </span>the<span class="w"> </span>new<span class="w"> </span>master.
+</span></code></pre></div>
+<p>基本上，连接到正在进行故障转移的主节点的客户端会被暂时阻塞。与此同时，主节点会将自己的复制偏移量发送给副本节点，副本节点会等待自身达到该偏移量。当副本节点的复制偏移量达到目标值时，故障转移流程正式启动，原主节点会收到配置切换的通知。当原主节点上的客户端解除阻塞后，它们会被重定向到新的主节点。</p>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>若要将一个副本提升为主节点，首先必须确保集群中大多数主节点已将该副本识别为合法副本。否则，该副本将无法在故障转移选举中胜出。如果该副本是刚刚加入集群的新节点（参见 <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/scaling/#add-a-new-node-as-a-replica">Add a new node as a replica</a>），可能需要等待一段时间再发送 <code>CLUSTER FAILOVER</code> 命令，以确保集群中的主节点能够感知到新副本的存在。</p>
+</div>
+<h3 id="add-a-new-node">Add a New Node<a class="headerlink" href="#add-a-new-node" title="Permanent link">¶</a></h3>
+<p>添加新节点本质上是一个先添加空节点，再根据节点类型进行配置的过程：  </p>
+<ul>
+<li>若作为<strong>主节点</strong>，则将部分数据迁移至该节点  </li>
+<li>若作为<strong>副本节点</strong>，则将其设置为已知节点的副本  </li>
+</ul>
+<p>我们将演示这两种情况，首先从添加新主节点实例开始。  </p>
+<p>无论是哪种情况，第一步都是先<strong>添加一个空节点</strong>。  </p>
+<h4 id="add-a-new-node-as-a-master">Add a new node as a master<a class="headerlink" href="#add-a-new-node-as-a-master" title="Permanent link">¶</a></h4>
+<p>这很简单，只需要在端口 7006 上启动一个新节点（我们之前已经使用了 7000 到 7005 作为已有的 6 个节点的端口），其配置与其他节点相同，唯一的区别是端口号。因此，若要按照之前的方式进行配置，你需要：</p>
+<ol>
+<li>在终端中新建一个标签页  </li>
+<li>进入 <code>cluster-test</code> 目录  </li>
+<li>创建名为 <code>7006</code> 的目录  </li>
+<li>在其中创建 <code>redis.conf</code> 文件，配置与其他节点相同（仅需将端口号改为7006）  </li>
+<li>最后执行 <code>../redis-server ./redis.conf</code> 启动服务  </li>
+</ol>
+<p>此时，服务器应该已经在运行。</p>
+<p>现在我们可以像往常一样使用 <code>redis-cli</code>，将该节点添加到现有的集群中。</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="go">redis-cli --cluster add-node 127.0.0.1:7006 127.0.0.1:7000</span>
+</span></code></pre></div>
+如你所见，我使用了 <code>add-node</code> 命令，第一个参数是新节点的地址，第二个参数是集群中任意一个已存在节点的地址。<p></p>
+<p>从实际效果来看，<code>redis-cli</code> 并没有做太多复杂的工作，它只是向新节点发送了一条 <code>CLUSTER MEET</code> 消息，这其实也可以手动完成。不过，<code>redis-cli</code> 在操作前还会检查集群的状态，因此即使你了解底层机制，使用 <code>redis-cli</code> 来执行集群相关操作仍然是一个好习惯。</p>
+<p>现在我们可以连接到这个新节点，看看它是否真的加入了集群：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="go">redis 127.0.0.1:7006&gt; cluster nodes</span>
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="go">3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 127.0.0.1:7001 master - 0 1385543178575 0 connected 5960-10921</span>
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="go">3fc783611028b1707fd65345e763befb36454d73 127.0.0.1:7004 slave 3e3a6cb0d9a9a87168e266b0a0b24026c0aae3f0 0 1385543179583 0 connected</span>
+</span><span id="__span-24-4"><a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="go">f093c80dde814da99c5cf72a7dd01590792b783b :0 myself,master - 0 0 0 connected</span>
+</span><span id="__span-24-5"><a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="go">2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385543178072 3 connected</span>
+</span><span id="__span-24-6"><a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a><span class="go">a211e242fc6b22a9427fed61285e85892fa04e08 127.0.0.1:7003 slave 97a3a64667477371c4479320d683e4c8db5858b1 0 1385543178575 0 connected</span>
+</span><span id="__span-24-7"><a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="go">97a3a64667477371c4479320d683e4c8db5858b1 127.0.0.1:7000 master - 0 1385543179080 0 connected 0-5959 10922-11422</span>
+</span><span id="__span-24-8"><a id="__codelineno-24-8" name="__codelineno-24-8" href="#__codelineno-24-8"></a><span class="go">3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7005 master - 0 1385543177568 3 connected 11423-16383</span>
+</span></code></pre></div>
+<p>注意，由于该节点已经连接到集群，它已经能够正确地重定向客户端请求，从整体上看，它已经是集群的一部分。然而，相较于其他主节点，它有两个特殊之处：</p>
+<ul>
+<li>它不包含任何数据，因为它还没有被分配哈希槽；</li>
+<li>由于它是一个没有哈希槽的主节点，因此在副本尝试提升为主节点时，它不会参与选举过程。</li>
+</ul>
+<p>现在可以使用 <code>redis-cli</code> 的重新分片（resharding）功能将哈希槽分配给这个节点。由于这一过程我们在前面的部分已经演示过了，这里就不再重复，唯一的区别是这次的目标是一个空节点。</p>
+<h4 id="add-a-new-node-as-a-replica">Add a new node as a replica<a class="headerlink" href="#add-a-new-node-as-a-replica" title="Permanent link">¶</a></h4>
+<p>添加新的从节点可以通过两种方式完成。最直接的方法是再次使用 <code>redis-cli</code>，但这次添加 <code>--cluster-slave</code> 选项，例如：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="go">redis-cli --cluster add-node 127.0.0.1:7006 127.0.0.1:7000 --cluster-slave</span>
+</span></code></pre></div>
+<p>注意，这条命令行和我们添加新主节点时几乎一模一样，因此我们并没有指定要将从节点挂载到哪个主节点上。在这种情况下，<code>redis-cli</code> 会自动将新节点作为副本分配给当前副本数量最少的某个主节点。</p>
+<p>当然，你也可以明确指定新副本要挂载的主节点，命令格式如下：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>redis-cli --cluster add-node 127.0.0.1:7006 127.0.0.1:7000 --cluster-slave --cluster-master-id 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e
+</span></code></pre></div>
+<p>这样就可以将新副本明确分配给某个特定的主节点。</p>
+<p>另一种更手动的方式是，先将新节点作为一个空的主节点加入集群，然后使用 <code>CLUSTER REPLICATE</code> 命令将其转换为某个主节点的副本。这种方式同样适用于某个节点已经是副本，但你想将它迁移为另一个主节点的副本的场景。</p>
+<p>例如，假设我们要为节点 <code>127.0.0.1:7005</code> 添加一个副本，该节点当前负责的哈希槽范围是 <code>11423-16383</code>，其节点 ID 为 <code>3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e</code>，那么我们只需要连接到新加入的空主节点，并发送如下命令：</p>
+<p>就是这样。现在我们为这一组哈希槽成功添加了一个新的副本，集群中的其他节点在经过几秒钟的配置更新后也都已经知晓这一变更。我们可以通过以下命令进行验证：</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>$ redis-cli -p 7000 cluster nodes | grep slave | grep 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>f093c80dde814da99c5cf72a7dd01590792b783b 127.0.0.1:7006 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385543617702 3 connected
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385543617198 3 connected
+</span></code></pre></div>
+<p>节点 <code>3c3a0c...</code> 现在拥有两个副本，分别运行在端口 7002（原有的副本）和端口 7006（新添加的副本）。
+</p><div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>redis 127.0.0.1:7006&gt; cluster replicate 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e
+</span></code></pre></div><p></p>
+<h3 id="remove-a-node">Remove a Node<a class="headerlink" href="#remove-a-node" title="Permanent link">¶</a></h3>
+<p>要移除一个副本节点，只需使用 <code>redis-cli</code> 的 <code>del-node</code> 命令即可：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="go">redis-cli --cluster del-node 127.0.0.1:7000 `&lt;node-id&gt;`</span>
+</span></code></pre></div>
+第一个参数是集群中任意一个节点的地址，第二个参数是你想要移除的节点的 ID。<p></p>
+<p>你也可以用同样的方法移除主节点，但要注意，主节点必须是空的才能被移除。如果主节点中还有数据，你需要先将数据重新分片（reshard）到其他主节点上。</p>
+<p>另一种移除主节点的方法是，先在其某个副本上执行手动故障转移（manual failover），让副本晋升为主节点，然后再将原主节点作为副本移除。显然，这种方法不适用于你想要减少集群中主节点数量的情况，这种场景下仍然需要执行重新分片操作。</p>
+<p>还有一种特殊情况是你想移除一个已经宕掉的节点。在这种情况下<strong>不要</strong>使用 <code>del-node</code> 命令，因为它会尝试连接所有节点，而你会遇到“连接被拒绝”的错误。此时应使用 <code>call</code> 命令来完成操作：</p>
+<p></p><div class="language-console highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="go">redis-cli --cluster call 127.0.0.1:7000 cluster forget `&lt;node-id&gt;`</span>
+</span></code></pre></div>
+该命令会在每个节点上执行 <code>CLUSTER FORGET</code> 命令。<p></p>
+<h3 id="replica-migration">Replica Migration<a class="headerlink" href="#replica-migration" title="Permanent link">¶</a></h3>
+<p>在 Redis 集群中，你可以随时使用如下命令将一个从节点重新配置为跟随另一个主节点进行复制：</p>
+<div class="language-console highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="go">CLUSTER REPLICATE &lt;master-node-id&gt;</span>
+</span></code></pre></div>
+<p>但在某些特殊情况下，你可能希望副本节点在没有系统管理员干预的情况下，自动从一个主节点迁移到另一个主节点。这种副本的自动重新配置被称为<strong>副本迁移（replicas migration）</strong>，它可以提高 Redis 集群的可靠性。</p>
+<div class="admonition tip">
+<p class="admonition-title">注意</p>
+<p>你可以在 <a href="https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/">Redis Cluster Specification</a> 中查看副本迁移的详细信息，在这里我们仅提供一些关于副本迁移的基本概念以及如何利用它的相关信息。</p>
+</div>
+<p>之所以你可能希望在某些条件下让副本自动迁移，是因为 Redis 集群的容错能力通常依赖于一个主节点所拥有的副本数量。</p>
+<p>举个例子：如果一个集群中每个主节点只有一个副本，那么当某个主节点和它的副本同时宕机时，集群将无法继续提供服务，因为没有其他节点保存该主节点所负责的哈希槽的数据副本。然而，虽然网络分裂（net-split）这种情况可能会导致多个节点同时失联，但很多其他类型的故障（比如某个节点的硬件或软件故障）通常只会影响单个节点，不太可能同时发生。因此，在一个每个主节点仅有一个副本的集群中，如果副本在凌晨 4 点宕机，主节点在早上 6 点宕机，集群同样会进入无法正常运行的状态。</p>
+<p>为了提高系统的可靠性，我们可以选择为每个主节点添加额外的副本，但这会比较昂贵。副本迁移允许我们只在少数主节点上添加更多副本。因此，你可能有 10 个主节点，每个主节点有 1 个副本，总共 20 个实例。然而，你可以比如为一些主节点添加 3 个副本实例，这样某些主节点就会有超过一个副本。</p>
+<p>副本迁移的原理是，如果某个主节点没有副本了，那么一个拥有多个副本的主节点的副本将会迁移到这个孤立的主节点上。因此，在上面提到的例子中，当副本在凌晨 4 点宕机时，另一副本会接替其位置，而当主节点在早上 6 点宕机时，仍然会有一个副本可以被选举为新的主节点，保证集群可以继续运行。</p>
+<p>那么，关于副本迁移，你应该简要了解什么呢？</p>
+<ul>
+<li>集群会尝试从当前拥有最多副本的主节点迁移副本。</li>
+<li>要利用副本迁移功能，你只需为集群中的某个主节点添加几个副本，具体是哪个主节点并不重要。</li>
+<li>有一个配置参数控制副本迁移功能，名为 <code>cluster-migration-barrier</code>。你可以在 Redis 集群提供的示例 <code>redis.conf</code> 文件中阅读更多关于该参数的信息。</li>
+</ul>
+<h3 id="upgrade-nodes-in-a-redis-cluster">Upgrade Nodes in a Redis Cluster<a class="headerlink" href="#upgrade-nodes-in-a-redis-cluster" title="Permanent link">¶</a></h3>
+<p>升级从节点相对简单，只需停止节点并使用更新后的 Redis 版本重启即可。如果客户端通过从节点扩展读取能力，那么当某个从节点不可用时，它们应能自动重连到其他可用从节点。  </p>
+<p>升级主节点则较为复杂，建议按以下步骤操作：</p>
+<ul>
+<li>使用 <code>CLUSTER FAILOVER</code> 命令将主节点手动切换到其某个从节点（详见本节中的“手动故障转移”部分）。  </li>
+<li>等待原主节点变为从节点后，像升级从节点一样升级该节点。  </li>
+<li>如果希望该节点重新成为主节点，可再次触发手动故障转移，将其切换回主节点角色。</li>
+</ul>
+<p>按照这个步骤，你应该一个接一个地升级每个节点(1)，直到所有节点都完成升级。</p>
+<h3 id="migrate-to-redis-cluster">Migrate to Redis Cluster<a class="headerlink" href="#migrate-to-redis-cluster" title="Permanent link">¶</a></h3>
+<p>希望迁移至 Redis 集群的用户可能当前仅使用单个主节点，也可能已在使用现有的分片方案——即通过某种内部算法、客户端库实现的分片算法或 Redis 代理，将键分散存储在 <code>N</code> 个节点中。  </p>
+<p class="annotate">无论是哪种情况，都可以迁移至 Redis 集群（但难度不同），最关键的因素在于应用程序是否使用了多键操作以及如何使用(1)。具体分为以下三种场景：<br></p>
+<ol>
+<li>
+<p>主要是看程序中的每个事务/多键操作是否都限定在<strong>单个哈希槽</strong>内进行。</p>
+</li>
+<li>
+<p><strong>未使用多键操作</strong>：包括涉及多键的事务或Lua脚本。所有键均独立访问（即使通过事务或 Lua 脚本将针对同一键的多个命令组合在一起执行）。  </p>
+</li>
+<li><strong>使用多键操作但键具有相同哈希标签（hash tag）</strong>：涉及多键的事务、Lua 脚本或操作仅作用于带有相同 <code>{...}</code> 子串的键。例如，以下多键操作在相同哈希标签下定义：<code>SUNION {user:1000}.foo {user:1000}.bar</code>。  </li>
+<li><strong>使用多键操作但键名无明确或相同的哈希标签</strong>：此类场景<strong> Redis 集群不支持</strong>，必须修改应用程序，停止使用多键操作或确保其仅作用于相同哈希标签的键。  </li>
+</ol>
+<p>第一种和第二种场景已被 Redis 集群支持，因此我们将重点关注这两种处理方式相同的场景，文档中不再区分二者。  </p>
+<p>假设现有数据集已分散在 <code>N</code> 个主节点中（若未分片则 <code>N=1</code>），迁移至Redis集群需执行以下步骤：</p>
+<ol>
+<li><strong>停止客户端访问</strong>：目前无法实现自动的实时迁移到 Redis 集群。你可以在你的应用程序/环境中通过协调实时迁移来实现。</li>
+<li><strong>为所有 <code>N</code> 个主节点生成 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件</strong>：对每个主节点执行 <code>BGREWRITEAOF</code> 命令，等待所有 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件完全生成。</li>
+<li><strong>保存 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件</strong>：将生成的 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件（从 <code>aof-1</code> 到 <code>aof-N</code>）妥善保存，此时可以选择停止旧实例（在非虚拟化部署中通常需要复用原有服务器）。</li>
+<li><strong>创建 Redis 集群</strong>：创建由 <code>N</code> 个主节点组成的集群（暂不添加从节点）。确保所有节点都使用 <abbr title="Append Only File，仅附加文件">AOF</abbr> 持久化</li>
+<li><strong>替换 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件</strong>：停止所有集群节点，用之前保存的 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件替换节点文件（第一个节点用 <code>aof-1</code>，第二个用 <code>aof-2</code>，以此类推，直到 <code>aof-N</code>）</li>
+<li><strong>重启并修复集群</strong>：使用新的 <abbr title="Append Only File，仅附加文件">AOF</abbr> 文件重启集群节点，随后节点会报告存在不符合配置的键，此时使用 <code>redis-cli --cluster fix</code> 命令修复集群，其会根据各节点负责的哈希槽迁移每个键。</li>
+<li><strong>最终检查</strong>：使用 <code>redis-cli --cluster check</code> 在最后检查集群状态，确保集群正常</li>
+<li><strong>恢复客户端访问</strong>：修改客户端代码，使用支持 Redis 集群的客户端库，重新启动客户端。</li>
+</ol>
+<p>另外一种从外部实例导入数据到 Redis 集群的方式是使用 <code>redis-cli --cluster import</code> 命令。</p>
+<p>该命令将把运行中的实例的所有键（删除源实例中的键）移动到指定的预先存在的 Redis 集群。不过请注意，如果你使用 Redis 2.8 作为源实例，操作可能会很慢，因为 2.8 没有实现迁移连接缓存，因此你可能需要在执行此操作之前将源实例重启为 Redis 3.x 版本。</p>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>从 Redis 5 开始，除非出于向后兼容的考虑，Redis 项目不再使用 “slave”（从节点）一词。<br>
+但遗憾的是，在该命令中 “slave” 是协议的一部分，因此只能等该 API 自然废弃后才能将其彻底移除。</p>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/the-full" target="_blank" rel="noopener" title="zhazi on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.tooltips", "navigation.tabs", "navigation.instant", "navigation.indexes", "navigation.top", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../_static/js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

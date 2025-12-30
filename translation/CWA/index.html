@@ -1,0 +1,2915 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A personal knowledge base for storing notes, research, and technical documentation">
+      
+      
+        <meta name="author" content="Zhazi">
+      
+      
+      
+        <link rel="prev" href="../tetris2/">
+      
+      
+        <link rel="next" href="../SR-Adv/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>CWA - Zhazi's Memo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Fira Sans";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../_static/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#rethinking-model-ensemble-in-transfer-based-adversarial-attacks" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Zhazi's Memo" class="md-header__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Zhazi's Memo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CWA
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red" aria-label="切换至深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue" aria-label="切换至浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  浅入浅出
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../record/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  实践记录
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../note/go-reflection/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习笔记
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../paper/ACE/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  论文阅读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  文献翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algorithm/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  算法
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Zhazi's Memo" class="md-nav__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Zhazi's Memo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浅入浅出
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    浅入浅出
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    为什么有的下载能接着下，有的断了就得重来？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/how-clash-for-linux-provides-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clash for Linux 是怎么提供网关代理的？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../record/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实践记录
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实践记录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/common_problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    普通问题归档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/waymo_perprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    waymo 数据预处理遇到的问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于 OpenPCDet 在 Waymo 数据集上训练模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对 Waymo 数据集做加工
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/luogu-U207568/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    杂记：洛谷 U207568
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-TinyRAG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-Milvus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：Milvus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/go-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言基础：反射
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/rsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rsync 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/modelnet40/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ModelNet40 归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_linux_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 有用软件归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    优质博客归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-01-CW-Attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-02-CW-Attack-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(二) —— C&amp;W Attack 框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文阅读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文阅读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/ACE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/GradCraft/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GradCraft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/occupancy_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Occupancy Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文献翻译
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    文献翻译
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Go-Data-Structures-Interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言数据结构：接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../The-Laws-of-Reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言的反射定律
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Scale-with-Redis-Cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../A-plain-english-introduction-to-CAP-Theorem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAP 定理的简明介绍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Tetris Using the Noisy Cross-Entropy Method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-preliminaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Preliminaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-motivation-of-commom-weakness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Motivation of Commom Weakness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-sharpness-aware-minimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Sharpness Aware Minimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-cosine-similarity-encourager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Cosine Similarity Encourager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-common-weakness-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Common Weakness Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experiments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-attack-in-image-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Attack in Image Classification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-attack-in-object-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Attack in Object Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-attack-in-large-vision-language-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Attack in Large Vision-Language Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-analysis-and-discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Analysis and Discussion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ethics-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ethics Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SR-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SR-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AL-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PartA2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PartA2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Cyber-Physical-Systems-Security-A-Survey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cyber-Physical Systems Security—A Survey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-semantic-ai-security-in-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: On the Semantic AI Security in Autonomous Driving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-adv-for-network-intrusion-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algorithm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    算法
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    算法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    归档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    归档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三月 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分类
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分类
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/algorithm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Work
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methodology">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-preliminaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Preliminaries
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-motivation-of-commom-weakness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Motivation of Commom Weakness
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-sharpness-aware-minimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Sharpness Aware Minimization
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-cosine-similarity-encourager" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Cosine Similarity Encourager
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-common-weakness-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 Common Weakness Attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experiments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-attack-in-image-classification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Attack in Image Classification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-attack-in-object-detection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Attack in Object Detection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-attack-in-large-vision-language-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 Attack in Large Vision-Language Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#44-analysis-and-discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.4 Analysis and Discussion
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ethics-statement" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ethics Statement
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags">
+    
+      
+      
+      
+      
+        <span class="md-tag">ICLR 2024</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">Transfer Attack</span>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/the-full/the-full.github.io/edit/master/docs/translation/CWA.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/the-full/the-full.github.io/raw/master/docs/translation/CWA.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+    </a>
+  
+
+
+<h1 id="rethinking-model-ensemble-in-transfer-based-adversarial-attacks">翻译：Rethinking Model Ensemble in Transfer-based Adversarial Attacks<a class="headerlink" href="#rethinking-model-ensemble-in-transfer-based-adversarial-attacks" title="Permanent link">¶</a></h1>
+<blockquote>
+<p>阅读最新论文，找点灵感</p>
+</blockquote>
+<div class="admonition info">
+<p class="admonition-title">文献</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2303.09105">Rethinking Model Ensemble in Transfer-based Adversarial Attacks</a></li>
+</ul>
+</div>
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">¶</a></h2>
+<p>深度学习模型对对抗样本缺乏鲁棒性。对抗样本可以在不同的模型之间迁移，这使得攻击可以在目标模型未知的情况下进行。提高可迁移性的一种有效策略是攻击<strong>集成的模型</strong>。然而，以前的研究只是对不同模型的输出进行平均，缺乏对模型集成方法如何以及为何能够大大提高可迁移性的深入分析。</p>
+<p>在本文中，我们重新思考了对抗性攻击中的集成，并用两个属性定义了模型集成的共同弱点：1）损失景观的平坦性；2）与每个模型局部最优值的接近程度。我们通过经验和理论表明这两个属性都与可迁移性密切相关，并提出了一种共同弱点攻击 (CWA)，通过提升这两个属性来生成更多可迁移的对抗性样本。</p>
+<p>在图像分类和物体检测任务上的实验结果验证了我们的方法在提高对抗性可迁移性方面的有效性，尤其是在攻击对抗性训练的模型时。我们还成功地将我们的方法应用于攻击黑盒大型视觉语言模型——谷歌的 Bard，展示了实际的有效性。代码可在 https://github.com/huanranchen/AdversarialAttacks 上找到。</p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">¶</a></h2>
+<p>根据攻击者对受害者模型的了解程度，对抗性攻击通常可分为白盒攻击和黑盒攻击。在模型信息有限的情况下，黑盒攻击要么依赖查询反馈，要么利用可迁移性来生成对抗性示例。</p>
+<p>基于迁移的攻击使用针对白盒代理模型生成的对抗性示例来误导黑盒模型，而不需要访问黑盒模型，这使得它们在许多实际场景中更为实用。随着对抗性防御和多样化网络架构 的发展 ，现有方法的可迁移性可能会大大降低。</p>
+<p>通过将对抗性示例的可迁移性与深度神经网络的泛化进行类比，许多研究人员通过设计高级优化算法来避免不良的最优值或利用数据增强策略来防止过度拟合，从而提高可迁移性。</p>
+<p>同时，为多个代理模型生成对抗性示例可以进一步提高可迁移性，类似于在更多数据上进行训练以提高模型泛化能力。早期方法只是在损失函数或 logits  中对多个模型的输出进行平均，但忽略了它们的不同性质。Xiong 等人引入了 SVRG 优化器，以在优化过程中降低不同模型的梯度方差。然而，最近的研究表明，梯度方差并不总是与泛化性能相关。 从模型角度来看，增加代理模型的数量可以减少泛化误差，一些研究建议从现有模型中创建代理模型。然而，由于计算成本高，对抗攻击中的代理模型数量通常有限，因此有必要开发新的算法，以利用更少的代理模型，同时提高攻击成功率。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-commom-weakness.png" data-desc-position="bottom"><img alt="" src="../images/CWA-commom-weakness.png"></a></p>
+<p class="caption">图 1： 共同弱点的说明。 泛化误差与损失景观的平坦度以及解决方案与每个模型最近的局部最优值之间的距离密切相关。我们将模型集成的共同弱点定义为位于平坦景观且接近训练模型局部最优值的解决方案，如 (d) 所示。</p>
+<p>在本文中，我们重新思考了对抗攻击中的集成方法。通过对受害者模型的预期攻击目标进行二次近似，我们观察到二阶项涉及损失函数的 Hessian 矩阵和每个模型到局部最优值的平方 ℓ2 距离，这两者都与对抗可迁移性密切相关（如图 1 所示），尤其是当集成中只有少数模型时。</p>
+<p>基于这两个术语，我们将模型集成的共同弱点定义为处于平坦景观且接近模型局部最优值的解决方案。为了生成利用模型集成共同弱点的对抗性示例，我们提出了一种共同弱点攻击（CWA）， 由两个子方法组成，分别称为锐度感知最小化（SAM）和余弦相似性鼓励器（CSE），旨在分别优化共同弱点的两个属性。由于我们的方法与以前的方法正交，我们的方法可以与它们无缝结合以提高性能。</p>
+<p>我们进行了大量实验，以确认我们的方法生成的对抗性示例的卓越可迁移性。我们首先在图像分类中针对 31 个受害者模型进行验证，这些模型具有各种架构（ 例如 CNN、Transformers ）和训练设置（ 例如标准训练、对抗性训练、输入净化）。令人印象深刻的是，在攻击最先进的防御模型时，在黑盒设置下，MI-CWA 比采用 logits 集成策略的 MI 高出 30%。我们将方法扩展到物体检测，生成一个通用对抗补丁，在 8 个现代检测器上实现了 9.85 的平均 mAP，超越了最近的工作。消融研究还证实，我们的方法确实使损失图景平坦化，并增加了不同模型梯度的余弦相似度。此外，我们基于我们的方法展示了对最近的大型视觉语言模型的成功黑盒攻击，其表现远超基线方法。</p>
+<h2 id="related-work">Related Work<a class="headerlink" href="#related-work" title="Permanent link">¶</a></h2>
+<p>在本节中，我们简要回顾了现有的基于迁移的对抗攻击算法。总体而言，这些方法通常将对抗性示例的可迁移性和深度学习模型的泛化性进行类比，我们将它们分为以下 3 类。</p>
+<p>基于梯度的优化。 将对抗样本的优化与深度学习模型的训练进行比较，研究者引入了一些优化技术来增强对抗样本的可迁移性。动量迭代（MI）方法 （Dong et al.， 2018 ） 和 Nesterov 迭代（NI）方法 （Lin et al.， 2020 ） 引入动量优化器和 Nesterov 加速梯度，以防止对抗样本陷入不良的局部最优值。增强动量迭代（EMI）方法 （Wang et al.， 2021 ） 累积前次迭代梯度方向上采样的数据点的平均梯度，以稳定更新方向并摆脱不良的局部最大值。方差调整动量迭代（VMI）方法 （Wang &amp; He， 2021 ） 通过使用前一个数据点邻域中的梯度方差来调整当前梯度来降低优化过程中梯度的方差。</p>
+<p>输入转换。 这些方法在将输入图像输入分类器之前对其进行变换，以实现多样性，类似于深度学习中的数据增强技术。多样化输入 (DI) 方法 (Xie et al., 2019 ) 对输入图像进行随机调整大小和填充。平移不变 (TI) 攻击 (Dong et al., 2019 ) 推导了一种有效的算法，用于计算平移图像的梯度，这相当于对输入图像进行平移。尺度不变 (SI) 攻击 (Lin et al., 2020 ) 基于模型在缩放图像上具有相似性能的观察结果，使用不同的因子对图像进行缩放。</p>
+<p>模型集成方法。 Huang 等人 ( 2023 ) 指出，增加对抗攻击中分类器的数量可降低经验风险最小化 (ERM) 中的泛化误差上界，类似于增加深度学习中的训练示例数量。Dong 等人 ( 2018 ) 提出对代理模型的损失、预测概率或对数取平均值以形成集成。Li 等人 ( 2020 ) 和 Huang 等人 ( 2023 ) 也提出了新方法来生成代理模型的大量变体，然后取损失或对数的平均值。Xiong 等人 ( 2022 ) 将 SVRG 优化器 (Allen-Zhu &amp; Yuan, 2016 ) 引入集成对抗攻击，以减少优化过程中梯度的方差。然而，实践中可用的代理模型数量通常较少，这无法保证 ERM 理论中令人满意的泛化上界，而仅仅关注方差并不一定能获得更好的泛化效果 (Yang et al., 2021 ) 。此外，自组装代理模型的有效性通常低于标准代理模型，导致其性能受限。</p>
+<h2 id="methodology">Methodology<a class="headerlink" href="#methodology" title="Permanent link">¶</a></h2>
+<p>在本节中，我们基于二阶近似提出了常见弱点的公式，并提出了由尖锐感知最小化 (SAM) 和余弦相似性鼓励器 (CSE) 组成的常见弱点攻击 (CWA) 。</p>
+<h3 id="31-preliminaries">3.1 Preliminaries<a class="headerlink" href="#31-preliminaries" title="Permanent link">¶</a></h3>
+<p>我们让 <span class="arithmatex">\( \mathcal{F} = \{ f \} \)</span> 表示给定任务的可能图像分类器的集合，其中每个分类器 <span class="arithmatex">\( f : \mathbb{R}^D \to \mathbb{R}^K \)</span> 输出输入 <span class="arithmatex">\( x \in \mathbb{R}^D \)</span> 的 K 个类别的 logits。给定自然图像 <span class="arithmatex">\( x_{\text{nat}} \)</span> 和相应的标签 <span class="arithmatex">\( y \)</span>，基于迁移的攻击旨在构造一个对抗性示例 <span class="arithmatex">\( x \)</span>，使得 <span class="arithmatex">\( \mathcal{F} \)</span> 中的模型可能会错误分类它。它可以被表述为一个约束优化问题：</p>
+<div class="arithmatex">\[
+\min_{x} \mathbb{E}_{f \in \mathcal{F}} [L(f(x), y)], \quad \text{s.t. } \|x - x_\text{nat}\|_\infty \leq \epsilon,
+\tag{1}
+\]</div>
+<p>其中 <span class="arithmatex">\( L(f(x), y) \)</span> 是分类器 <span class="arithmatex">\( f \)</span> 在输入 <span class="arithmatex">\( x \)</span> 上对标签 <span class="arithmatex">\( y \)</span> 的损失函数，<span class="arithmatex">\(\epsilon\)</span> 是允许的最大扰动量。</p>
+<p>其中 <span class="arithmatex">\( L \)</span> 是损失函数，例如负交叉熵损失 <span class="arithmatex">\( L(f(x), y) = -\log(\text{softmax}(f(x))) \)</span>，我们研究 <span class="arithmatex">\( l_\infty \)</span> 范数。公式 1 可以通过几个“训练”分类器 <span class="arithmatex">\( f_i, i=1,\ldots,n \)</span>（称为集成）来近似，如 <span class="arithmatex">\( L(f(x), y) \)</span> 的平均值或 <span class="arithmatex">\( f_i(x) \)</span> 的对数和的平均值。之前的工作提出了基于这种经验损失的梯度计算或输入变换方法以提高可迁移性。例如，动量迭代（MI）方法执行梯度更新（如图 2(a) 所示）作为</p>
+<div class="arithmatex">\[
+\mathbf{m} = \mu \cdot \mathbf{m} + \dfrac{\nabla_\mathbf{x} L\left(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y\right)}{\left\Vert \nabla_\mathbf{x} L\left(\dfrac{1}{n} \sum_{i=1}^{n} f_i(\mathbf{x}), y\right)\right\Vert_1};\quad 
+\mathbf{x}_{t+1} = \text{clip}_{\mathbf{x}_{nat},\epsilon}(\mathbf{x}_t + \alpha \cdot \text{sign}(\mathbf{m})),
+\]</div>
+<h3 id="32-motivation-of-commom-weakness">3.2 Motivation of Commom Weakness<a class="headerlink" href="#32-motivation-of-commom-weakness" title="Permanent link">¶</a></h3>
+<p>虽然现有方法可以在一定程度上提高可迁移性，但最近的一项研究指出，对抗样本的优化符合经验风险最小化（ERM），训练模型的数量有限可能导致较大的泛化误差。在本文中，我们考虑式（1）中目标的二次近似。</p>
+<p>形式上，我们让 <span class="arithmatex">\( \mathbf{p}_i \)</span> 表示模型 <span class="arithmatex">\( f_i \in \mathcal{F} \)</span> 到 <span class="arithmatex">\( x \)</span> 的最近最优解，<span class="arithmatex">\( \mathbf{H}_i \)</span> 表示在 <span class="arithmatex">\( \mathbf{p}_i \)</span> 处的 <span class="arithmatex">\( L(f(x_i), y)) \)</span> 的Hessian矩阵。我们对每个模型 <span class="arithmatex">\( f_i \)</span> 使用二阶泰勒展开来近似方程 1 中的 <span class="arithmatex">\( \mathbf{p}_i \)</span>。</p>
+<div class="arithmatex">\[
+\mathbb{E}_{f_i \in \mathcal{F}} \left[ L(f_i(\mathbf{p}_i), y) + \dfrac{1}{2} (\mathbf{x} - \mathbf{p}_i)^T \mathbf{H}_i (\mathbf{x} - \mathbf{p}_i) \right].
+\tag{2}
+\]</div>
+<p>在下面的讨论中，为了简化起见，我们将省略式（2）中期望的下标。根据式（2），我们可以看出 <span class="arithmatex">\( E[L(f(\mathbf{p}), y)] \)</span> 和 <span class="arithmatex">\( E[(\mathbf{x} - \mathbf{p})^T \mathbf{H} (\mathbf{x} - \mathbf{p})] \)</span> 的较小值意味着测试模型的损失较小，即更好的可迁移性。第一项表示每个模型在其自身最优解 <span class="arithmatex">\( \mathbf{p}_i \)</span> 处的损失值。一些先前的工作已经证明了局部最优与全局最优在神经网络中几乎具有相同的值。因此，进一步改进这一项的空间可能不大。因此，我们把主要精力放在第二项上，以实现更好的可迁移性。</p>
+<p>在下面的定理中，我们推导出第二项的上限，因为直接优化它（需要三阶导数）是难以解决的。</p>
+<div class="admonition info">
+<p class="admonition-title">定理 3.1.</p>
+<p>假设 <span class="arithmatex">\(\Vert\mathbf{\mathbf{H}}\Vert_F\)</span> 和 <span class="arithmatex">\(\|\mathbf{\mathbf{p}}_1 - \mathbf{x}\|_2\)</span> 之间的协方差为零，我们可以得到第二项的上界如下：</p>
+<div class="arithmatex">\[
+\mathbb{E}[(\mathbf{x} - \mathbf{p}_i^\star)^T \mathbf{H}_i(\mathbf{x} - \mathbf{p}_i)] \leq \mathbb{E}[\Vert\mathbf{H}_F\Vert] \cdot \mathbb{E}[\Vert(\mathbf{x} - \mathbf{p}_i^\star)\Vert_2^2].\tag{3}
+\]</div>
+</div>
+<details class="note">
+<summary>定理 3.1. 的证明</summary>
+<p><strong>TODO</strong></p>
+</details>
+<p>直观地说，<span class="arithmatex">\(\Vert\mathbf{H}\Vert_p\)</span> 代表损失地形的尖锐度/平坦度，而 <span class="arithmatex">\(\|\mathbf{x}-\mathbf{p}_i\|^2\)</span> 描述了损失地形的平移。这两项可以假设是独立的，因此它们的协方差可以被假定为零。如定理 3.1 所示，<span class="arithmatex">\(\mathbb{E}[\Vert\mathbf{H}\Vert_F]\)</span> 和 <span class="arithmatex">\(\mathbb{E}[\Vert\mathbf{x}-\mathbf{p}\Vert^2]\)</span> 的较小值提供了较小的边界，并且会导致测试模型的损失更小。之前的研究指出，Hessian 矩阵的范数较小表明目标的地形较为平坦，这与泛化能力有很强的相关性。至于 <span class="arithmatex">\(\mathbb{E}[\|\mathbf{x}-\mathbf{p}_i\|^2]\)</span>，它代表了从 <span class="arithmatex">\(\mathbf{x}\)</span> 到每个模型的最优解 <span class="arithmatex">\(p_i\)</span> 的平方欧几里得距离，我们在第 D.2 节中经验性地展示了它与泛化和对抗可迁移性的紧密联系，并在第 A.2 节的一个简单情况下理论上证明了这一点。图 1 提供了一个示例，说明了损失地形的平坦度和不同模型局部最优解之间的接近程度如何有助于对抗可迁移性。</p>
+<p>根据上述分析，对抗样本的优化变成了寻找一个接近受害模型最优点的点（即最小化原始目标），同时追求该点的景观平坦且与每个最优点的距离较近。后两个目标是我们的主要发现，我们在这里定义了<strong>共同弱点</strong>的概念，这两个术语作为局部点 <span class="arithmatex">\( \mathbf{x} \)</span>，其具有小的 <span class="arithmatex">\( E[\Vert\mathbf{H}_i\Vert_F] \)</span> 和 <span class="arithmatex">\( E[\Vert(\mathbf{x}-\mathbf{p}_i)\Vert^2] \)</span>。请注意，共同弱点和非共同弱点之间没有明确的界限——这两个术语越小，<span class="arithmatex">\( \mathbf{x} \)</span> 越可能是共同弱点。最终的目标是找到一个具有共同弱点属性的例子。正如定理 3.1 所指出的那样，我们可以通过分别优化这两个项来实现这一点。</p>
+<h3 id="33-sharpness-aware-minimization">3.3 Sharpness Aware Minimization<a class="headerlink" href="#33-sharpness-aware-minimization" title="Permanent link">¶</a></h3>
+<p>为了应对损失地形的平坦性，我们对集成中的每个模型最小化 <span class="arithmatex">\( \Vert\mathbf{H}_i\Vert_F \)</span>。然而，这需要对 <span class="arithmatex">\( \mathbf{x} \)</span> 的三阶导数进行计算，这在计算上是昂贵的。有一些研究旨在缓解模型训练中损失地形的尖锐度。锐度感知最小化（SAM）是一种有效的算法，用于获取更平坦的地形，它被表述为一个极小极大优化问题。内最大化旨在找到一个方向，沿着这个方向损失变化更快；而外层问题则在这个方向上最小化损失以改善损失地形的平坦性。</p>
+<p>在由 <span class="arithmatex">\( \ell_\infty \)</span> 范数约束生成的对抗性示例的背景下（如公式 1 所示），我们的目标是在 <span class="arithmatex">\( \ell_\infty \)</span> 范数的空间内优化地形的平坦度，以增强其可迁移性，这与原始 SAM 算法在 <span class="arithmatex">\( \ell_2 \)</span> 范数空间内的做法不同。因此，我们推导出一种适合 <span class="arithmatex">\( \ell_\infty \)</span> 范数的改进 SAM 算法（见第 B.1 节）。如图 2 所示，在第 t 次迭代中的对抗性攻击时，SAM 算法首先对当前对抗性示例 <span class="arithmatex">\( x_t \)</span> 执行一个梯度上升步骤，步长为 <span class="arithmatex">\( \epsilon \)</span>，然后执行另一个梯度下降步骤，步长为 <span class="arithmatex">\( r \)</span>。</p>
+<div class="arithmatex">\[
+\mathbf{x}_t^r = \text{clip}_{x_{nat}, \epsilon} \left( \mathbf{x}_t + r \cdot \text{sign} \left( \nabla_\mathbf{x} L \left( \dfrac{1}{n} \sum_{i=1}^{n} f(\mathbf{x}_i), y \right) \right) \right).
+\tag{4}
+\]</div>
+<p>然后在 <span class="arithmatex">\(\mathcal{x}_t^r\)</span> 处执行外梯度下降步骤，步长为 <span class="arithmatex">\(\alpha\)</span>，如下所示：</p>
+<div class="arithmatex">\[
+\mathbf{x}_t^f = \text{clip}_{x_{nat}, \epsilon} \left( \mathbf{x}_t^r - \alpha \cdot \text{sign} \left( \nabla_\mathbf{x} L \left( \dfrac{1}{n} \sum_{i=1}^{n} f(\mathbf{x}_i^r), y \right) \right) \right).
+\tag{5}
+\]</div>
+<p>请注意，在公式4和公式5中，我们在模型集成上应用了 SAM 而不是每个训练模型。因此，我们不仅可以提高反向传播过程中的并行计算效率，还可以利用logits 集成策略获得更好的结果。</p>
+<p>此外，我们可以将 SAM 的反向步骤和正向步骤合并为一个更新方向 <span class="arithmatex">\(\mathbf{x}_t^f-\mathbf{x}_t\)</span>，并将其集成到现有的攻击算法中。例如，MI 与 SAM 的集成可以得到 MI-SAM 算法，其更新方式如下（ 如图 2(c) 所示）：</p>
+<div class="arithmatex">\[
+\mathbf{m} = \mu \cdot \mathbf{m} + \mathbf{x}_i^f - \mathbf{x}_i; \quad \mathbf{x}_{i+1} = \text{clip}_{\mathbf{x}_{nat}, \epsilon}(\mathbf{x}_i + \mathbf{m}),
+\]</div>
+<p>其中 <span class="arithmatex">\( \mathbf{m} \)</span> 以衰减因子 <span class="arithmatex">\( \mu \)</span> 累积梯度。通过迭代重复此过程，对抗性示例将收敛到一个更平坦的损失景观，从而提高可迁移性。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-MI-SAM.png" data-desc-position="bottom"><img alt="" src="../images/CWA-MI-SAM.png"></a></p>
+<p class="caption">图 2： MI、SAM 和 MI-SAM 示意图。符号介绍见公式 (4)-(6)</p>
+<h3 id="34-cosine-similarity-encourager">3.4 Cosine Similarity Encourager<a class="headerlink" href="#34-cosine-similarity-encourager" title="Permanent link">¶</a></h3>
+<p>然后我们开发了一种算法，使对抗性示例收敛到每个模型的局部最优解附近。我们不直接优化 <span class="arithmatex">\(\dfrac{1}{n} \sum_{i=1}^{n}\left\Vert\mathbf{x}-\mathbf{p}_{i}\right\Vert_2^2\)</span> ，因为计算相对于 <span class="arithmatex">\(\mathbf{x}\)</span> 的梯度是困难的，所以我们推导出这个损失的上界。</p>
+<div class="admonition info">
+<p class="admonition-title">定理 3.2.</p>
+<p><span class="arithmatex">\(\dfrac{1}{n} \sum_{i=1}^{n}\left\Vert\mathbf{x}-\mathbf{p}_{i}\right\Vert_2^2\)</span> 的上限与所有模型的梯度的点积相似度成正比：</p>
+<div class="arithmatex">\[
+\dfrac{1}{n} \sum_{i=1}^{n} \| (\mathbf{x} - \mathbf{p}_i) \|_2^2 \leq \dfrac{2M}{n} \sum_{i=1}^{n} \sum_{j=1}^{i-1} \mathbf{g}_i \mathbf{g}_j,
+\]</div>
+</div>
+<details class="note">
+<summary>定理 3.2. 的证明</summary>
+<p><strong>TODO</strong></p>
+</details>
+<p>根据定理 3.2 ，最小化每个模型到局部最优值的距离转化为最大化不同模型梯度之间的点积。为了解决这个问题， Nichol 等人 提出了一种基于一阶导数近似的有效算法。我们应用该算法生成对抗样本，方法是使用从集成模型 <span class="arithmatex">\(\mathcal{F}_t\)</span> 中采样的每个模型 <span class="arithmatex">\(f_i\)</span>，以较小的步长 <span class="arithmatex">\(\beta\)</span> 依次执行梯度更新。更新过程如下：</p>
+<div class="arithmatex">\[
+\mathbf{x}_t^i = \text{clip}_{x_{nat}, \epsilon} \left( \mathbf{x}_t^{i-1} - \beta \cdot \nabla_\mathbf{x} L(f_t(\mathbf{x}_t^{i-1}), y) \right),
+\]</div>
+<p>其中 <span class="arithmatex">\(\mathbf{x}_t^0 = \mathbf{x}_t\)</span>。每个模型的更新完成后，我们使用更大的步长 
+<span class="arithmatex">\(\alpha\)</span> 计算最终更新，如下所示：</p>
+<div class="arithmatex">\[
+\mathbf{x}_{t+1} = \text{clip}_{x_{nat}, \epsilon}(\mathbf{x}_t + \alpha \cdot (\mathbf{x}_t^n - \mathbf{x}_t)).
+\]</div>
+<p>虽然直接应用该算法可以取得良好的效果，但由于梯度范数的尺度不同，它与 SAM 不兼容。为了解决这个问题，我们在每次更新时用它们的 <span class="arithmatex">\(\ell_2\)</span> 范数对梯度进行归一化。我们发现修改后的版本实际上最大化了梯度之间的余弦相似性（证明在下面）。因此，我们将其称为余弦相似性激励器 (CSE)，它可以进一步与 MI 结合成为 MI-CSE。MI-CSE 涉及一个内部动量来累积每个模型的梯度（伪代码在下面）。</p>
+<details class="证明">
+<summary>证明</summary>
+<p><strong>TODO</strong></p>
+</details>
+<details class="伪代码">
+<summary>伪代码</summary>
+<p><strong>TODO</strong></p>
+</details>
+<h3 id="35-common-weakness-attack">3.5 Common Weakness Attack<a class="headerlink" href="#35-common-weakness-attack" title="Permanent link">¶</a></h3>
+<p>鉴于各个算法都在优化损失景观的平坦度和不同模型局部最优值之间的接近度，因此我们需要将它们组合成统一的公共弱点攻击 (CWA)，以实现更好的可迁移性。考虑到并行梯度反向传播的可行性和时间复杂度，我们用 CSE 代替 SAM 的第二步，得到的算法称为 CWA。我们还将 CWA 与 MI 结合起来得到 MI-CWA，伪代码如算法 1 所示。CWA 还可以与其他强对抗攻击算法结合使用，包括 VMI、SSA 等 。</p>
+<div class="arithmatex">\[
+\begin{array}{rl}
+\hline
+- &amp; \textbf{Algorithm 1.} \quad \text{MI-CWA 算法} \\
+\hline
+- &amp; \textbf{Input. } \text{自然图像 } \mathbf{x}_{nat}, \text{ 标签 } y, \text{ 扰动预算 } \epsilon, \text{ 迭代次数 } T, \text{ 损失函数 } L, \text{ 模型集合 } \\
+  &amp; F_t (f_i, i \in [1, n]), \text{ 衰减因子 } \mu, \text{ 步长 } r, \beta \text{ 和 } \alpha. \\
+- &amp; \textbf{Output. } \text{对抗样本 } \mathbf{x}_T. \\
+\hline
+1 &amp; \mathbf{m}_0 \gets 0, \hat{\mathbf{m}}_0 \gets 0, \mathbf{x}_0 \gets \mathbf{x}_{nat}; \\
+2 &amp; \textbf{for}\ t = 0\ \text{to}\ T-1\ \textbf{do} \\
+3 &amp; \quad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L \left( \dfrac{1}{n} \sum_{i=1}^n f_i(x_t), y \right); \\
+4 &amp; \quad \text{ 更新 } \mathbf{x}_t \gets \text{clip}(\mathbf{x}_{nat}, \epsilon (x_t + r \cdot \text{sign}(g))); \\
+5 &amp; \quad \textbf{for}\ i = 1\ \text{to}\ n\ \textbf{do} \\
+6 &amp; \quad \quad \text{ 计算 } \mathbf{g} \gets \nabla_\mathbf{x} L(f_i(\mathbf{x}_t^{i-1}), y); \\
+7 &amp; \quad \quad \text{ 更新内部动量 } \hat{\mathbf{m}} \gets \mu \cdot \hat{\mathbf{m}} + \dfrac{g}{\Vert\mathbf{g}\Vert_2}; \\
+8 &amp; \quad \quad \text{ 更新 } \mathbf{x}_t^i \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (x_t^{i-1} - \beta \cdot \hat{m}); \\
+9 &amp; \quad \textbf{end for} \\
+10 &amp;  \quad \text{ 计算更新方向 } \mathbf{g} \gets \mathbf{x}_t^n - \mathbf{x}_t; \\
+11 &amp;  \quad \text{ 更新外部动量 } \mathbf{m} \gets \mu \cdot \mathbf{m} + \mathbf{g}; \\
+12 &amp;  \quad \text{ 更新 } \mathbf{x}_{t+1} \gets \text{clip}_{\mathbf{x}_{nat}, \epsilon} (\mathbf{x}_t + \alpha \cdot \text{sign}(\mathbf{m})); \\
+13 &amp;  \textbf{end for} \\
+14 &amp;  \textbf{return } \mathbf{x}_T. \\
+\hline
+\end{array}
+\]</div>
+<h2 id="experiments">Experiments<a class="headerlink" href="#experiments" title="Permanent link">¶</a></h2>
+<p>在本节中，我们进行了全面的实验，以展示我们方法的优越性。任务范围从图像分类到使用最新的大型视觉-语言模型进行的物体检测和图像描述，展示了我们方法的通用性。</p>
+<p class="caption_table">表 1：在 NIPS2017 数据集上的黑盒攻击成功率（<span class="arithmatex">\(\%, \uparrow\)</span>）。虽然我们的方法在具有各种架构的 16 个常规训练模型上引领性能，但它们显著提升了基于迁移的攻击能力，在 RobustBench（Croce 等人，2021 年）上可用的 8 个对抗性训练模型上取得了很大的优势。模型详细信息在第 C.1 节中提供。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-table-black-box-attack.png" data-desc-position="bottom"><img alt="" src="../images/CWA-table-black-box-attack.png"></a></p>
+<h3 id="41-attack-in-image-classification">4.1 Attack in Image Classification<a class="headerlink" href="#41-attack-in-image-classification" title="Permanent link">¶</a></h3>
+<p>实验设置如下：</p>
+<ul>
+<li>
+<p><strong>数据集</strong>：与以往研究类似，我们采用 NIPS2017 数据集，该数据集包含了 1000 张与 ImageNet（Russakovsky 等人，2015）兼容的图像。所有图像均被统一调整为大小为 <span class="arithmatex">\(224 × 224\)</span>。</p>
+</li>
+<li>
+<p><strong>代理模型</strong>：我们选用了四个标准训练模型 —— ResNet-18、ResNet-32、ResNet-50、ResNet-101（He 等人，2016，来自 TorchVision (Marcel &amp; Rodriguez, 2010)），以及两个对抗训练模型 —— ResNet-50（Salman 等人，2020）和 XCiT-S12（Debenedetti 等人，2023，来自 RobustBench (Croce 等人，2021)）。这组模型包含了常规模型与鲁棒模型的组合，有助于评估攻击者在使用多样代理模型时的能力。我们在附录 C 中还进一步进行了使用其他代理模型和其他设置（例如使用不那么多样化的代理模型、采用 Dong 等人（2018）和 Naseer 等人（2020）的设置、在 <span class="arithmatex">\(\epsilon = \dfrac{4}{255}\)</span> 下的攻击）下的实验。</p>
+</li>
+<li>
+<p><strong>黑盒模型</strong>：我们从 TorchVision 和 RobustBench 所提供的每一类模型中各选取一个模型作为黑盒模型。同时，我们还纳入了另外 7 个具有代表性的防御模型参与评估。总共选取了 31 个模型。更多细节请参考 C.1 节。</p>
+</li>
+<li>
+<p><strong>对比方法</strong>：我们将所提出的方法分别集成进 MI（Dong 等人，2018）中，命名为 MI-SAM、MI-CSE 和 MI-CWA。同时我们也将 CWA 方法集成进两种先进的攻击方法 —— VMI（Wang &amp; He，2021）和 SSA（Long 等人，2022）中，分别命名为 VMI-CWA 和 SSA-CWA。我们将这些方法与 FGSM（Goodfellow 等人，2015）、BIM（Kurakin 等人，2018）、MI（Dong 等人，2018）、DI（Xie 等人，2019）、TI（Dong 等人，2019）、VMI（Wang &amp; He，2021）、PI（Gao 等人，2020）、SSA（Long 等人，2022）、RAP（Qin 等人，2022）以及 SVRE（Xiong 等人，2022）进行对比。除了 FGSM 和 BIM，所有算法都集成了 MI 方法，并按照 Dong 等人（2018）提出的 logit 集成策略进行优化。</p>
+</li>
+<li>
+<p><strong>超参数</strong>：我们设置的扰动预算为 <span class="arithmatex">\(\epsilon = \dfrac{16}{255}\)</span>，总迭代次数为 <span class="arithmatex">\(T = 10\)</span>，衰减因子为 <span class="arithmatex">\(\mu = 1\)</span>，步长为 <span class="arithmatex">\(\beta = 50\)</span>，随机初始化幅度为 <span class="arithmatex">\(r = \dfrac{16}{255 \times 15}\)</span>，更新步长为 <span class="arithmatex">\(\alpha = \dfrac{16}{255 \times 5}\)</span>。对比方法中使用的超参数均采用其各自论文中报告的最优设置。</p>
+</li>
+</ul>
+<p><strong>在常规模型上的实验结果</strong>。黑盒攻击的结果展示在表 1 的上半部分。相比于原始方法 MI，我们的 MI-SAM 和 MI-CSE 都显著提升了攻击成功率。需要注意的是，当黑盒模型与某一个代理模型相似时，MI-CSE 能显著提升攻击成功率。例如，在攻击 ViT-B/16 时，MI-CSE 的攻击成功率比 MI 高出近 30%。这是因为 MI-CSE 专门针对代理模型的<strong>共性弱点</strong>进行攻击，只要存在任一与黑盒模型相似的代理模型，就能实现高效攻击。而其他方法无法有效识别和攻击代理模型的共性弱点，且相似代理模型提供的信息会被其他无关代理模型的噪声所掩盖。需要指出的是，无论代理模型是否与黑盒模型相似，MI-SAM 始终能稳定提升攻击成功率，这是因为它通过使对抗样本收敛至<strong>更平坦的极值点</strong>来增强迁移性。</p>
+<p>当将 MI-SAM 融入 MI-CSE 构成 MI-CWA 时，攻击成功率进一步提升。这是因为 MI-SAM 与 MI-CSE 分别针对<strong>不同的训练目标</strong>进行优化，并且根据定理 3.2，它们是<strong>相容的</strong>。因此，所得的 MI-CWA 方法不仅能够使对抗样本收敛到一个平坦区域，还能够接近每个代理模型的最优解，从而进一步提升对抗样本的可迁移性。</p>
+<p>通过将我们提出的 CWA 方法与当前先进的攻击方法 VMI 和 SSA 相结合，所得到的攻击方法 VMI-CWA 和 SSA-CWA 实现了显著的攻击性能提升。通常情况下，SSA-CWA 在大多数常规模型上的攻击成功率超过 99%。此外，VMI-CWA 和 SSA-CWA 的表现也远超其原始版本 VMI 和 SSA。这一结果不仅验证了我们方法在与其他攻击方法融合时的有效性，也进一步证明了现有图像分类器在面对强可迁移性攻击时的脆弱性。</p>
+<p><strong>在对抗训练模型上的实验结果</strong>。如表 1 所示，由于我们的方法能够攻击代理模型的<strong>共性弱点</strong>，因此可以充分利用 XCiT-S12（Debenedetti 等人，2023）中的信息来攻击其他对抗训练的 XCiT 模型，而不会受到集成中四个常规训练 ResNet 模型的干扰。</p>
+<p>由于 FastAT（Wong 等人，2020）和 PGDAT（Engstrom 等人，2019；Salman 等人，2020）是对抗训练的 ResNet 模型，我们的算法通过充分利用集成中 ResNet 与防御模型的特征信息，相较于现有方法，在攻击成功率上提升了 <span class="arithmatex">\(40%\)</span>，展现出显著的性能优势。</p>
+<p><strong>在其他防御模型上的实验结果</strong>。从表 1 可以看出，我们的算法显著提升了现有攻击方法在面对先进防御手段时的攻击效果。例如，当与 SSA（Long 等人，2022）结合时，我们的方法在 4 种随机化防御下均实现了 100% 的攻击成功率，在最新提出的防御方法 DiffPure（Nie 等人，2022）下也达到了 <span class="arithmatex">\(97.5%\)</span> 的成功率。这些结果充分说明了我们所提出方法在面对防御模型时的卓越攻击能力。</p>
+<h3 id="42-attack-in-object-detection">4.2 Attack in Object Detection<a class="headerlink" href="#42-attack-in-object-detection" title="Permanent link">¶</a></h3>
+<p>实验设置如下：</p>
+<ul>
+<li>
+<p><strong>数据集</strong>：我们在 INRIA 数据集（Dalal &amp; Triggs, 2005）的训练集上生成通用对抗补丁，并在其测试集上的黑盒模型上进行评估，以验证对抗补丁在不同样本与多种模型间的可迁移性挑战。</p>
+</li>
+<li>
+<p><strong>代理模型</strong>：我们选择 YOLOv3（Redmon &amp; Farhadi, 2018）和 YOLOv5（Jocher, 2020）作为代理模型。</p>
+</li>
+<li>
+<p><strong>测试模型</strong>：我们在上述两个白盒模型及六个黑盒目标检测器上评估对抗补丁的攻击效果，包括 YOLOv2（Redmon &amp; Farhadi, 2017）、YOLOv3-T（Redmon &amp; Farhadi, 2018）、YOLOv4、YOLOv4-T（Bochkovskiy 等人，2020）、FasterRCNN（Ren 等人，2015）以及 SSD（Liu 等人，2016）。</p>
+</li>
+<li>
+<p><strong>对比方法</strong>：由于 Adam 方法常被用于目标检测中的对抗补丁优化（Thys 等人，2019；Zhang 等人，2023），我们将所提出的 CWA 方法与 Adam 结合，形成 Adam-CWA，并与以下对比方法进行性能比较：仅在 YOLOv3 上训练的补丁、仅在 YOLOv5 上训练的补丁，以及在 YOLOv3 和 YOLOv5 上进行 Loss Ensemble 训练的补丁（即 Huang 等人（2023）提出的 Enhanced Baseline 方法）。</p>
+</li>
+<li>
+<p><strong>训练过程</strong>：我们遵循 Huang 等人（2023）提出的“Enhanced Baseline”设置，包括图像尺寸、检测器权重、补丁粘贴方式、学习率等参数设定。</p>
+</li>
+</ul>
+<p class="caption_table">表2：<strong>在 INRIA 数据集上进行攻击时，黑盒检测器的 mAP（<span class="arithmatex">\(\%, \downarrow\)</span>）</strong>。使用 Adam-CWA 在 YOLOv3 和 YOLOv5 上训练得到的<strong>通用对抗补丁</strong>在多个现代检测器上取得了最低的 mAP（平均为 9.85），且具有显著的优势。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-table-black-box-attack-in-detection.png" data-desc-position="bottom"><img alt="" src="../images/CWA-table-black-box-attack-in-detection.png"></a></p>
+<p>结果如表 2 所示，我们的方法在所有模型上平均比损失集成（Loss Ensemble） 方法高出 20% ，与单检测器生成的对抗补丁相比优势更为显著。值得注意的是，Adam-CWA 生成的通用对抗补丁在两个白盒模型上的 mAP 值（YOLOv3 为 2.32，YOLOv5 为 2.06）甚至低于白盒攻击的结果（YOLOv3 为 12.35，YOLOv5 为 7.98），这表明我们的方法不仅提升了对抗补丁在不同模型间的迁移性，还增强了其在不同样本间的泛化能力。</p>
+<h3 id="43-attack-in-large-vision-language-models">4.3 Attack in Large Vision-Language Models<a class="headerlink" href="#43-attack-in-large-vision-language-models" title="Permanent link">¶</a></h3>
+<p>实验设置如下：</p>
+<ul>
+<li><strong>数据集</strong>：我们从 NIPS2017 数据集<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>中随机选择了 100 张图片。 </li>
+<li>
+<p><strong>代理模型</strong>：我们采用了 ViT-B/16（Dosovitskiy 等人，2020）、CLIP（Radford 等人，2021）和BLIP-2（Li 等人，2023）的视觉编码器作为代理模型，使用的攻击目标作为：</p>
+<div class="arithmatex">\[
+\max_{{\bf x}}\mathbb{E}_{f\in\mathcal{F}}[\|f({\bf x})-f({\bf x}_{nat})\|_{2}^{2}],\mbox{ s.t. }\|{\bf x}-{\bf x}_{nat}\|_{\infty}\leq\epsilon,
+\]</div>
+<p>其中，对抗样本的特征与原始图像特征之间的距离被最大化。  </p>
+</li>
+<li>
+<p><strong>测试模型</strong>：我们在谷歌的Bard<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>上测试生成的对抗样本的攻击成功率。  </p>
+</li>
+<li><strong>超参数</strong>：我们使用的超参数与第 4.1 节中的完全相同。  </li>
+</ul>
+<div class="admonition info half end">
+<p class="caption_table">表3：黑盒攻击成功率（<span class="arithmatex">\(\%, \uparrow\)</span>），攻击目标为 Bard。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-table-black-box-attack-at-llm.png" data-desc-position="bottom"><img alt="" src="../images/CWA-table-black-box-attack-at-llm.png"></a></p>
+</div>
+<p>结果如表 3 所示，在扰动预算 <span class="arithmatex">\(\epsilon=\dfrac{16}{255}\)</span> 和 <span class="arithmatex">\(\epsilon=\dfrac{32}{255}\)</span> 两种设定下，SSA-CWA 均显著优于 SSA 方法。我们发现对抗样本会引发 Bard 的三种错误行为：错误描述、视觉盲区和拒绝应答（如图 3 所示）。相比 SSA，SSA-CWA 将错误描述率提升了 <span class="arithmatex">\(8%\)</span>。此外，SSA-CWA 的拒绝应答率也远高于 SSA。这些结果不仅印证了本算法对前沿商业大模型的有效攻击性，更凸显了针对此类模型开发专用防御手段的紧迫性。更多实验结果可参阅我们的后续研究（Dong et al., 2023）。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-black-box-attack-at-llm.png" data-desc-position="bottom"><img alt="" src="../images/CWA-black-box-attack-at-llm.png"></a></p>
+<p class="caption">图3：基于可迁移性的黑盒攻击示例，目标为 Google 的 Bard。</p>
+<h3 id="44-analysis-and-discussion">4.4 Analysis and Discussion<a class="headerlink" href="#44-analysis-and-discussion" title="Permanent link">¶</a></h3>
+<p>在本节中，我们进行了一些额外的实验，以证明我们关于方法有效性的主张，包括平坦化损失地形、促进局部最优解之间的接近性，以及与其他算法相比的计算效率。</p>
+<p><strong>（损失）地形可视化</strong>。我们首先通过可视化不同算法的损失地形（详见第 D.2 节），分析损失地形与对抗样本可迁移性之间的关系。如图 4(a) 和 4(b) 所示，MI-CWA 生成的对抗样本的地形比 MI 的地形平坦得多。此外，MI-CWA 中模型的局部最优解比 MI 中的更接近。这支持了我们的观点，即 CWA 能够促进地形的平坦性和局部最优解之间的接近性，从而带来更好的可迁移性。</p>
+<p class="cation"><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/CWA-additional-results.png" data-desc-position="bottom"><img alt="" src="../images/CWA-additional-results.png"></a>
+图 4：<strong>附加结果</strong>。（a-b）：分别由 MI 和 MI-CWA 优化的收敛点周围的损失景观。（c）：在不同攻击迭代次数 T 下的攻击成功率。</p>
+<p><strong>计算效率</strong>。当算法 1 中的总迭代次数 <span class="arithmatex">\(T\)</span> 保持不变时，提出的 CWA 算法需要两倍于 MI 的计算成本，因此直接与其他算法比较是不公平的。因此，我们测量了在不同T 下，不同算法生成的对抗样本在表 1 中 31 个模型上的平均攻击成功率。结果如图 4(c) 所示。我们的算法在任何迭代次数下都优于其他算法，即使 CWA 算法的 <span class="arithmatex">\(T=5\)</span>。这表明 CWA 算法的有效性并非源于大量迭代，而是因为它捕捉到了不同模型的共同弱点。</p>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">¶</a></h2>
+<p>在本文中，我们重新审视了黑盒对抗攻击中的模型集成问题。我们进行了理论分析，探讨了对抗样本的可转移性、Hessian 矩阵的 F 范数以及每个模型的局部最优点与收敛点之间距离的关系。基于这些见解，我们定义了模型集成的共同弱点，并提出了有效的算法来发现模型集成的共同弱点。通过在图像分类和目标检测中的全面实验，我们实验证明了我们的算法在发现共同弱点方面表现出色，从而增强了对抗样本的可转移性。</p>
+<h2 id="ethics-statement">Ethics Statement<a class="headerlink" href="#ethics-statement" title="Permanent link">¶</a></h2>
+<p>我们方法的潜在负面影响是，恶意攻击者可能利用我们的方法攻击大型商业模型，从而导致有害内容的生成或隐私泄露。目前，由于大模型表现出色，许多人专注于改进这些模型，因此探索和解决深度学习模型的漏洞显得尤为重要，因为这些漏洞可能成为黑盒攻击的目标，而无需了解目标模型的具体细节。总之，我们的工作展示了潜在的攻击算法，并强调了增强深度学习模型安全性的必要性。</p>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>https://www.kaggle.com/competitions/nips-2017-non-targeted-adversarial-attack&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p>https://bard.google.com/&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/the-full" target="_blank" rel="noopener" title="zhazi on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.tooltips", "navigation.tabs", "navigation.instant", "navigation.indexes", "navigation.top", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../_static/js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

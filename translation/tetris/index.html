@@ -1,0 +1,2948 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A personal knowledge base for storing notes, research, and technical documentation">
+      
+      
+        <meta name="author" content="Zhazi">
+      
+      
+      
+        <link rel="prev" href="../A-plain-english-introduction-to-CAP-Theorem/">
+      
+      
+        <link rel="next" href="../tetris2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>BUILDING CONTROLLERS FOR TETRIS - Zhazi's Memo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Fira Sans";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../_static/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#building-controllers-for-tetris" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Zhazi's Memo" class="md-header__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Zhazi's Memo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              BUILDING CONTROLLERS FOR TETRIS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red" aria-label="切换至深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue" aria-label="切换至浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  浅入浅出
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../record/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  实践记录
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../note/go-reflection/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习笔记
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../paper/ACE/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  论文阅读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  文献翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algorithm/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  算法
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Zhazi's Memo" class="md-nav__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Zhazi's Memo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浅入浅出
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    浅入浅出
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    为什么有的下载能接着下，有的断了就得重来？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/how-clash-for-linux-provides-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clash for Linux 是怎么提供网关代理的？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../record/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实践记录
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实践记录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/common_problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    普通问题归档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/waymo_perprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    waymo 数据预处理遇到的问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于 OpenPCDet 在 Waymo 数据集上训练模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对 Waymo 数据集做加工
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/luogu-U207568/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    杂记：洛谷 U207568
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-TinyRAG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-Milvus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：Milvus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/go-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言基础：反射
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/rsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rsync 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/modelnet40/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ModelNet40 归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_linux_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 有用软件归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    优质博客归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-01-CW-Attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-02-CW-Attack-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(二) —— C&amp;W Attack 框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文阅读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文阅读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/ACE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/GradCraft/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GradCraft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/occupancy_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Occupancy Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文献翻译
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    文献翻译
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Go-Data-Structures-Interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言数据结构：接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../The-Laws-of-Reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言的反射定律
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Scale-with-Redis-Cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../A-plain-english-introduction-to-CAP-Theorem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAP 定理的简明介绍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-existing-tetris-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. EXISTING TETRIS CONTROLLERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. EXISTING TETRIS CONTROLLERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-hand-written-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Hand-written controllers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-reinforcement-learning-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Reinforcement Learning Approaches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-general-purpose-optimization-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 General Purpose Optimization Approaches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-final-comments-of-the-best-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Final comments of the best approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-on-the-difficulty-of-comparing-different-tetris-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ON THE DIFFICULTY OF COMPARING DIFFERENT TETRIS CONTROLLERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. ON THE DIFFICULTY OF COMPARING DIFFERENT TETRIS CONTROLLERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-tetris-problem-variations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Tetris problem variations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-the-large-deviation-in-tetris-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 The large deviation in Tetris scores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-tetris-implementations-subtleties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Tetris implementations subtleties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-2008-reinforcement-learning-competition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. THE 2008 REINFORCEMENT LEARNING COMPETITION
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion-and-open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. CONCLUSION AND OPEN QUESTIONS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. REFERENCES
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Tetris Using the Noisy Cross-Entropy Method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CWA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SR-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SR-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AL-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PartA2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PartA2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Cyber-Physical-Systems-Security-A-Survey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cyber-Physical Systems Security—A Survey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-semantic-ai-security-in-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: On the Semantic AI Security in Autonomous Driving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-adv-for-network-intrusion-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algorithm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    算法
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    算法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    归档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    归档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三月 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分类
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分类
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/algorithm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstraction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstraction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-existing-tetris-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. EXISTING TETRIS CONTROLLERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. EXISTING TETRIS CONTROLLERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-hand-written-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Hand-written controllers
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-reinforcement-learning-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Reinforcement Learning Approaches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-general-purpose-optimization-approaches" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.3 General Purpose Optimization Approaches
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-final-comments-of-the-best-approach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.4 Final comments of the best approach
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-on-the-difficulty-of-comparing-different-tetris-controllers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. ON THE DIFFICULTY OF COMPARING DIFFERENT TETRIS CONTROLLERS
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. ON THE DIFFICULTY OF COMPARING DIFFERENT TETRIS CONTROLLERS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-tetris-problem-variations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Tetris problem variations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-the-large-deviation-in-tetris-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 The large deviation in Tetris scores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-tetris-implementations-subtleties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Tetris implementations subtleties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-the-2008-reinforcement-learning-competition" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. THE 2008 REINFORCEMENT LEARNING COMPETITION
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-conclusion-and-open-questions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. CONCLUSION AND OPEN QUESTIONS
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-references" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. REFERENCES
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags">
+    
+      
+      
+      
+      
+        <span class="md-tag">Reinforcement Learning</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">Tetris</span>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/the-full/the-full.github.io/edit/master/docs/translation/tetris.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/the-full/the-full.github.io/raw/master/docs/translation/tetris.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+    </a>
+  
+
+
+<h1 id="building-controllers-for-tetris">翻译：Building Controllers for Tetris<a class="headerlink" href="#building-controllers-for-tetris" title="Permanent link">¶</a></h1>
+<div class="admonition info">
+<p class="admonition-title">文献</p>
+<ul>
+<li><a href="https://hal.science/inria-00418954/">Building Controllers for Tetris</a></li>
+</ul>
+</div>
+<h2 id="abstraction">Abstraction<a class="headerlink" href="#abstraction" title="Permanent link">¶</a></h2>
+<p>这篇文章有两个目的：一是对为广为人知的视频游戏 Tetris 构建控制器的这一问题进行综述，二是对如何实现最佳性能做出贡献。典型解决方案的关键组成部分包括特征设计和特征权重优化。我们提供了一份清单，列出了我们在文献和实现中找到的所有特征，并提及了用于权重优化的方法。我们还强调了这样一个事实，即 Tetris 的性能指标必须非常小心地比较，因为（1）它们具有相当大的方差，并且（2）微小的实现选择可能会对最终得分产生重大影响。这次综述的直接兴趣在于，直接从不同的工作中收集想法可能会产生新的想法。我们展示了我们如何构建了一个性能优于先前已知最佳控制器的控制器。最后，我们简要讨论了这一实现如何让我们赢得了 2008 年强化学习竞赛的 Tetris 赛道奖项。</p>
+<h2 id="1-introduction">1. Introduction<a class="headerlink" href="#1-introduction" title="Permanent link">¶</a></h2>
+<p>俄罗斯方块是一款流行的电子游戏，由阿列克谢·帕基特诺夫（Alexey Pajitnov）于 1985 年创作。游戏在一个 10×20 的网格上进行，不同形状的方块从顶部落下（见图1）。玩家需要选择每个方块的放置位置：玩家可以水平移动或旋转方块。当一行填满后，该行将被移除，其上方的所有格子将向下移动一行。游戏的目标是在游戏结束前（即方块堆顶部没有足够的空间放置新的方块时）尽可能多地移除行。Fahey 的网站（Fahey，2003）上提供了关于俄罗斯方块的详细规范。</p>
+<p>在本文中，我们回顾了尝试构建俄罗斯方块控制器的文献，并提供了这些文献中涉及的特征函数的参考文献。据我们所知，目前文献中尚无此类综述。对于人类玩家来说，俄罗斯方块游戏的主要难点在于方块可能会从游戏区域顶部快速落下：如此短的时间通常会使决策过程变得困难。然而，这个问题在与 ai 玩家打交道时不会出现这种情况，因为与控制器的决策速度相比，方块的下落速度可以忽略不计：事实上，我们在本文中讨论的控制器能够在当今的台式计算机上每秒进行数万次移动。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/Tetris-Intorduction.png" data-desc-position="bottom"><img alt="" src="../images/Tetris-Intorduction.png"></a></p>
+<p class="caption">图 1：左侧：Tetris 游戏的屏幕截图。右侧：方块的七种形状。</p>
+<p>俄罗斯方块游戏被几位研究人员选作基准优化问题：目标是找到一个控制器来最大化平均得分（Burges，1997），这总是有限的，因为已知每局游戏都以概率1结束。这个问题因其计算难度而闻名。在测试中确实存在大量状态（大约 <span class="arithmatex">\(7.0 \times 19^{8} = 5.6 \times 10^{9}\)</span> 个棋盘配置<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>），甚至仅仅提前知道两块积木的内容就足以使最大化平均得分的策略成为一个 NP 完全问题（Demaine、Hohenberger 和 Liben-Nowell，2003）。</p>
+<p>文章的结构如下：第 2 节我们描述现有的“俄罗斯方块”控制器。第 3 节报告了合成不同类型控制器的困难。在第 4 节中，我们提出了自己的程序 BCTS，该程序赢得了 2008 年强化学习竞赛。BCTS 是 Building Controllers for Tetris Systems 的缩写。第 5 节给出了结论并列出了两个开放性问题。</p>
+<h2 id="2-existing-tetris-controllers">2. EXISTING TETRIS CONTROLLERS<a class="headerlink" href="#2-existing-tetris-controllers" title="Permanent link">¶</a></h2>
+<p>大多数Tetris控制器的实现（Tsitsiklis和van Roy，1996；Bertsekas和Tsitsiklis，1996；Kakade，2001；Lagoudakis，Parr和Littman，2002；Ramon和Driessens，2004；Farias和van Roy，2006；Szita和Lorincz，2006；Llima，2005）都是<strong>单方块控制器（one-piece controller）</strong>，即仅使用当前棋盘和当前方块知识的控制器。控制器还可以使用下一个方块的知识（Fahey，2003；Bohm，Kokai和Mandl，2005），如原始Tetris设置中可能的那样，可以做出利用方块组合的决策，被称为<strong>双方块控制器（two-piece controller）</strong>。</p>
+<p>所有控制器都依赖于<strong>评估函数（evaluation function）</strong>。在给定的游戏状态下（即 (1) 当前棋盘配置，(2) 当前方块，以及 (3) 可选的下一个方块），所有可能的动作（即当前方块的位置和方向选择）都由评估函数进行评估。然后，控制器选择评估值最高的动作。图2 展示了这个过程。在图2a 中，我们可以看到单方块控制器的原理（即单层评估过程）。从当前状态（当前棋盘和当前方块）开始，尝试每种可能的动作，并得出新的棋盘，并通过评估函数进行评估。然后，选择获得最佳评估值的动作。在图2b 中，我们可以看到双方块控制器的原理（即双层评估过程）。从当前状态开始，尝试每种可能的动作，并得出新的棋盘，其中下一个方块是已知的。对于每个状态，都会尝试所有可能的后续动作，并通过评估函数对最终的棋盘进行评估。然后，我们在第一个状态下执行导致找到最佳评估的状态的动作。</p>
+<p>理论上，可以通过在每个阶段对所有可能的方块进行操作评估并取平均值来计算多阶段的预判。然而，据我们所知，由于这需要巨大的计算时间，这种深入的搜索从未被实施过。因此，<strong>构建一个俄罗斯方块控制器的问题归结为构建一个好的评估函数</strong>。理想情况下，这个函数应该对好的决策返回高值，对坏的决策返回低值。评估函数通常是特征函数的组合，通常（但并非总是；例如参见Böhm等人，2005年）是一个加权的总和。每个特征函数旨在捕捉行动和状态的某些相关特性。一个特征的例子是堆叠中的空洞<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>数量，其关联权重通常是负数：创建的空洞越多，评估值越低。</p>
+<p>实际上，设计一个基于特征的俄罗斯方块控制器包括两个步骤。第一步是选择一组能够提取关于游戏的相关信息的特征，这通常由专家完成。表2.1 提供了我们在此提到的作品中引入的特征的综合列表。第二步是调整特征的相对权重。在文献中，这种调整是手动或自动完成的（通过强化学习或一些优化技术）。我们现在更详细地讨论我们认为最重要的工作。在2.1小节中，我们讨论了手写控制器，在2.2小节中讨论了强化学习方法，在2.3小节中讨论了通用优化方法。在2.4小节中，我们对最佳方法给出了最终评论。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/Tetris-one-and-two-ply-evoluation.png" data-desc-position="bottom"><img alt="" src="../images/Tetris-one-and-two-ply-evoluation.png"></a></p>
+<p class="caption">图 2. (a) 单层评估过程。(b) 双层评估过程。</p>
+<h3 id="21-hand-written-controllers">2.1 Hand-written controllers<a class="headerlink" href="#21-hand-written-controllers" title="Permanent link">¶</a></h3>
+<p>据我们所知，目前最好的单方块控制器是由 Dellacherie（Fahey，2003年）开发的，并且是手工调整的。Dellacherie 通过反复试验，手动设置了一组有效的特征及其权重。令人惊讶的是，这个手工编写的控制器在性能上超过了文献中的其他单方块控制器，即使那些控制器的权重是自动调整的。在总共 56 场比赛中，Dellacherie 的算法平均得分约为 660,000 行。此外，这个每局 660,000 行的测量结果是在原始俄罗斯方块游戏的实现上进行的，正如我们将在第 3 节中看到的，这比大多数研究人员考虑的常规简化俄罗斯方块设置要困难。由于该算法的源代码在 Fahey 的网站上免费提供，我们对其进行了逆向工程，并确定了其特征及其权重。Dellacherie 的评估函数是以下特征的线性组合：</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp; - \text{(Landing height)} + \text{(Eroded piece cells)} - \text{(Row transitions)} \\
+&amp; - \text{(Column transitions)} - 4 \times \text{(Holes)} - \text{(Cumulative wells)}
+\end{align}
+\]</div>
+<p>其中涉及的特征在下面的汇总表中有详细说明。
+Fahhey(2003) 创建了一个两方块控制器，其中一些原始特征的权重也是手工调整的。他报告了 7200000 行的游戏得分。只进行了一场比赛，这花了一周的时间。</p>
+<details class="info">
+<summary>常见手工特征汇总表</summary>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Max height</td>
+<td>Maximum height of a column</td>
+<td>一列的最大高度</td>
+</tr>
+<tr>
+<td>Holes</td>
+<td>Number of empty cells covered by a full cell</td>
+<td>被完整单元格覆盖的空单元格数量</td>
+</tr>
+<tr>
+<td>Column height</td>
+<td>Height of each column</td>
+<td>每列的高度</td>
+</tr>
+<tr>
+<td>Column difference</td>
+<td>Height difference between each pair of adjacent columns</td>
+<td>相邻两列之间的高度差</td>
+</tr>
+<tr>
+<td>Landing height</td>
+<td>Height where the last piece is added</td>
+<td>最后一个方块下落位置的高度</td>
+</tr>
+<tr>
+<td>Cell transitions</td>
+<td>Number of fill to empty or empty to fill cell transitions</td>
+<td>从满到空或从空到满的单元格转换次数</td>
+</tr>
+<tr>
+<td>Deep wells</td>
+<td>Sum of well depths, except for wells with depth = 1</td>
+<td>除深度为 1 的井外，所有井深度的总和</td>
+</tr>
+<tr>
+<td>Embedded holes</td>
+<td>Sort of weighted sum of holes (not precisely documented)</td>
+<td>孔洞加权的总和（不精确记录）</td>
+</tr>
+<tr>
+<td>Height differences</td>
+<td>Sum of the height differences between adjacent columns</td>
+<td>相邻列之间的高度差的和</td>
+</tr>
+<tr>
+<td>Mean height</td>
+<td>Mean height of columns</td>
+<td>列的平均高度</td>
+</tr>
+<tr>
+<td>Δ max height</td>
+<td>Variation of the maximum column height</td>
+<td>最大列高度的方差</td>
+</tr>
+<tr>
+<td>Δ holes</td>
+<td>Variation of the hole number</td>
+<td>孔洞数量的方差</td>
+</tr>
+<tr>
+<td>Δ height differences</td>
+<td>Variation of the sum of height differences</td>
+<td>高度差之和的方差</td>
+</tr>
+<tr>
+<td>Δ mean height</td>
+<td>Variation of the mean column height</td>
+<td>平均列高度的方差</td>
+</tr>
+<tr>
+<td>Removed lines</td>
+<td>Number of rows completed at the last move</td>
+<td>上一步放置完成的行数</td>
+</tr>
+<tr>
+<td>Weighted cells</td>
+<td>Full cells weighed by their height</td>
+<td>根据其高度加权填充的单元格</td>
+</tr>
+<tr>
+<td>Wells</td>
+<td>Sum of the depth of the wells</td>
+<td>所有井的深度之和</td>
+</tr>
+<tr>
+<td>Full cells</td>
+<td>Number of occupied cells on the board</td>
+<td>板上占用单元格的数量</td>
+</tr>
+<tr>
+<td>Eroded piece cells</td>
+<td>(Move × Number of bricks eliminated from the last piece added)</td>
+<td>(最后一步移除的行数)×(最后添加的一块砖的数量)</td>
+</tr>
+<tr>
+<td>Row transitions</td>
+<td>Number of horizontal cell transitions</td>
+<td>水平单元格转换的数量</td>
+</tr>
+<tr>
+<td>Column transitions</td>
+<td>Number of vertical cell transitions</td>
+<td>垂直单元格转换的数量</td>
+</tr>
+<tr>
+<td>Cumulative wells</td>
+<td><span class="arithmatex">\( \sum_{w=1}^{n} (1 + 2 + ... + \text{depth}(w)) \)</span></td>
+<td><span class="arithmatex">\( \sum_{w=1}^{n} (1 + 2 + ... + \text{depth}(w)) \)</span></td>
+</tr>
+<tr>
+<td>Min height</td>
+<td>Minimum height of a column</td>
+<td>一列的最小高度</td>
+</tr>
+<tr>
+<td>Max – mean height</td>
+<td>Maximum column height – Mean column height</td>
+<td>最大列高度−最小列高度</td>
+</tr>
+<tr>
+<td>Mean – min height</td>
+<td>Mean column height – Minimum column height</td>
+<td>平均列高度−最小列高度</td>
+</tr>
+<tr>
+<td>Mean hole depth</td>
+<td>Mean depth of holes</td>
+<td>孔深的平均值</td>
+</tr>
+<tr>
+<td>Max height difference</td>
+<td>Maximum difference in height between two columns</td>
+<td>两列之间的最大高度差</td>
+</tr>
+<tr>
+<td>Adjacent column holes</td>
+<td>Number of holes, where adjacent holes in the same column count once</td>
+<td>相邻孔在同一列只计数一次的孔洞数量</td>
+</tr>
+<tr>
+<td>Max well depth</td>
+<td>Maximum depth of a well</td>
+<td>井的最大深度</td>
+</tr>
+<tr>
+<td>Hole depth</td>
+<td>Number of full cells in the column above each hole</td>
+<td>每个孔上方填充的单元格数量</td>
+</tr>
+<tr>
+<td>Rows with holes</td>
+<td>Number of rows having at least one hole</td>
+<td>至少有一个孔的行数</td>
+</tr>
+<tr>
+<td>Pattern diversity</td>
+<td>Number of different transition patterns between adjacent columns</td>
+<td>相邻列之间不同转换模式的数量</td>
+</tr>
+</tbody>
+</table>
+</details>
+<h3 id="22-reinforcement-learning-approaches">2.2 Reinforcement Learning Approaches<a class="headerlink" href="#22-reinforcement-learning-approaches" title="Permanent link">¶</a></h3>
+<p>强化学习文献中有多部作品以俄罗斯方块游戏为研究对象。Carr (2005) 在一篇综述中提到了其中一些工作。在强化学习领域（Sutton and Barto, 1998），算法旨在调整权重，使评估函数能够很好地逼近每个状态（回想一下，状态包括 (1) 当前棋盘布局，(2) 当前方块，以及 (3) 可选的下一个方块）的最佳预期未来得分。由于状态数量巨大，状态空间通常通过模拟来访问。</p>
+<p>强化学习领域中关于俄罗斯方块的最早工作似乎是由 Tsitsiklis 和 van Roy（1996）完成的。他们的方法使用了一种基于特征的值迭代方法。所获得的控制器基于两个特征（堆积高度和空洞数量），并且平均得分较低（在 30 分左右）。然而，他们的工作表明，使用基于特征的评估函数比仅仅选择实现最高即时奖励的移动效果更好（根据他们的说法，大多数情况下，后一种方法无法得分）。后来，Bertsekas 和 Tsitsiklis（1996）提出了 <span class="arithmatex">\(\lambda\)</span>-策略迭代算法，并将其应用于俄罗斯方块。这种方法推广了标准的值迭代和策略迭代算法（Bellman，1957）。评估函数通过一组更精致的特征的加权和来近似，并通过模拟来估计。他们报告说，在 100 场比赛中平均得分为 3,200 行。另外两项强化学习工作重用了他们的特征集。在第一项工作中，Kakade（2001）应用了一种自然策略梯度方法，并报告说平均得分约为每局 6,800 行，但没有具体说明平均了多少局游戏的得分。在第二项工作中， Farias 和 van Roy（2006）应用了一种线性规划方法，在 90 场比赛中平均得分为 4,700 行。 Lagoudakis 等人（2002）应用了最小二乘策略迭代方法，并使用了一些原始特征，报告说平均得分在 1,000 到 3,000 行之间。该算法仅在开始时收集一次样本，并且与 <span class="arithmatex">\(\lambda\)</span>-策略迭代方法相比，显示出有趣的收敛特性。尽管并没有取得非常好的性能（平均每局约 50 行），但为了完整性，我们也应该提到 Ramon 和 Driessens （2004）使用关系强化学习的工作。</p>
+<h3 id="23-general-purpose-optimization-approaches">2.3 General Purpose Optimization Approaches<a class="headerlink" href="#23-general-purpose-optimization-approaches" title="Permanent link">¶</a></h3>
+<p>一种替代强化学习的方法是使用通用优化来调整权重，其中算法直接寻找使相应控制器表现良好的权重，而不是尝试近似期望得分。与强化学习相反，由此产生的评估函数没有任何特定的语义。例如，GNU 实现中的 XTRIS 机器人涉及六个特征，其相对权重通过遗传算法进行了调整（Lima, 2005）。该算法在 18 代 50 组系数上进化了 20 次，在 500 台机器的小时内分布在 20 个工作站上。</p>
+<p>在一个非常接近原始俄罗斯方块游戏的模拟器上，作者报告说平均每局游戏清除 50,000 行。 Bohm 等人（2005）还报告了一种有趣的进化方法，试图优化具有文献特征的控制器和几个原始特征。然而，他们的结果无法与其他大多数工作进行比较，因为他们只考虑了两方块控制器。此外，由于运行时间的原因，他们没有对 10×20 板上的结果进行平均。</p>
+<p>最近， Szita 和 Lörincz （2006）应用了交叉熵方法（见 De Boer 等人, 2004），这是一种更接近于进化算法的方法，其中控制器的种群围绕高斯分布进化。他们使用了 Bertsekas 和 Tsitsiklis （1996）的特征，并在 30 个游戏中报告了平均 350,000 行的分数，超过了强化学习方法的结果，这些方法使用了相同的特征。</p>
+<h3 id="24-final-comments-of-the-best-approach">2.4 Final comments of the best approach<a class="headerlink" href="#24-final-comments-of-the-best-approach" title="Permanent link">¶</a></h3>
+<p>对当前技术水平的综述引出了几点评论。一方面，Dellacherie 提出的特征似乎是最具竞争力的。即便是使用人工设定的权重，Dellacherie 的控制器目前仍然取得了最好的效果。另一方面，一些优化算法（如 Szita 和 Lőrincz, 2006；Böhm 等, 2005；Llima, 2005）被认为是在为特定特征集合调整权重方面最为成功的方法。</p>
+<p>至于强化学习方法（试图利用俄罗斯方块问题的最优控制结构）未能取得良好结果的原因，很可能是因为以当前该领域的先进技术而言，俄罗斯方块问题仍然过于困难。在线性架构下，估计最优得分的难度可能太大。</p>
+<h2 id="3-on-the-difficulty-of-comparing-different-tetris-controllers">3. ON THE DIFFICULTY OF COMPARING DIFFERENT TETRIS CONTROLLERS<a class="headerlink" href="#3-on-the-difficulty-of-comparing-different-tetris-controllers" title="Permanent link">¶</a></h2>
+<p>我们前面提到了多个俄罗斯方块控制器作者报告的平均得分。本节将强调这样一个事实：比较不同的俄罗斯方块控制器，尤其是在其性能基于不同实现方式评估的情况下，是一件非常困难的事情。</p>
+<p>首先，我们将在第 3.1 节指出，不同研究中的游戏设定常常存在差异。接着，在第 3.2 节我们将论证俄罗斯方块控制器的平均得分存在较大的偏差，并解释如何推导置信区间。最后，在第 3.3 节我们将展示，由于某些微妙的细节，控制器的性能可能会出现显著变化。</p>
+<h3 id="31-tetris-problem-variations">3.1 Tetris problem variations<a class="headerlink" href="#31-tetris-problem-variations" title="Permanent link">¶</a></h3>
+<p>我们之前已经提到，有些研究采用单方块控制器，而另一些则考虑双方块控制器。Fahey 设计了一个双方块控制器，他解释说，当下一个方块未知时，他算法中相应的单块控制器相比于其他单块控制器表现得很差。这表明，预知下一个方块可以显著提升控制器的性能。反过来看，这也说明当前关于单块控制器的研究成果在与少数几篇涉及双块控制器<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>的工作（如 Fahey, 2003；Böhm 等人 2025）相比时，可能被显著低估了。
+从大多数研究者所考虑的俄罗斯方块问题来看，它与 Fahey（2003）所定义的原始游戏略有不同。通常会做出一些简化，以便将注意力集中在自动玩家的核心问题上，即为当前方块选择一个位置和旋转方向。
+在原始游戏中（即 Fahey，2003 所定义的版本），当前方块出现在游戏区域内，并逐渐下落。当没有足够的空间在区域顶部生成新方块时，游戏结束。而大多数实现（如 Tsitsiklis 和 van Roy, 1996；Bertsekas 和 Tsitsiklis, 1996；Kakade, 2001；Lagoudakis 等, 2002；Ramon 和 Driessens, 2004；Farias 和 van Roy, 2006；Szita 和 Lőrincz, 2006），包括我们自己的实现，都采用了如下的简化设定：控制器只需要决定当前方块在哪一列、以什么朝向落下。
+在这种简化设定中，游戏被适度简化了：在控制器做出决策之前，方块不会出现在游戏区域内。这就相当于总是有足够的空间在区域顶部用来调整方块的朝向并选择投放的列。这一点造成了重要差异，因为整个棋盘的空间都可用于放置方块，包括最上方的几行。
+此外，我们更倾向于避免出现方块无法从棋盘一侧移动到另一侧的情况，这种情况通常由于堆叠太高而发生。简化后的俄罗斯方块游戏比原始游戏更容易，因此控制器通常能消除更多的行<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>。</p>
+<h3 id="32-the-large-deviation-in-tetris-scores">3.2 The large deviation in Tetris scores<a class="headerlink" href="#32-the-large-deviation-in-tetris-scores" title="Permanent link">¶</a></h3>
+<p>令人惊讶的是，尽管大多数作者似乎意识到俄罗斯方块成绩存在较大偏差，但几乎没有人提供置信区间。据我们所知，Szita 和 Lőrincz（2006）是唯一提供此类置信区间的出版物。下面我们将解释如何推导这些置信区间。</p>
+<p>Fahey（2003）曾推测，对于一个固定策略的俄罗斯方块游戏，其得分遵循指数分布<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。事实上，由于得分（消除的行数）是一个整数，一个更合理且在质量上更接近的猜测是得分服从几何分布。该猜测背后的直觉如下：大致来说，墙体的最大高度在游戏过程中类似于一维随机游走：它会上升和下降，这取决于随机生成的方块；有时它会回落到底部空行。最终得分与游戏持续时间高度相关——即随机游走首次触顶所花费的时间。这个时间对应的随机变量通常被称为“击中时间”（hitting time），其渐近行为已知服从几何分布定律<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+<p>然而，尽管几何分布比指数分布是更好的猜测，Fahey 的猜测却在实验中被证实对许多控制器是成立的（这些控制器的得分在95%的置信度下符合指数分布），这是通过 Szita 和 Lőrincz（2006）采用 Kolmogorov-Smirnov 统计检验得出的。在这一猜测（或几何分布猜测）下，得分的标准差等于（或非常接近<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>）其期望值（Billingsley, 1995）。这一事实在实践中非常有意义，因为它可以用来评估置信区间。</p>
+<p>在通过多次游戏来评估平均得分时，标准统计分析可以告诉我们：置信区间的宽度会随着游戏次数的增加而缩小，而随着标准差的增大而扩大。对于给定的置信水平，更大的标准差意味着需要更多的游戏次数。由于在俄罗斯方块中，得分的标准差等于得分本身，控制器越好，其精确评估就越困难。</p>
+<p>更具体地说，置信区间具有如下形式（参见任何一本概率论教材，例如 Billingsley（1995）中对这一内容的通用介绍）：在某个概率 <span class="arithmatex">\( p \)</span> 下，通过 <span class="arithmatex">\( N \)</span> 局游戏得到的平均得分 <span class="arithmatex">\( \hat{\mu} \)</span> 与期望得分 <span class="arithmatex">\( \mu \)</span> 之间的差异满足以下关系，其中标准差 <span class="arithmatex">\( \sigma = \mu \)</span>：</p>
+<div class="arithmatex">\[
+|\mu - \hat{\mu}| \leq \frac{k \sigma}{\sqrt{N}} = \frac{k \mu}{\sqrt{N}} \simeq \frac{k \hat{\mu}}{\sqrt{N}}
+\]</div>
+<p>其中，<span class="arithmatex">\( k \)</span> 是一个常数，取决于所选的置信概率 <span class="arithmatex">\( p \)</span>（典型的取值关系为：当 <span class="arithmatex">\( p = 0.68 \)</span> 时，<span class="arithmatex">\( k = 1 \)</span>；当 <span class="arithmatex">\( p = 0.95 \)</span> 时，<span class="arithmatex">\( k = 2 \)</span>；当 <span class="arithmatex">\( p = 0.997 \)</span> 时，<span class="arithmatex">\( k = 3 \)</span>）。等价地，这可以推导出如下的<strong>相对置信区间</strong>：</p>
+<div class="arithmatex">\[
+\frac{|\mu - \hat{\mu}|}{\hat{\mu}} \leq \frac{k}{\sqrt{N}} .
+\]</div>
+<h3 id="33-tetris-implementations-subtleties">3.3 Tetris implementations subtleties<a class="headerlink" href="#33-tetris-implementations-subtleties" title="Permanent link">¶</a></h3>
+<p>我们刚刚看到，总体而言，为俄罗斯方块控制器推导出的置信区间范围较大。在实现模拟器时，我们进一步注意到某些实现细节会对性能指标产生显著影响。本文将以 Dellacherie 控制器为例，探讨这些细节及其对游戏分数的影响。</p>
+<p>一个关键细节（现有文献均未明确提及）在于基于评估的控制器在游戏结束时的处理逻辑。当最高评分的操作会导致游戏结束，而其他低评分操作仍可继续时，更合理的策略是直接排除那些导致游戏结束的操作——不评估这类操作能延长游戏时长从而提高分数。按此规则，仅当所有可选操作都会导致游戏结束时游戏才终止。我们按此方式实现 Dellacherie 算法时，其平均可完成 5,000 ± 20% 行。若允许控制器评估导致游戏结束的操作，其性能会骤降至 850,000 ± 20%。</p>
+<p>实际上，多数俄罗斯方块实现将游戏结束判定定义为当前方块无法放入 10 × 20 的游戏板（即方块堆叠超出边界）。但细读 Bertsekas 与 Tsitsiklis (1996) 的描述会发现，他们将结束条件定义为"顶部行任意方格被填满且方块堆触及网格顶端"，这相当于将有效游戏区域缩小为 10 × 19。这个细微差异对分数影响巨大：在 10 × 19 版中，Dellacherie 算法仅能完成 2,500,000 ± 20% 行，而非 5,200,000 ± 20%。因此我们认为第 2 节引用的 Bertsekas 等人实验结果相对于其他强化学习研究是被低估的。</p>
+<p>鉴于游戏规则和控制器实现的微小细节都会显著影响分数，在比较不同方法时需要格外谨慎。由于多数研究采用不同的实现方案，前人报道的结果实际上缺乏可比性。特别当需要将 Dellacherie 分数与简化版俄罗斯方块设置（多数研究者采用）对比时，其基准应视为 5,000,000 ± 20% 行（在原始俄罗斯方块模拟器<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup>上的结果）而非 660,000 ± 27%。公平比较不同控制器的唯一方法是在相同模拟器上多次运行测试。为此，我们开发了可配置的优化版模拟器并实现了多种控制器<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>。</p>
+<h2 id="4-the-2008-reinforcement-learning-competition">4. THE 2008 REINFORCEMENT LEARNING COMPETITION<a class="headerlink" href="#4-the-2008-reinforcement-learning-competition" title="Permanent link">¶</a></h2>
+<p>基于对俄罗斯方块相关文献的仔细分析，我们实现了一个控制器，它结合了先前成功的特征设计和特征权重优化。我们将该程序命名为 BCTS，即“为俄罗斯方块系统构建控制器（Building
+Controllers for Tetris Systems）”。我们采用交叉熵方法（Szita 和 L˝orincz，2006）训练了一个控制器，使用了 Dellacherie（Fahey，2003）中的高性能特征以及表 2.1 中提到的两个原始特征：孔深度（Hole depth）和带孔行数（Rows with holes）。我们在此给出对权重进行交叉熵优化后获得的评估函数：</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp; -12.63 \text{ (Landing height)} + 6.60 \text{ (Eroded piece cells)} - 9.22 \text{ (Row transitions)} - 19.77 \text{ (Column transitions)} \\
+&amp; -13.08 \text{ (Holes)} - 10.49 \text{ (Cumulative wells)} - 1.61 \text{ (Hole depth)} - 24.04 \text{ (Rows with holes)}.
+\end{align}
+\]</div>
+<p>在大多数研究者所采用的简化版俄罗斯方块设定中（参见第 3.1 节），该控制器以 95% 的概率实现了平均消除 <span class="arithmatex">\(35,000,000\pm 20\%\)</span> 行的成绩。尽管我们未在真实版俄罗斯方块游戏（依据 Fahey, 2003 的规范）中进行测试，但通过在一个 <span class="arithmatex">\(10\times 16\)</span> 的简化版棋盘上进行游戏实验，我们保守估计该控制器在真实游戏中的得分下限为 <span class="arithmatex">\(910,000\pm 5\%\)</span> 行（置信概率 95%）。这一结论的合理性在于：简化版棋盘上的所有可行操作在真实版 <span class="arithmatex">\(10\times 20\)</span> 棋盘上同样可行，因为所有方块的高度均不超过 4。关于 BCTS 构建的更多细节可参阅 Thiery 与 Scherrer（2009）的研究。</p>
+<p>基于本文献综述工作，BCTS 近期赢得了 <strong>2008 年强化学习竞赛</strong>。该竞赛要求俄罗斯方块控制器在修改后的游戏版本中运行，其中部分游戏属性（如棋盘尺寸、消除 1/2/3/4 行的得分规则）可能发生变化，人工智能玩家需自适应不同环境。竞赛采用的性能指标<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup> 比本文讨论的自然指标具有更低的方差。虽然竞赛以强化学习为框架，但允许使用任何方法。我们在前述控制器基础上增加了名为 <strong>“模式多样性”</strong> 的创新特征——该特征通过分析相邻两列顶部形成的图案并统计不同图案的数量，促使控制器确保棋盘能容纳任何方块而不产生空洞。据与 Marek Petrik 和 Istvan Szita 的个人交流，获得亚军和季军的人工智能玩家同样采用了 <strong>交叉熵方法</strong> 进行调参。我们认为，<strong>特征选择的优势</strong> 是赢得竞赛的关键因素。  </p>
+<h2 id="5-conclusion-and-open-questions">5. CONCLUSION AND OPEN QUESTIONS<a class="headerlink" href="#5-conclusion-and-open-questions" title="Permanent link">¶</a></h2>
+<p>本综述的一个观察发现是，诸如交叉熵方法（Szita与L˝orincz，2006）或进化算法（B¨ohm等，2005；Llima，2005）等优化方法目前取得的成效远超强化学习方法。然而，强化学习方法提供了优秀的理论工具，尤其能计算最优俄罗斯方块策略的预期得分（价值函数）。事实上，我们通过价值迭代算法（Puterman，1994；Sutton与Barto，1998）成功构建了缩小版俄罗斯方块（5×5棋盘）的精确最优玩家。在此缩小棋盘上，最优策略的预期得分值为13.7行。面对标准尺寸的俄罗斯方块棋盘时，尽管强化学习算法受维度灾难所困，且在需要近似时难以准确预估未来得分，但其优势在于能持续评估未来得分而非仅追求最大化。虽然交叉熵和遗传算法等优化方法在俄罗斯方块中表现更优，但它们无法提供关于理论最高得分的信息。这引出了我们的首个开放性问题：值得沿此方向继续探索，借助强化学习框架估算最优玩家得分的期望值上限。</p>
+<p>本综述遗留的第二个开放性问题是：何种优化方法最适合俄罗斯方块？当前最先进的权重调优方法（Llima，2005；B¨ohm 等，2005；Szita 与 L˝orincz，2006）因采用不同实现方式和特征设计而无法直接比较。此外，与其他两项研究及强化学习方法不同，B¨ohm等（2005）仅考虑了两方块控制器，因此其相对于单方块控制器的性能仍属未知。若能在相同条件下实施并运行这些方法，将有助于判断交叉熵方法在何种情况下优于遗传算法（若存在这种情况），以及此类结论是否专属于俄罗斯方块或可推广至其他问题领域。
+关于最佳可能得分。这引出了我们的第一个悬而未决的问题。继续朝这个方向进行研究，以便估算出基于强化学习框架的最佳玩家得分预期值的上限，将会非常有趣。</p>
+<h2 id="6-references">6. REFERENCES<a class="headerlink" href="#6-references" title="Permanent link">¶</a></h2>
+<ol>
+<li><strong>Bellman, R. E.</strong> (1957). <em>Dynamic Programming</em>. Princeton University Press, Princeton, NJ.  </li>
+<li><strong>Bertsekas, D. and Tsitsiklis, J.</strong> (1996). <em>Neurodynamic Programming</em>. Athena Scientific.  </li>
+<li><strong>Billingsley, P.</strong> (1995). <em>Probability and measure</em>. John Wiley &amp; Sons, New York, N.Y., 3rd edition.  </li>
+<li><strong>Boer, P. de, Kroese, D., Mannor, S., and Rubinstein, R.</strong> (2004). A tutorial on the cross-entropy method. <em>Annals of Operations Research</em>, Vol. 1, No. 134, pp. 19–67.  </li>
+<li><strong>Böhm, N., Kókai, G., and Mandl, S.</strong> (2005). An Evolutionary Approach to Tetris. <em>The Sixth Metaheuristics International Conference (MIC2005)</em>.  </li>
+<li><strong>Burgiel, H.</strong> (1997). How to Lose at Tetris. <em>Mathematical Gazette</em>, Vol. 81, pp. 194–200.  </li>
+<li><strong>Carr, D.</strong> (2005). Applying reinforcement learning to Tetris. Technical report, Computer Science department of Rhodes University.  </li>
+<li><strong>Demaine, E. D., Hohenberger, S., and Liben-Nowell, D.</strong> (2003). Tetris is hard, even to approximate. <em>Proc. 9th International Computing and Combinatorics Conference (COCOON 2003)</em>, pp. 351–363.  </li>
+<li><strong>Fahey, C. P.</strong> (2003). Tetris AI, Computer plays Tetris. <a href="http://colinfahey.com/tetris/tetris_en.html">http://colinfahey.com/tetris/tetris_en.html</a>.  </li>
+<li><strong>Farias, V. and Roy, B. van</strong> (2006). <em>Tetris: A study of randomized constraint sampling</em>. Springer-Verlag.  </li>
+<li><strong>Kakade, S.</strong> (2001). A natural policy gradient. <em>Advances in Neural Information Processing Systems (NIPS 14)</em>, pp. 1531–1538.  </li>
+<li><strong>Lagoudakis, M. G., Parr, R., and Littman, M. L.</strong> (2002). Least-squares methods in reinforcement learning for control. <em>SETN '02: Proceedings of the Second Hellenic Conference on AI</em>, pp. 249–260, Springer-Verlag, London, UK.  </li>
+<li><strong>Llima, R. E.</strong> (2005). Xtris readme. <a href="http://www.iagora.com/~espel/xtris/README">http://www.iagora.com/~espel/xtris/README</a>.  </li>
+<li><strong>Puterman, M.</strong> (1994). <em>Markov Decision Processes</em>. Wiley, New York.  </li>
+<li><strong>Ramon, J. and Driessens, K.</strong> (2004). On the numeric stability of gaussian processes regression for relational reinforcement learning. <em>ICML-2004 Workshop on Relational Reinforcement Learning</em>, pp. 10–14.  </li>
+<li><strong>Sutton, R. and Barto, A.</strong> (1998). <em>Reinforcement Learning, An introduction</em>. BradFord Book. The MIT Press.  </li>
+<li><strong>Szita, I. and Lőrincz, A.</strong> (2006). Learning Tetris Using the Noisy Cross-Entropy Method. <em>Neural Computation</em>, Vol. 18, No. 12, pp. 2936–2941.  </li>
+<li><strong>Thiery, C. and Scherrer, B.</strong> (2009). Construction d’un joueur artificiel pour Tetris. <em>Revue d’Intelligence Artificielle</em>, Vol. 23, pp. 387–407.  </li>
+<li><strong>Tsitsiklis, J. N. and Roy, B. van</strong> (1996). Feature-Based Methods for Large Scale Dynamic Programming. <em>Machine Learning</em>, Vol. 22, pp. 59–94.  </li>
+</ol>
+<div class="footnote">
+<hr>
+<ol>
+<li id="fn:1">
+<p>这个个数字是一个估计值，因为它包括了一些不可能的配置（参见 Fahey, 2003）。&nbsp;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">↩</a></p>
+</li>
+<li id="fn:2">
+<p>一个个洞是指被有填充格包围的空格。&nbsp;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">↩</a></p>
+</li>
+<li id="fn:3">
+<p>回想一下，一个单件控制器可以很容易地扩展到两件控制器设置（见图2）。&nbsp;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">↩</a></p>
+</li>
+<li id="fn:4">
+<p>请注意，有了这个常见的简化，通过让当前块掉落然后水平移动来填补空洞”变得不可能。然而，这并没有什么区别，因为根据 Fahey 对原始游戏的规定实现的控制器（Fahey, 2003）也没有利用这种能力。&nbsp;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">↩</a></p>
+</li>
+<li id="fn:5">
+<p>这是俄罗斯方块游戏的典型特性。没有理由相信其他游戏具有相同的属性。&nbsp;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">↩</a></p>
+</li>
+<li id="fn:6">
+<p>这可以被视为著名的 Perron-Frobenius 定理的结果（Billingsley, 1995）：设 <span class="arithmatex">\(\lambda\)</span> 是与随机游走相关的随机矩阵的最大（按模）非 1 特征值。当时间 <span class="arithmatex">\(t\)</span> 趋向于无穷大时，随机游走在时间 <span class="arithmatex">\(t\)</span> 仍然处于非吸收状态的概率等同于 <span class="arithmatex">\(a^t\)</span>（其中 <span class="arithmatex">\(a\)</span> 是某个常数）。因此，击中时间为确切 <span class="arithmatex">\(t\)</span> 的概率等同于 <span class="arithmatex">\(a(t-1) - a^t\)</span>，这与 <span class="arithmatex">\(t\)</span> 成比例。&nbsp;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">↩</a></p>
+</li>
+<li id="fn:7">
+<p>参数 <span class="arithmatex">\(p\)</span> 的几何分布的平均值为 <span class="arithmatex">\(1/p\)</span>，标准差为 <span class="arithmatex">\(\sqrt{(1-p)/p^2}\)</span>（Billingsley, 1995）。当 <span class="arithmatex">\(p\)</span> 非常小（这是 Tetris 控制器表现良好的情况），标准差等同于 <span class="arithmatex">\(1/p\)</span>。&nbsp;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">↩</a></p>
+</li>
+<li id="fn:8">
+<p>尽管在比通常的简化设置更严格的实现中获得了 660,000 ± 27% 的分数，但这已经是已知的最佳性能。&nbsp;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">↩</a></p>
+</li>
+<li id="fn:9">
+<p>The C source code is available here: http://gforge.inria.fr/projects/mdptetris.&nbsp;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">↩</a></p>
+</li>
+<li id="fn:10">
+<p>该性能是指在固定次数的交互后所获得的总分，其中输掉游戏不会受到惩罚（除了将游戏重置为最初的空状态）。&nbsp;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">↩</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/the-full" target="_blank" rel="noopener" title="zhazi on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.tooltips", "navigation.tabs", "navigation.instant", "navigation.indexes", "navigation.top", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../_static/js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

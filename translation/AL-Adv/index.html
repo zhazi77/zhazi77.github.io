@@ -1,0 +1,2849 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A personal knowledge base for storing notes, research, and technical documentation">
+      
+      
+        <meta name="author" content="Zhazi">
+      
+      
+      
+        <link rel="prev" href="../SR-Adv/">
+      
+      
+        <link rel="next" href="../PartA2/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>AL-Adv - Zhazi's Memo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Fira Sans";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../_static/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#adaptive-local-adversarial-attacks-on-3d-point-clouds-for-augmented-reality" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Zhazi's Memo" class="md-header__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Zhazi's Memo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AL-Adv
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red" aria-label="切换至深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue" aria-label="切换至浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  浅入浅出
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../record/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  实践记录
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../note/go-reflection/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习笔记
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../paper/ACE/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  论文阅读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  文献翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algorithm/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  算法
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Zhazi's Memo" class="md-nav__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Zhazi's Memo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浅入浅出
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    浅入浅出
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    为什么有的下载能接着下，有的断了就得重来？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/how-clash-for-linux-provides-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clash for Linux 是怎么提供网关代理的？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../record/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实践记录
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实践记录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/common_problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    普通问题归档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/waymo_perprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    waymo 数据预处理遇到的问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于 OpenPCDet 在 Waymo 数据集上训练模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对 Waymo 数据集做加工
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/luogu-U207568/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    杂记：洛谷 U207568
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-TinyRAG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-Milvus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：Milvus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/go-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言基础：反射
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/rsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rsync 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/modelnet40/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ModelNet40 归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_linux_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 有用软件归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/useful_blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    优质博客归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-01-CW-Attack/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../note/3D-Adv-02-CW-Attack-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(二) —— C&amp;W Attack 框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文阅读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文阅读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/ACE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/GradCraft/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GradCraft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/occupancy_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Occupancy Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文献翻译
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    文献翻译
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Go-Data-Structures-Interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言数据结构：接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../The-Laws-of-Reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言的反射定律
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Scale-with-Redis-Cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../A-plain-english-introduction-to-CAP-Theorem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAP 定理的简明介绍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tetris2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Tetris Using the Noisy Cross-Entropy Method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CWA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SR-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SR-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Related Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-digital-adversarial-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Digital adversarial attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-physical-adversarial-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Physical adversarial attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-vulnerability-analysis-of-3d-network-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Vulnerability Analysis of 3D Network Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-generating-adversarial-point-clouds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Generating Adversarial Point Clouds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-adaptive-gradient-attack-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Adaptive gradient attack algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-adaptive-local-adversarial-attack-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Adaptive local adversarial attack method
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experiments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-experimental-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Experimental setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-experimental-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Experimental results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discussion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../PartA2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PartA2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Cyber-Physical-Systems-Security-A-Survey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cyber-Physical Systems Security—A Survey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-semantic-ai-security-in-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: On the Semantic AI Security in Autonomous Driving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sok-adv-for-network-intrusion-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algorithm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    算法
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    算法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    归档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    归档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三月 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分类
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分类
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/algorithm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related-work" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Related Work
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Related Work">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-digital-adversarial-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 Digital adversarial attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-physical-adversarial-attack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 Physical adversarial attack
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-vulnerability-analysis-of-3d-network-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 Vulnerability Analysis of 3D Network Models
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-generating-adversarial-point-clouds" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 Generating Adversarial Point Clouds
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-adaptive-gradient-attack-algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 Adaptive gradient attack algorithm
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-adaptive-local-adversarial-attack-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 Adaptive local adversarial attack method
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Experiments
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Experiments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-experimental-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 Experimental setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-experimental-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 Experimental results
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discussion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discussion
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags">
+    
+      
+      
+      
+      
+        <span class="md-tag">Transfer Attack</span>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/the-full/the-full.github.io/edit/master/docs/translation/AL-Adv.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/the-full/the-full.github.io/raw/master/docs/translation/AL-Adv.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+    </a>
+  
+
+
+<h1 id="adaptive-local-adversarial-attacks-on-3d-point-clouds-for-augmented-reality">翻译 &amp; 精修：Adaptive Local Adversarial Attacks on 3D Point Clouds for Augmented Reality<a class="headerlink" href="#adaptive-local-adversarial-attacks-on-3d-point-clouds-for-augmented-reality" title="Permanent link">¶</a></h1>
+<blockquote>
+<p>点云局部攻击二则（其二）</p>
+</blockquote>
+<div class="admonition info">
+<p class="admonition-title">文献</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2303.06641">Adaptive Local Adversarial Attacks on 3D Point Clouds for Augmented Reality</a></li>
+</ul>
+</div>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/AL-Adv-main-fig-adv-examples-risks.png" data-desc-position="bottom"><img alt="" src="../images/AL-Adv-main-fig-adv-examples-risks.png"></a></p>
+<p class="caption">图 1：<strong>对抗样本对增强现实系统（Augmented Reality, AR）构成安全风险。</strong>在室内场景中，AR 设备使用激光雷达感知场景，并应用 3D 识别和跟踪技术实时识别和跟踪物体。一个良性物体可以被 AR 设备正确检测和识别，然而，攻击者可以向良性物体添加扰动以生成对抗物体，使 AR 设备无法正确识别。如图所示，一个良性的“椅子”被正确识别，而一个对抗性的“椅子”被 AR 设备识别为“马桶”。</p>
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">¶</a></h2>
+<p>三维识别和跟踪做为增强现实（AR）的关键技术，极容易受到对抗样本的影响，这对 AR 系统构成严重的安全风险。因此，研究对抗样本对于提高三维神经网络模型的鲁棒性、增强 AR 系统的稳定性具有重要意义。目前，大多数三维对抗攻击方法扰动整个点云以生成对抗样本，这不仅导致扰动成本偏高，而且在物理世界中重建相应的实际物体困难也变得更加困难。在本文中，我们提出了一种自适应的局部对抗攻击方法（AL-Adv），用于在三维点云上生成对抗点云。首先，我们分析三维网络模型的脆弱性并提取输入点云的显著区域，即脆弱区域。其次，我们设计了一种针对脆弱区域的自适应梯度攻击算法。该算法能够自适应地在点云坐标的不同方向上分配不同的扰动。实验结果表明，我们提出的方法 AL-Adv 相较于全局攻击方法使用更低的生成代价取得了更高的攻击成功率，同时表现出良好的不可感知性。</p>
+<p><strong>关键词</strong>：增强现实、三维对抗攻击、点云、局部区域攻击；</p>
+<p><strong>TODO</strong></p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">¶</a></h2>
+<p>近年来，随着深度学习技术的发展，AR 技术已与深度学习深度融合，例如二维和三维物体检测、识别等。在增强现实（AR）中，确定真实世界中物体的三维（3D）空间位置是一项重要任务，它直接影响用户的产品体验。为了确保虚拟物体更好地叠加在真实物体上，AR 系统对物体的实时识别和跟踪有更高的要求。基于深度学习方法的 AR 物体识别与跟踪（三维深度网络），作为增强现实的核心技术，已广泛应用于工业领域，为远程指导、维护和培训提供了直观高效的解决方案。然而，基于三维深度网络的 AR 物体识别与跟踪在实际应用过程中仍存在巨大的安全威胁。如果攻击者在现实世界中制造出对抗性物体，将很可能导致AR系统无法正常感知真实场景。</p>
+<p>三维点云的识别与跟踪是 AR 应用的重要支撑。AR 通过检测、识别和跟踪真实环境中的物体来实现对场景的感知，这是虚拟物体无缝叠加的基础。然而，之前的研究发现三维深度网络模型容易受到对抗样本的影响，导致模型产生错误的识别结果。对于输入的三维点云，通过对抗性扰动生成对抗样本，会导致三维深度网络模型给出错误的预测。如果三维网络模型受到对抗样本的攻击，AR 系统的三维识别与跟踪功能将无法正常工作，这对 AR 应用来说是一个巨大的风险。在三维点云中，对抗攻击主要分为两类：数字域和物理世界。</p>
+<p>在数字域中，对抗样本主要通过添加点或簇、删除点和扰动点来生成。生成的对抗样本需要在尽可能接近原始点云的同时，保持良好的三维特性，如平滑性和公平性。同时，对抗样本应对三维网络模型具有高攻击成功率。</p>
+<p>在物理世界中，三维对抗样本需要在真实场景中构建。例如，数字域中生成的对抗样本可以通过 3D 打印技术在现实世界中呈现，并用于攻击基于三维网络模型的人工智能系统。这种在物理世界中重建的对抗样本通常对人工智能系统（包括 AR 系统）构成更大的威胁。因此，本文主要研究如何生成三维点云的对抗样本，这对于三维网络模型的鲁棒性至关重要。三维网络模型的稳定识别与跟踪技术有助于提高 AR 系统的鲁棒性。</p>
+<p>在一般的三维网络模型中，训练和测试样本通常是良性的，这也导致模型在识别对抗样本时总是出错。因此，研究人员通常将对抗样本添加到训练集中，模型在训练过程中学习它们。这种方法可以有效地应对对抗样本对三维网络模型的威胁。我们主要关注如何生成高质量的三维点云对抗样本，这有助于提高 AR 系统的安全性。总之，生成的对抗样本的不可感知性越好，人眼就越难察觉。</p>
+<p>在本文中，当生成对抗样本时，我们关注三维点云的局部区域而不是整个点云。与攻击整个点云相比，通过攻击点云的局部区域生成的对抗样本在物理世界中具有更好的可操作性。因此，本文提出了一种自适应局部对抗攻击方法（<strong>A</strong>daptive <strong>L</strong>ocal <strong>Adv</strong>ersarial Attack, AL-Adv）来生成高质量的对抗点云。首先，我们引入博弈论的思想来分析三维网络模型。具体来说，使用 Shapley 值来分析三维网络模型的脆弱性并提取显著区域。每个区域使用一个 Shapley 值来表示其对网络模型识别结果的重要性。如果一个区域的显著性更强，三维网络模型在这个区域就更加脆弱。其次，我们设计了一种针对显著区域的自适应梯度攻击算法。攻击算法根据点云的梯度自适应地在三维坐标的每个方向上分配不同的扰动。为了验证生成对抗样本的有效性，我们将 AL-Adv 与几种流行的对抗攻击方法进行了比较。实验结果表明，所提出的 AL-Adv 比其他全局对抗攻击方法的攻击成功率更高。</p>
+<p>这项工作的主要贡献可以表述如下：</p>
+<ul>
+<li>现有的对抗攻击方法主要关注全局点云，而我们提出的 AL-Adv 方法更关注点云的局部区域。</li>
+<li>为了获得更高质量的三维对抗点云，我们为局部区域设计了一种新颖的自适应梯度攻击算法。</li>
+<li>与现有的全局对抗攻击方法相比，所提出的方法 AL-Adv 在局部区域实现了更高的攻击成功率。</li>
+</ul>
+<h2 id="related-work">Related Work<a class="headerlink" href="#related-work" title="Permanent link">¶</a></h2>
+<p>目前，AR 系统中使用的物体识别与跟踪方法主要分为两类：二维识别和三维识别。本文主要关注三维点云物体识别与跟踪方法对 AR 系统的影响。因此，本节介绍了数字域和物理世界中针对三维点云的对抗攻击相关工作。</p>
+<h3 id="21-digital-adversarial-attack">2.1 Digital adversarial attack<a class="headerlink" href="#21-digital-adversarial-attack" title="Permanent link">¶</a></h3>
+<p>在图像中，通过对输入图像应用对抗性扰动而获得的样本会导致深度网络模型产生错误的预测，此类样本被称为对抗样本。对于图像，已经出现了许多生成对抗样本的方法。在生成对抗样本时，攻击者的目标是在使其对人眼不可感知的同时实现高攻击成功率。在这个过程中通常会使用距离约束来限制对抗样本的生成。在三维点云中，许多对抗攻击方法是从图像扩展而来的。生成三维点云对抗样本最常见的方法是对输入点云进行扰动、删除和添加点。例如，Xiang 等人的研究扰动整个点云，使点云中的点偏离原始位置，以欺骗三维网络模型。此外，向输入点云中添加点簇或具有形状（如平面、球体等）的物体以生成对抗点云。Zheng 等人提出了一种新的对抗攻击方法，通过从输入点云中删除点来生成对抗样本。首先，该方法通过梯度生成输入点云的显著性图，代表每个点对模型预测结果的贡献。因此，为显著性高的点设计了相应的点删除算法，以有效生成对抗样本。随着删除点的数量增加，三维网络模型的识别结果会降低。为了确保三维网络模型正确工作，点删除操作相当于将点移动到点云的中心。为了增强对抗样本的转移性并使其更难以防御，Hamdi 等人提出了一种数据驱动的对抗攻击方法。该方法设计了一个新的损失函数来扰动输入点云。</p>
+<p>使用优化方法生成对抗样本是设计对抗攻击目标函数的另一种重要方式。Kim 等人提出了一种统一的三维点云对抗样本生成公式，以获得具有最小操作点的更不可感知的对抗点云。该方法统一了扰动点和添加点的两种对抗点云生成方法，并在生成对抗样本时使用了距离约束和点数约束。为了避免对抗样本中出现明显的离群点并保持三维物体的基本属性，Wen 等人设计了一种新颖的几何感知目标函数来生成对抗点云。然后，基于这个几何感知目标函数，通过正则化对抗损失，实现了一种基于优化的对抗攻击方法。该方法生成的对抗点云对三维网络模型更具危害性，更难以防御。然而，Huang 等人认为三维点云是高度结构化的数据，很难使用简单的约束来限制扰动。因此，他们的方法 SI-Adv 将原始点云转换到新的坐标系中，并约束点在切平面内的移动。此外，该方法使用新坐标系中的梯度来寻找最佳攻击方向，并构建了点云的显著性图。</p>
+<h3 id="22-physical-adversarial-attack">2.2 Physical adversarial attack<a class="headerlink" href="#22-physical-adversarial-attack" title="Permanent link">¶</a></h3>
+<p>目前，对于三维点云，数字对抗攻击是主要的研究方向，而在物理世界中的对抗攻击工作较少。在物理世界中现有的对抗攻击可以分为三类。第一类是通过数字模拟生成具有高攻击成功率的优质对抗样本，然后使用三维打印技术在现实世界中重建对抗物体。例如，Wen 等人首先使用对抗攻击方法生成对抗点云，并将对抗点云转换为网格。然后使用三维打印技术在现实世界中制作重建的对抗网格。最后，将打印出的真实物体重新扫描成点云，以测试三维网络模型的性能。第二类是在真实场景中扫描的点云数据中实施对抗攻击。例如，Tu 等人提出了一种对抗攻击方法，用于生成不同几何形状的对抗物体。将这些对抗物体放置在汽车点云的顶部可以欺骗激光雷达，导致三维物体识别网络无法检测到汽车。第三类是在物理世界中实现对抗攻击，导致激光雷达失效。Zhu 等人提出了一个对抗攻击框架，用于寻找现实世界中的攻击位置。在这些攻击位置放置任何具有反射表面的物体，如商业无人机，都会使目标物体对激光雷达不可见。这种攻击方法对现实世界中的自动驾驶系统构成了非常大的威胁。</p>
+<h2 id="method">Method<a class="headerlink" href="#method" title="Permanent link">¶</a></h2>
+<h3 id="31-vulnerability-analysis-of-3d-network-models">3.1 Vulnerability Analysis of 3D Network Models<a class="headerlink" href="#31-vulnerability-analysis-of-3d-network-models" title="Permanent link">¶</a></h3>
+<ul>
+<li>
+<p><strong>Shapley 值</strong></p>
+<p>我们更关心点云局部区域对网络模型输出的影响，而不是点云的全局结构。我们介绍了 Shapley 值如何应用于三维网络模型的脆弱性分析。Shapley 值是博弈论中使用的合理方法，用于解决合作收益的分配问题。假设有多个玩家参与游戏，不同的玩家会得到不同的奖励。在整个游戏过程中，多个玩家合作以获得最大奖励，一些玩家对最终奖励的贡献很大，而一些玩家的贡献较小。Shapley 值用于合理地将奖励分配给每个玩家，以确保公平性。</p>
+</li>
+<li>
+<p><strong>3D 深度网络的 Shapley 值</strong></p>
+<p>对于输入点云 <span class="arithmatex">\( x \)</span>，我们将其划分为 <span class="arithmatex">\( m \)</span> 个区域，记作 <span class="arithmatex">\( x(a_1, a_2, \ldots, a_k, \ldots, a_m) \)</span>，其中 <span class="arithmatex">\( a_i \)</span> 表示第 <span class="arithmatex">\( i \)</span> 个区域。所有区域的集合表示为 <span class="arithmatex">\( M = \{1, 2, \ldots, m\} \)</span>。给定一个训练好的 3D 网络模型，其输出表示为 <span class="arithmatex">\( g(\cdot) \)</span>。假设 <span class="arithmatex">\( S \subseteq M \)</span> 是某些区域的集合，当参与游戏的区域属于集合 <span class="arithmatex">\( S \)</span> 时，它们获得的奖励表示为 <span class="arithmatex">\( g(S) \)</span>。那么，输入点云的第 <span class="arithmatex">\( i \)</span> 个区域的 Shapley 值表示为 <span class="arithmatex">\( \phi(i) \)</span>。</p>
+<div class="arithmatex">\[ 
+\phi(i) = \sum_{S \subseteq M \setminus \{i\}} \frac{|S|!(m-|S|-1)!}{m!} \left( g(S \cup \{i\}) - g(S) \right).
+\tag{1}
+\]</div>
+<p>\phi(i) ) 表示输入点云的第 <span class="arithmatex">\( i \)</span> 个区域对 3D 网络模型识别结果的重要性。<span class="arithmatex">\( \phi(i) \)</span> 的值越高，第 <span class="arithmatex">\( i \)</span> 个区域对网络模型识别结果越重要。每个区域都使用 Shapley 值分配了一个显著值，这表明该区域对网络模型输出的重要性。也就是说，区域的显著值越高，其对模型识别结果的影响越大。对于 3D 网络模型，具有更高显著值的区域更容易被攻击影响。</p>
+<p>Shapley 值可用于分析 3D 点云深度网络模型的脆弱性并提取点云的显著区域，如图 2 所示。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/AL-Adv-salient-regions-visualization.png" data-desc-position="bottom"><img alt="" src="../images/AL-Adv-salient-regions-visualization.png"></a></p>
+<p class="caption">图 2：点云的显著区域。在 ModelNet40 上对 PointNet 进行了漏洞分析。</p>
+</li>
+</ul>
+<h3 id="32-generating-adversarial-point-clouds">3.2 Generating Adversarial Point Clouds<a class="headerlink" href="#32-generating-adversarial-point-clouds" title="Permanent link">¶</a></h3>
+<ul>
+<li>
+<p><strong>无目标攻击</strong></p>
+<p>在本文中，我们专注于三维网络模型的无目标攻击。对于一个包含 <span class="arithmatex">\( n \)</span> 个点的点云 <span class="arithmatex">\( \mathbf{x} \in \mathbb{R}^{n \times 3} \)</span>，其真实标签是 <span class="arithmatex">\( y \)</span>。三维神经网络模型 <span class="arithmatex">\( f \)</span> 能够正确识别 <span class="arithmatex">\( \mathbf{x} \)</span>，即 <span class="arithmatex">\( f(\mathbf{x}) = y \)</span>。我们的目标是找到一个点云 <span class="arithmatex">\( \mathbf{x}' \)</span>，使得三维神经网络模型 <span class="arithmatex">\( f \)</span> 的识别结果错误，也就是说 <span class="arithmatex">\( f(\mathbf{x}') \neq y \)</span>。此外，在生成 <span class="arithmatex">\( \mathbf{x}' \)</span> 的过程中，必须确保 <span class="arithmatex">\( \mathbf{x} \)</span> 和 <span class="arithmatex">\( \mathbf{x}' \)</span> 尽可能相似。这样的 <span class="arithmatex">\( \mathbf{x}' \)</span> 被称为对抗性示例，可以表示如下：</p>
+<div class="arithmatex">\[ 
+\min D(\mathbf{x}, \mathbf{x}') \quad \text{s.t.} \quad f(\mathbf{x}') \neq y, 
+\tag{2}
+\]</div>
+<p>其中 <span class="arithmatex">\( D \)</span> 代表 <span class="arithmatex">\( \mathbf{x} \)</span> 和 <span class="arithmatex">\( \mathbf{x}' \)</span> 之间的扰动度量，例如距离度量。生成的对抗性点云通过最小化度量 <span class="arithmatex">\( D \)</span> 来强制接近原始点云。度量 <span class="arithmatex">\( D \)</span> 的较小值表明对抗性点云 <span class="arithmatex">\( \mathbf{x}' \)</span> 更接近原始点云 <span class="arithmatex">\( \mathbf{x} \)</span>，并且更难以区分。</p>
+</li>
+<li>
+<p><strong>局部区域的对抗性攻击</strong></p>
+<p>我们已经使用了 Shapley 值对三维网络模型进行了脆弱性分析，并提取了易受攻击的区域。我们的目标不是攻击整个点云，而是仅攻击一定数量的易受攻击区域以生成对抗性示例。基于最显著区域的点云攻击方案如图 3 所示。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/AL-Adv-attack-pipelin.png" data-desc-position="bottom"><img alt="" src="../images/AL-Adv-attack-pipelin.png"></a>
+图 3：基于显著区域的点云攻击方案。在良性点云“椅子”的显著区域添加扰动以生成对抗性点云“扰动椅子”。良性点云“椅子”被正确识别，而对抗性点云“扰动椅子”被识别为“马桶”。</p>
+<p>大多数对抗性攻击方法的目的是扰动整个点云，然而，我们更关心点云的局部区域。因此，我们将原始点云划分为 <span class="arithmatex">\( m \)</span> 个区域，记为 <span class="arithmatex">\( \mathcal{x} = (a_1, a_2, \cdots, a_m) \)</span>，其中 <span class="arithmatex">\( a_i \)</span> 表示第 <span class="arithmatex">\( i \)</span> 个区域。假设区域 <span class="arithmatex">\( a_i \)</span> 的扰动为 <span class="arithmatex">\( e_i \)</span>，则对抗性点云 <span class="arithmatex">\( \mathcal{x}' \)</span> 可以表示为：</p>
+<div class="arithmatex">\[
+\mathcal{x}' = \{d_j | d_j = a_i + e_i|a_i \in \mathcal{x}\}.
+\tag{3}
+\]</div>
+<p>可以看出，<span class="arithmatex">\( \mathcal{x} \)</span> 和 <span class="arithmatex">\( \mathcal{x}' \)</span> 具有相同的结构，即对抗性点云 <span class="arithmatex">\( \mathcal{x}' = (a'_1, a'_2, \cdots, a'_m) \)</span>，其中 <span class="arithmatex">\( a'_i \)</span> 是通过对区域 <span class="arithmatex">\( a_i \)</span> 进行扰动得到的。
+因此，根据方程 (2)，三维点云的区域攻击可以表述如下：</p>
+<div class="arithmatex">\[
+\min C_{Region} = l(\mathcal{x}') + \lambda_1 * D(\mathcal{x}, \mathcal{x}') + \lambda_2 * P(\mathcal{x}, \mathcal{x}').
+\tag{4}
+\]</div>
+<p><span class="arithmatex">\( l(\mathcal{x}') \)</span> 是对抗损失，<span class="arithmatex">\( D(\mathcal{x}, \mathcal{x}') \)</span> 是原始点云 <span class="arithmatex">\( \mathcal{x} \)</span> 和对抗性点云 <span class="arithmatex">\( \mathcal{x}' \)</span> 之间的距离约束，<span class="arithmatex">\( \lambda_1 \)</span> 和 <span class="arithmatex">\( \lambda_2 \)</span> 是常数。在实际求解过程中，二分搜索法用于自动找到最优参数值 <span class="arithmatex">\( \lambda_1 \)</span>。<span class="arithmatex">\( P(\mathcal{x}, \mathcal{x}') \)</span> 表示与原始点云相比，被对抗性点云修改的点数。最后，通过解方程 (4) 生成对抗性示例。</p>
+</li>
+<li>
+<p><strong>感知性</strong></p>
+<p>当生成对抗性示例时，有必要使用相关约束以确保对抗性示例尽可能接近原始示例。使用距离约束是提高生成对抗性示例不可感知性的有效方法。本文使用 Chamfer 距离和 Hausdorff 距离，这两种距离在 3D 数据中很常见，来约束对抗性点云的生成。这两个距离约束也是衡量对抗性点云质量的重要指标。
+Chamfer 距离用于测量两个点集之间的差异。计算方法如下：</p>
+<div class="arithmatex">\[
+D_{\text{Chamfer}}(\mathbf{x}, \mathbf{x}') = \max \left\{ \frac{1}{n} \sum_{a \in \mathbf{x}} \min_{b \in \mathbf{x}'} \| b - a \|_2^2,\ \frac{1}{n'} \sum_{a \in \mathbf{x}'} \min_{b \in \mathbf{x}} \| a - b \|_2^2 \right\},
+\tag{5}
+\]</div>
+<p>其中 <span class="arithmatex">\( n \)</span> 代表原始点云 <span class="arithmatex">\( \mathbf{x} \)</span> 中的点数，<span class="arithmatex">\( n' \)</span> 代表与点云 <span class="arithmatex">\( \mathbf{x}' \)</span> 对应的点数。
+Hausdorff 距离是生成 3D 对抗性点云的一个常用约束项，它有效地减少了生成对抗性示例的外部点。通过这个距离约束，生成的对抗性示例可以在一定程度上变得更加不可感知，使它们更难区分。Hausdorff 距离的计算方法如下：</p>
+<div class="arithmatex">\[
+D_{\text{Hausdorff}}(\mathbf{x}, \mathbf{x}') = \max \left\{ \max_{a \in \mathbf{x}} \min_{b \in \mathbf{x}'} \| b - a \|_2,\ \max_{a \in \mathbf{x}'} \min_{b \in \mathbf{x}} \| a - b \|_2 \right\}.
+\tag{6}
+\]</div>
+<p>在这篇论文中，使用 Chamfer 距离和 Hausdorff 距离约束的局部对抗性攻击方法可以表达如下：  </p>
+<div class="arithmatex">\[
+D\left(\mathbf{x}, \mathbf{x}^{\prime}\right)=D_{\text {Chamfer }}\left(\mathbf{x}, \mathbf{x}^{\prime}\right)+D_{\text {Hausdorff }}\left(\mathbf{x}, \mathbf{x}^{\prime}\right).
+\tag{7}
+\]</div>
+</li>
+<li>
+<p><strong>对抗性损失</strong></p>
+<p>给定一个三维网络模型 <span class="arithmatex">\(f\)</span>，输入一个标记为 <span class="arithmatex">\(y\)</span> 的三维点云 <span class="arithmatex">\(x\)</span>，正确的预测结果是 <span class="arithmatex">\(f(x)=y\)</span>。在对输入点云的脆弱区域进行攻击以生成对抗性点云 <span class="arithmatex">\(x'\)</span> 后，我们的目标是通过以下方式使模型产生错误的输出，即使得 <span class="arithmatex">\(f\left(x^{\prime}\right) \neq y\)</span>。因此，我们使用对抗性损失来使模型无法正确识别对抗性点云。  </p>
+<div class="arithmatex">\[
+l\left(\mathbf{x}^{\prime}\right)=\max \left\{f_{y}\left(\mathbf{x}^{\prime}\right)-\max _{j \neq y} f_{j}\left(\mathbf{x}^{\prime}\right), 0\right\}.
+\tag{8}
+\]</div>
+<p>其中 <span class="arithmatex">\(y\)</span> 是原始点云 <span class="arithmatex">\(x\)</span> 的类别标签。<span class="arithmatex">\(f_y(x')\)</span> 表示三维网络模型将输入 <span class="arithmatex">\(x'\)</span> 识别为类别 <span class="arithmatex">\(y\)</span>。在这里，对抗性损失的实质是一种惩罚项。如果网络模型将对原始点云的真实类别的对抗性点云分类为其他类别，那么 <span class="arithmatex">\(l\left(x^{\prime}\right)&gt;0\)</span>，这需要施加惩罚。否则，<span class="arithmatex">\(l\left(x^{\prime}\right)=0\)</span>，对抗性损失将不起作用。</p>
+</li>
+</ul>
+<h3 id="33-adaptive-gradient-attack-algorithm">3.3 Adaptive gradient attack algorithm<a class="headerlink" href="#33-adaptive-gradient-attack-algorithm" title="Permanent link">¶</a></h3>
+<p>为了生成更有害的对抗性示例，本文设计了一种针对脆弱区域的适应性梯度攻击算法。</p>
+<p>根据对三维网络模型的脆弱性分析，只有在生成对抗性点云时才需要对点云中最脆弱的区域进行扰动。因此，需要对点云的所有区域的显著值进行排序。按降序排列不同区域的显著值，得到 <span class="arithmatex">\( x (p_1, p_2,..., p_k, p_m) \)</span>，其中 <span class="arithmatex">\( (p_1) &gt; (p_2) &gt; ... &gt; (p_k) &gt; (p_m) \)</span>。然后，对抗性攻击方法只需要扰动前 <span class="arithmatex">\( k \)</span> 个区域 <span class="arithmatex">\( (p_1, p_2,..., p_k) \)</span> 就能生成对抗性示例。</p>
+<p>三维点云的空间位置包括三个方向: <span class="arithmatex">\( x \)</span>, <span class="arithmatex">\( y \)</span> 和 <span class="arithmatex">\( z \)</span>。提出的自适应梯度攻击算法在干扰脆弱区域时会自动为每个方向分配干扰大小。首先，自适应梯度攻击算法计算每次迭代中对抗性点云的梯度 <span class="arithmatex">\( grad = \nabla_x C_{Region}(x, x') \)</span>。然后，在不同坐标轴方向的扰动大小的计算方法如下。为了避免歧义，我们将 <span class="arithmatex">\( x \)</span>、<span class="arithmatex">\( y \)</span> 和 <span class="arithmatex">\( z \)</span> 三轴分别记为 <span class="arithmatex">\( x^\star \)</span>、<span class="arithmatex">\( y^\star \)</span> 和 <span class="arithmatex">\( z^\star \)</span>。</p>
+<div class="arithmatex">\[ 
+e_{x^\star} = \frac{\left| grad_{x^\star} \right|}{\left| grad_{x^\star} \right| + \left| grad_{y^\star} \right| + \left| grad_{z^\star} \right|}, 
+\tag{9}
+\]</div>
+<div class="arithmatex">\[ 
+e_{y^\star} = \frac{\left| grad_{y^\star} \right|}{\left| grad_{x^\star} \right| + \left| grad_{y^\star} \right| + \left| grad_{z^\star} \right|}, 
+\tag{10}
+\]</div>
+<div class="arithmatex">\[ 
+e_{z^\star} = \frac{\left| grad_{z^\star} \right|}{\left| grad_{x^\star} \right| + \left| grad_{y^\star} \right| + \left| grad_{z^\star} \right|}. 
+\tag{11}
+\]</div>
+<p>在上面的等式中，<span class="arithmatex">\( grad_{x^\star} \)</span>、<span class="arithmatex">\( grad_{y^\star} \)</span> 和 <span class="arithmatex">\( grad_z^\star \)</span> 分别表示对抗性点云在 <span class="arithmatex">\( x \)</span>、<span class="arithmatex">\( y \)</span> 和 <span class="arithmatex">\( z \)</span> 三个轴上的梯度大小。我们将三维坐标轴的扰动大小之比记为 <span class="arithmatex">\( Ration = [e_{x^\star}, e_{y^\star}, e_{z^\star}] \)</span>。获得三维空间中各坐标轴的扰动大小比例后，在每次迭代的优化过程中会自动将扰动分配到不同的坐标轴上。更新对抗性点云的过程如下所示:</p>
+<div class="arithmatex">\[ 
+x' \leftarrow x + Ration \cdot \epsilon \cdot \text{sign}(grad) \cdot offset \cdot Region_{idx}, 
+\tag{12}
+\]</div>
+<p>其中参数 <span class="arithmatex">\(\epsilon\)</span> 是扰动大小，而 <span class="arithmatex">\(offset\)</span> 是需要优化的扰动量。<span class="arithmatex">\(Region_{idx}\)</span> 代表需要扰动的脆弱区域。<span class="arithmatex">\(sign\)</span> 是一个符号函数，具体的计算方法如下：  </p>
+<div class="arithmatex">\[
+\operatorname{sign}(k) = \begin{cases}
+1 &amp; k &gt; 0 \\
+0 &amp; k = 0 \\
+-1 &amp; k &lt; 0
+\end{cases}
+\tag{13}
+\]</div>
+<h3 id="34-adaptive-local-adversarial-attack-method">3.4 Adaptive local adversarial attack method<a class="headerlink" href="#34-adaptive-local-adversarial-attack-method" title="Permanent link">¶</a></h3>
+<p>在本文中，自适应局部对抗性攻击方法（AL-Adv）生成了更具破坏性的对抗性示例。我们提出的 AL-Adv 的具体实施过程如算法 1 所述。整个实施过程可以分为两个方面：首先，使用 Shapley 值对三维网络模型进行脆弱性分析，并从输入点云中提取显著区域。其次，确定输入点云的前 <span class="arithmatex">\(k\)</span> 个脆弱区域，并对这些脆弱区域应用自适应梯度攻击算法。最后，在迭代优化过程中找到最优的对抗性点云。</p>
+<h2 id="experiments">Experiments<a class="headerlink" href="#experiments" title="Permanent link">¶</a></h2>
+<h3 id="41-experimental-setup">4.1 Experimental setup<a class="headerlink" href="#41-experimental-setup" title="Permanent link">¶</a></h3>
+<ul>
+<li>
+<p><strong>数据集</strong></p>
+<p>本文评估了各种对抗攻击方法在 ModelNet40 数据集上的效果。ModelNet40 数据集在 3D 网络模型分类中非常流行，并且是主要的评估数据集之一。该数据集包含 40 个类别的 12311 个 CAD 模型。在特定的实验中，使用的数据是从这些 CAD 模型中通过均匀采样获得的点云。本文遵循先前工作中的实验设置，训练数据使用总共 9843 个点云，测试数据包含 2468 个点云。</p>
+</li>
+<li>
+<p><strong>实现细节</strong> </p>
+<p>在本文中，实验仅在 3D 点云分类模型上进行。我们采用 PointNet  作为被攻击的 3D 网络模型。遵循之前的设置，PointNet 的输入点云为 1024 个点。在实际实验中，我们从 ModelNet40 测试集中为每个类别选择 25 个样本进行实验。在模型漏洞分析期间，我们将输入点云分为 32 个区域，并为每个区域计算显著值。在生成对抗点云的过程中，我们使用 Adam 优化扰动，优化器的学习率设置为 0.01，动量设置为 0.9，扰动大小 <span class="arithmatex">\(\epsilon\)</span> 设置为 0.6。参数 <span class="arithmatex">\(\lambda_1\)</span> 在优化过程中使用二分法自动调整，<span class="arithmatex">\(\lambda_2\)</span> 设置为 0.15。本文提出的方法 AL-Adv 攻击的显著区域数量为五个。</p>
+</li>
+<li>
+<p><strong>评估指标</strong></p>
+<p>3D 对抗攻击方法的评估指标主要包括攻击成功率、Chamfer 距离、Hausdorff 距离以及在生成对抗样本时操纵的点数。本文采用这四个指标来衡量不同的对抗攻击方法。其中，攻击成功率越高越好，表明生成的对抗样本对网络模型的威胁越大。对于其他三个指标，越小越好。Chamfer 距离和 Hausdorff 距离衡量对抗样本与原始样本的相似度。操纵的点数代表生成对抗样本的成本。</p>
+</li>
+</ul>
+<h3 id="42-experimental-results">4.2 Experimental results<a class="headerlink" href="#42-experimental-results" title="Permanent link">¶</a></h3>
+<p>我们在 PointNet 上进行了对比实验。比较的方法包括近年来优秀的 3D 点云对抗攻击方法，分别由 Xiang 等人、Liu 等人、Wicker 等人、Zheng 等人、Kim 等人提出。根据 Kim 等人的设置，Xiang 等人提出的方法被修改为无目标攻击。Liu 等人提出的方法也被重新实现，分别表示为 Adversarial sink和 Adversarial stick。Wicker 等人通过移除点来生成对抗样本，这被修改为扰动，并实现了两种攻击方法 Random selection 和 Critical selection。Kim 等人使用了 Zheng 等人 的关键点选择策略，但将点移除操作修改为扰动操作，并根据点移除的规则实现了三种对抗攻击方法，即 Saliency map/critical frequency、Saliency map/low-score 和 Saliency map/high-score。</p>
+<p class="caption_table">表 1：当受害网络为 PointNet 时，不同对抗攻击方法在 ModelNet40 上的性能。注：“成功率”越高越好；“Chamfer 距离”越低越好；“Hausdorff 距离”越低越好。“#Points”代表扰动点的数量，越低越好。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/AL-Adv-table-result.png" data-desc-position="bottom"><img alt="" src="../images/AL-Adv-table-result.png"></a></p>
+<p>表 1 显示了不同对抗攻击方法的各种指标的对比。从表 1 可以看出，提出的方法 AL-Adv 实现了最高的攻击成功率，表明 AL-Adv 生成了更有害的对抗样本。同时，AL-Adv 方法操作的点数也相对较少，表明生成对抗样本的成本较低。在距离指标方面，Chamfer 距离和 Hausdorff 距离都相对较小，表明 AL-Adv 方法生成的对抗样本具有良好的不可感知性。</p>
+<p>在实验中，我们提出的对抗攻击方法（AL-Adv）针对点云的局部区域，并通过攻击显著区域生成对抗点云。所有其他比较方法都是全局对抗攻击方法。实验结果表明，提出的 AL-Adv 在仅操作 40 个点的情况下实现了最高的攻击成功率 92.92%。尽管 Kim 等人提出的方法仅通过操作 36 个点生成对抗样本，但该方法的攻击成功率为 89.38%。此外，“Adversarial sink” 操作了 1024 个点以获得 88.3% 的攻击成功率。尽管 “Critical selection” 方法仅使用 50 个点生成对抗样本，但攻击成功率仅为 18.99%，这表明对抗样本的质量较低。总之，提出的局部攻击方法（AL-Adv）比全局攻击方法实现了更高的攻击成功率，并且 AL-Adv 在整体上表现出色。</p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../images/AL-Adv-adv-examples-visualization.png" data-desc-position="bottom"><img alt="" src="../images/AL-Adv-adv-examples-visualization.png"></a></p>
+<p class="caption">图 4：在 ModelNet40 上通过不同的对抗攻击方法生成的对抗性点云。第一列和第二列是原始点云。第三列和第四列是由 Xiang 等人的攻击方法生成的对抗性点云。第五列和第六列是由提出的 AL-Adv 生成的对抗性点云。第三列和第五列中的对抗性点云来自第一列中的点云。第四列和第六列中的对抗性点云来自第二列中的点云。红点表示在生成对抗样本时的扰动点。黑点是没有被扰动的点。</p>
+<p>图 4 展示了由所提出的方法 AL-Adv 和 Xiang 等人提出的方法生成的对抗样本之间的比较。与原始点云相比，Xiang 等人生成的对抗样本需要操纵大量的点，并且容易产生明显的异常值，容易被检测到。然而，所提出的 AL-Adv 在生成对抗样本时操作的点数较少，并且生成的对抗样本具有更好的不可感知性。为了突出对抗点云之间的差异，我们用红色标记扰动点并增大红色点的大小。</p>
+<p>在性能评估方面，攻击成功率是一个重要的指标。攻击成功率越高，生成的对抗样本对网络模型造成的威胁就越大。因此，所提出的 AL-Adv 生成的对抗样本往往对网络模型的危害更大。此外，生成对抗样本的成本和不可感知性也是重要的指标。总而言之，所提出的 AL-Adv 以较小的成本生成了具有良好的视觉感知的对抗样本，并且这些对抗样本更有害。</p>
+<h2 id="discussion">Discussion<a class="headerlink" href="#discussion" title="Permanent link">¶</a></h2>
+<ul>
+<li>
+<p><strong>增强现实（AR）系统的风险</strong></p>
+<p>随着增强现实（AR）技术的发展，许多行业已经开始开发和应用 AR 产品。因此，现实生活中使用的 AR 系统的安全问题值得注意。作为 AR 技术的重要支撑，三维识别与跟踪对产品安全有着重要影响。点云由于具有良好的数据特性，在三维物体识别与跟踪中得到了广泛应用。对于 AR 的发展，点云数据的运用也是一个重要的方向。此外，深度网络模型容易受到对抗样本的恶意攻击，导致模型无法正确识别物体。因此，本文聚焦于三维点云上 AR 系统的安全性，并提出了一种更具危害性的对抗点云生成方法 AL-Adv。</p>
+</li>
+<li>
+<p><strong>局部区域攻击的优势</strong></p>
+<p>目前大多数对抗点云生成方法攻击整个点云，导致生成成本较大。因此，我们更加关注点云的局部区域。分析三维网络模型的脆弱性更有利于实施对抗攻击。理论上，我们只需要攻击网络模型的脆弱部分就可以实现对抗攻击。因此，所提出的方法 AL-Adv 仅攻击三维网络模型对输入点云最脆弱的区域。结果表明，AL-Adv以较小的成本生成对抗点云，并且对抗点云更具危害性。</p>
+</li>
+<li>
+<p><strong>自适应梯度攻击的优势</strong></p>
+<p>现有的基于梯度的对抗攻击方法在扰动点云时，通常是在梯度方向上实现攻击，这使得一个点的不同维度具有相同大小的扰动。然而，这是不合理的，一个点的不同维度应该有不同的扰动大小。因此，本文设计了一种自适应梯度攻击算法，使得每个点在不同维度上根据梯度自动设置扰动大小。实验表明，自适应梯度攻击算法实现了更高的攻击成功率。</p>
+</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">¶</a></h2>
+<p>现实世界中的对抗物体导致增强现实（AR）系统无法感知其周围环境。因此，对抗物体对 AR 技术的发展有重要影响。在本文中，我们提出了一种自适应局部对抗攻击方法（AL-Adv）来生成三维对抗样本。首先，我们对点云的局部区域进行攻击。然后，我们引入沙普利值来分析三维网络模型的脆弱性，并提取输入点云的显著区域。最后，我们设计了一种自适应梯度攻击算法来攻击这些显著区域。自适应梯度攻击算法在不同的坐标轴方向上自适应地分配不同的扰动大小。实验结果表明，所提出的方法 AL-Adv 比全局攻击方法获得了更高的攻击成功率，这表明我们的方法生成的对抗样本对三维网络模型更有害。因此，在模型训练阶段，三维网络模型学习对抗样本以增强模型鲁棒性，这是进一步提高 AR 系统安全性的基础。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/the-full" target="_blank" rel="noopener" title="zhazi on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.tooltips", "navigation.tabs", "navigation.instant", "navigation.indexes", "navigation.top", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../_static/js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

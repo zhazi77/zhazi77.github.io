@@ -1,0 +1,3151 @@
+<!DOCTYPE html><html lang="zh" class="no-js"><head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A personal knowledge base for storing notes, research, and technical documentation">
+      
+      
+        <meta name="author" content="Zhazi">
+      
+      
+      
+        <link rel="prev" href="../useful_blog/">
+      
+      
+        <link rel="next" href="../3D-Adv-02-CW-Attack-framework/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>三维点云对抗攻击反思录(一) —— C&amp;W Attack - Zhazi's Memo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Sans:300,300i,400,400i,700,700i%7CFira+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Fira Sans";--md-code-font:"Fira Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../_static/css/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cw-attack" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../.." title="Zhazi's Memo" class="md-header__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Zhazi's Memo
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              三维点云对抗攻击反思录(一) —— C&amp;W Attack
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="white" data-md-color-accent="red" aria-label="切换至深色模式" type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="切换至深色模式" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"></path></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="blue" aria-label="切换至浅色模式" type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="切换至浅色模式" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"></path></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="标签" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  浅入浅出
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../record/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  实践记录
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../go-reflection/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  学习笔记
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../paper/ACE/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  论文阅读
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../translation/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  文献翻译
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../algorithm/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  算法
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Zhazi's Memo" class="md-nav__button md-logo" aria-label="Zhazi's Memo" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"></path></svg>
+
+    </a>
+    Zhazi's Memo
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/the-full/the-full.github.io" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"></path></svg>
+  </div>
+  <div class="md-source__repository">
+    Memo
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2">
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    浅入浅出
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    浅入浅出
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/why-some-downloads-resume-and-others-dont/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    为什么有的下载能接着下，有的断了就得重来？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../se2se/how-clash-for-linux-provides-proxy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Clash for Linux 是怎么提供网关代理的？
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../record/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    实践记录
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    实践记录
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/common_problem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    普通问题归档
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/waymo_perprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    waymo 数据预处理遇到的问题
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    基于 OpenPCDet 在 Waymo 数据集上训练模型
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/openpcdet_waymo_process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    对 Waymo 数据集做加工
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/luogu-U207568/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    杂记：洛谷 U207568
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-TinyRAG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：RAG
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../record/LLM-Milvus/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LLM 学习：Milvus
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    学习笔记
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    学习笔记
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../go-reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言基础：反射
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssh 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rsync/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    rsync 笔记
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../modelnet40/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ModelNet40 归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../useful_linux_app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Linux 有用软件归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../useful_blog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    优质博客归纳
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(一) —— C&amp;W Attack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        背景知识
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="背景知识">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对抗样本
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基于优化的对抗样本搜索方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于优化的对抗样本搜索方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        盒约束问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        双目标优化问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cw-attack_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C&amp;W Attack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C&amp;W Attack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        问题转化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        超参二分搜索
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cw-attack_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C&amp;W Attack 代码剖析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C&amp;W Attack 代码剖析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        双循环
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        外循环：维护全局最优解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内循环：维护局部最优解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        搜索区间的更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../3D-Adv-02-CW-Attack-framework/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三维点云对抗攻击反思录(二) —— C&amp;W Attack 框架
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    论文阅读
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    论文阅读
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/ACE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ACE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/GradCraft/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GradCraft
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../paper/occupancy_network/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Occupancy Network
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../translation/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    文献翻译
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    文献翻译
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/Go-Data-Structures-Interfaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言数据结构：接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/The-Laws-of-Reflection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Go 语言的反射定律
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/Scale-with-Redis-Cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    使用 Redis 集群进行扩展
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/A-plain-english-introduction-to-CAP-Theorem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CAP 定理的简明介绍
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/tetris/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    BUILDING CONTROLLERS FOR TETRIS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/tetris2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Learning Tetris Using the Noisy Cross-Entropy Method
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/CWA/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CWA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/SR-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SR-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/AL-Adv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AL-Adv
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/PartA2/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PartA2
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/kafka/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kafka
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/Cyber-Physical-Systems-Security-A-Survey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cyber-Physical Systems Security—A Survey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/sok-semantic-ai-security-in-ad/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: On the Semantic AI Security in Autonomous Driving
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../translation/sok-adv-for-network-intrusion-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SoK: Realistic Adversarial Attacks and Defenses for Intelligent Network Intrusion Detection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../algorithm/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    算法
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    算法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_2">
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    归档
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    归档
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    三月 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7_3">
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    分类
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    分类
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/algorithm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Algorithm
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../algorithm/category/note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Note
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        背景知识
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="背景知识">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        对抗样本
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        基于优化的对抗样本搜索方法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="基于优化的对抗样本搜索方法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        盒约束问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        双目标优化问题
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cw-attack_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C&amp;W Attack
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C&amp;W Attack">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        问题转化
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        超参二分搜索
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cw-attack_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        C&amp;W Attack 代码剖析
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="C&amp;W Attack 代码剖析">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        双循环
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        外循环：维护全局最优解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内循环：维护局部最优解
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        搜索区间的更新
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        总结
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags">
+    
+      
+      
+      
+      
+        <span class="md-tag">Adversarial Attack</span>
+      
+    
+      
+      
+      
+      
+        <span class="md-tag">Rethingking</span>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/the-full/the-full.github.io/edit/master/docs/note/3D-Adv-01-CW-Attack.md" title="编辑此页" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/the-full/the-full.github.io/raw/master/docs/note/3D-Adv-01-CW-Attack.md" title="查看本页的源代码" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
+    </a>
+  
+
+
+<h1 id="cw-attack">三维点云对抗攻击反思录(一) —— C&amp;W Attack<a class="headerlink" href="#cw-attack" title="Permanent link">¶</a></h1>
+<blockquote>
+<p>随着三维视觉的发展，对抗攻击研究已然向三维点云发展。目前已经有工作对隐蔽性、可迁移性、最小生成代价等对抗样本经典问题进行了探讨，并出现了一些面向真实世界场景的对抗攻击方法。然而，在我研究学习过程中，我发现相关三维点云对抗攻击（之后简称点云对抗）的代码相比于图像中的对抗攻击要复杂的多。这导致我往往需要花很多的精力在那些与论文核心方法无关的代码上，而不能直入主题。我还时常对现有研究的评估体系感到疑惑，在我看来，一些工作的评估方式存在漏洞，甚至可能会导致错误的认识。在经历了数次困惑到理解的循环后，我最终决定整理并记录下学习过程中的一些想法，也算是给短暂的研究生涯画上一个句号。</p>
+</blockquote>
+<p>在对抗攻击研究中，<strong><a href="https://arxiv.org/abs/1608.04644">C&amp;W Attack</a></strong> 是一项具有里程碑意义的工作。作者结合多目标优化的思想设计了全新的对抗攻击框架 C&amp;W Attack，突破了（当时）最新的防御方法：防御性蒸馏，改变了社区对神经网络鲁棒性的认识。在此之后，有许多工作都建立在 C&amp;W Attack 上。点云对抗领域的首篇<a href="https://arxiv.org/abs/1809.07016">工作</a>就是 C&amp;W Attack 在三维视觉上的精神续作，之后一系列的点云对抗研究也大都沿用了这一算法框架。</p>
+<blockquote>
+<p>个人认为这一现象的背后有两方面因素：一是研究的惯性。在已经被证明有效的工作上改进是一种低门槛、高收益的科研方式。在前人的工作上改进可以避开很多前人踩过的坑，从而专注于自己的研究目标。二是点云模态的特殊性。人类对形变的感知比对颜色变化的感知更为敏感，因此点云中对抗样本需要设置更小的扰动，而 <strong>C&amp;W Attack</strong> 中正好包含了许多优化扰动大小的设计。此外，C&amp;W Attack 不仅是一种攻击方法，更是一个算法框架，这给后续工作提供了更多的改进空间 <del>适合水论文</del>。</p>
+</blockquote>
+<p>总之，<strong>C&amp;W Attack</strong> 在点云对抗中具有重要地位。然而，各研究在借鉴和改进该方法时，通常会根据自身需求对算法的设计进行取舍与调整。这导致尽管许多论文都声称基于 C&amp;W Attack，但在具体实现上存在差异，为初学者的学习带来了挑战。因此，本系列的第一篇以 C&amp;W Attack 开始，旨在梳理 C&amp;W Attack 在点云对抗中的应用。具体而言，本文将从算法设计的角度讲解 C&amp;W Attack 的关键点，主要包含两部分内容：</p>
+<ol>
+<li>理论层面，怎么理解 C&amp;W Attack? </li>
+<li>实践层面，C&amp;W Attack 代码的哪些地方需要关注? </li>
+</ol>
+<p>希望读者阅读结束后，能对 C&amp;W Attack 有一个比较清晰的理解。</p>
+<details class="info">
+<summary>参考文献</summary>
+<ul>
+<li><a href="https://arxiv.org/abs/1608.04644">Towards Evaluating the Robustness of Neural Networks</a></li>
+</ul>
+</details>
+<!-- more -->
+
+<h2 id="_1">背景知识<a class="headerlink" href="#_1" title="Permanent link">¶</a></h2>
+<h3 id="_2">对抗样本<a class="headerlink" href="#_2" title="Permanent link">¶</a></h3>
+<p>对抗样本是指经过人为修改或添加微小扰动后的输入数据，尽管这些修改对人类而言几乎不可见，但却足以使机器学习模型产生错误判断。例如，在图像识别任务中，添加几乎不可见的噪声可能会让模型将一只猫错误地识别为一只狗。</p>
+<p>从对抗样本的经典定义中，可以提炼出如下两个要求：</p>
+<ol>
+<li><strong>对抗性（Adversarial）</strong>：对抗样本 <span class="arithmatex">\(x^{\text{adv}}\)</span> 能够误导目标模型，使其输出错误的预测结果。</li>
+<li><strong>不可感知性（Imperceptible）</strong>：对于人类而言，很难判断输入是否被扰动，即对抗样本与原始输入在感知上几乎无法区分。</li>
+</ol>
+<p>从设计时的思路来看，对抗样本的生成方法的设计思路可以粗略的分为两类：基于优化的思路和基于分布的思路。前者从最优化的角度思考问题，将对抗样本建模为各种优化问题，然后设计算法来求解优化问题，所得到的解就是对抗样本。这类方法所设计的求解算法通常基于迭代的对抗样本搜索算法；后者从概率论的角度思考问题，将对抗样本建模为概率分布，先设法获取对抗样本分布，然后采样对抗样本分布来获得对抗样本。</p>
+<p><strong>注</strong>：C&amp;W Attack 是基于优化的方法，本系列也主要关注于基于优化的方法，不会涉及基于分布的方法。</p>
+<h3 id="_3">基于优化的对抗样本搜索方法<a class="headerlink" href="#_3" title="Permanent link">¶</a></h3>
+<p>基于优化的方法依据对抗样本的定义构建一个优化问题，然后通过求解优化问题的方法来制作对抗样本。主流的优化问题构建方式可以分为两种：<strong>建模为盒约束问题</strong>和<strong>建模为双目标优化问题</strong>。</p>
+<h4 id="_4">盒约束问题<a class="headerlink" href="#_4" title="Permanent link">¶</a></h4>
+<p>在这一类方法中，攻击者将对抗样本建模为一个具有盒约束的优化问题：</p>
+<div class="arithmatex">\[
+\begin{align}
+    \underset{\mathbf{x}^{\text{adv}}}{\arg\max}\quad &amp;{\mathcal{J}(f(\mathbf{x}^{\text{adv}}), y)} \\
+    \textrm{s.t.}\quad &amp;\Vert \mathbf{x}^{\text{adv}} - \mathbf{x}^{\text{ori}}\Vert_{\infty} &lt; \epsilon,
+\end{align}
+\tag{1}
+\]</div>
+<p>其中 <span class="arithmatex">\(f\)</span> 是目标模型，<span class="arithmatex">\(\mathcal{J}(\cdot, \cdot)\)</span> 表示交叉熵损失函数，<span class="arithmatex">\(\mathbf{x}^{\text{ori}}\)</span> 是具有真实标签 <span class="arithmatex">\(y\)</span> 的干净样本。攻击者的目标是在 <span class="arithmatex">\(\mathbf{x}^{\text{ori}}\)</span> 的 <span class="arithmatex">\(\ell_\infty\)</span> 邻域中找到一个对抗样本 <span class="arithmatex">\(\mathbf{x}^{\text{adv}}\)</span> 使得 <span class="arithmatex">\(\mathbf{x}^{\text{adv}}\)</span> 能误导 <span class="arithmatex">\(f\)</span> 。</p>
+<p>在实践中，通常将扰动 (<span class="arithmatex">\(\Delta = \mathbf{x}^{\text{adv}} - \mathbf{x}^{\text{ori}}\)</span>) 作为优化变量，并通过迭代算法来求解这个优化问题。例如，I-FGSM 中的扰动迭代公式为：</p>
+<div class="arithmatex">\[
+  \Delta_{i+1} = \Delta_i + \text{Clip}_\epsilon \left\{ \alpha \cdot \text{Sign} \left( \nabla \mathcal{J}(f(\mathbf{x}^{\text{ori}} + \Delta_i), y) \right) \right\}.
+\]</div>
+<p>其中，<span class="arithmatex">\(\text{Clip}_{\epsilon}(\cdot)\)</span> 表示将超出预算 <span class="arithmatex">\(\epsilon\)</span> 的部分裁剪到 <span class="arithmatex">\(\epsilon\)</span> 的操作（也被称为投影），<span class="arithmatex">\(\alpha\)</span> 是迭代步长。对于一个 <span class="arithmatex">\(T\)</span> 步的迭代过程，通常设置 <span class="arithmatex">\(\alpha=\epsilon / T\)</span></p>
+<h4 id="_5">双目标优化问题<a class="headerlink" href="#_5" title="Permanent link">¶</a></h4>
+<p>另一种方式是将对抗样本的两方面要求都视为优化目标，将对抗样本建模为一个双目标优化问题。这就是 C&amp;W Attack 所考虑的，作者将对抗性目标建模为：</p>
+<div class="arithmatex">\[
+\mathcal{L}_{adv} = \left(\max_{i\neq t}(f(\mathbf{x}^{\text{adv}})_{i})-f(\mathbf{x}^{\text{adv}})_{t}\right)^{+}
+\]</div>
+<p>其中，<span class="arithmatex">\(f(\cdot)_{i}\)</span> 表示 <span class="arithmatex">\(f\)</span> 输出的预测分数中 <span class="arithmatex">\(i\)</span> 类别的置信度。<span class="arithmatex">\((\cdot)^{+}\)</span> 是一个分段函数，将小于 0 的部分置为 0（等效于 ReLU)。另一方面，不可感知性目标被刻画为 <span class="arithmatex">\(p\)</span> 范数距离：</p>
+<div class="arithmatex">\[
+\mathcal{L}_{dis} = \Vert \mathbf{x}^{\text{adv}} - \mathbf{x}^{\text{ori}} \Vert_{p}
+\]</div>
+<p>通常（图像中）取 <span class="arithmatex">\(p=2\)</span>。综上，对抗样本被表述为如下双目标优化问题：</p>
+<div class="arithmatex">\[
+\begin{align}
+\min_{\mathbf{x}^{\text{adv}}} &amp; \quad \left(\max_{i\neq t}(f(\mathbf{x}^{\text{adv}})_{i})-f(\mathbf{x}^{\text{adv}})_{t}\right)^{+} \\
+\min_{\mathbf{x}^{\text{adv}}} &amp; \quad \Vert \mathbf{x}^{\text{adv}} - \mathbf{x} \Vert_{p} \\
+\end{align}
+\tag{2}
+\]</div>
+<p>与盒约束限制扰动必须在一定范围内不同，这种问题建模方式允许在对抗样本难以找到时增大扰动大小以实现攻击，因此这一设计也被称为<strong>软约束</strong>，相应地，前面的盒约束则被称为<strong>硬约束</strong>。</p>
+<p>背景知识补充完毕，接下来正式进入 C&amp;W Attack 的介绍。</p>
+<h2 id="cw-attack_1">C&amp;W Attack<a class="headerlink" href="#cw-attack_1" title="Permanent link">¶</a></h2>
+<p>C&amp;W Attack 求解上述双目标优化问题的思路是常规的：<strong>通过加权将双目标转化为单目标，然后通过超参搜索技术寻找最好的权值。</strong></p>
+<h3 id="_6">问题转化<a class="headerlink" href="#_6" title="Permanent link">¶</a></h3>
+<p>C&amp;W Attack 引入了一个权重系数 <span class="arithmatex">\(c\)</span> 将问题转化为如下形式：</p>
+<div class="arithmatex">\[
+\begin{align}
+&amp;\underset{\mathbf{x}^{\text{adv}}}{\arg\min} \quad c \mathcal{L}_{adv} + \mathcal{L}_{dis} \\
+\Longrightarrow \quad &amp;\underset{\mathbf{x}^{\text{adv}}}{\arg\min} \quad c \cdot \left(\max_{i\neq t}(f(\mathbf{x}^{\text{adv}})_{i})-f(\mathbf{x}^{\text{adv}})_{t}\right)^{+} + \Vert \mathbf{x}^{\text{adv}} - \mathbf{x}^{\text{ori}} \Vert_{p}
+\end{align}
+\tag{3}
+\]</div>
+<div class="admonition warning">
+<p class="admonition-title">注意</p>
+<p>这里权重 <span class="arithmatex">\(c\)</span> 加在对抗性目标上，后面将提到的点云对抗中的设置与此不同。</p>
+</div>
+<p>在解决上述方程时，较小的 <span class="arithmatex">\(c\)</span> 会使得所得到的解 <span class="arithmatex">\(\mathbf{x}^{\text{adv}}\)</span> 更具不可感知性，但同时也使得优化问题可行集更小，增大了求解失败的概率。相反，较大的 <span class="arithmatex">\(c\)</span> 提供了更大的可行集，代价是放宽了对不可感知性的约束。不同的干净样本 <span class="arithmatex">\(\mathbf{x}^{ori}\)</span> 对应的最佳权重 <span class="arithmatex">\(c\)</span> 不同，需要依据求解结果确定。因此 C&amp;W Attack 引入了<strong>超参数搜索技术</strong>，使用<strong>二分搜索</strong>来寻找最优的 <span class="arithmatex">\(c\)</span>。</p>
+<h3 id="_7">超参二分搜索<a class="headerlink" href="#_7" title="Permanent link">¶</a></h3>
+<p>一个理想的 <span class="arithmatex">\(c\)</span> 应该满足：如果减少它，则公式 3. 中的优化问题无解，换言之，<strong>理想的 <span class="arithmatex">\(c\)</span> 的值是使得公式 3. 中问题有解的最小值</strong>。此时，得到的样本具有最好的不可感知性，且能够实施攻击。</p>
+<p>为了找到最优的 <span class="arithmatex">\( c \)</span>，C&amp;W Attack 采用了二分搜索技术。这里先简述超参搜索的过程，然后再结合代码看具体如何实现。为了理解方便，不妨先考虑单个样本的情况。</p>
+<p>首先，固定 <span class="arithmatex">\(c\)</span>，求解公式 3. 所示的优化问题，得到当前问题的解。然后，检查解的有效性（即样本是否能够攻击模型）。如果本轮攻击成功，则放大 <span class="arithmatex">\(c\)</span>，让下一轮攻击目标向对抗性目标倾斜；反之，如果本轮攻击失败，则缩小 <span class="arithmatex">\(c\)</span>，让下一轮攻击目标向不可感知性目标倾斜。最后，重复上述过程，寻找一个最佳的 <span class="arithmatex">\(c\)</span>。算法流程如下：</p>
+<ol>
+<li><strong>初始化搜索范围</strong>：设定 <span class="arithmatex">\( c \)</span> 的初始搜索范围，例如 <span class="arithmatex">\( c_{\text{min}} = 0.1 \)</span> 和 <span class="arithmatex">\( c_{\text{max}} = 10^5 \)</span>。</li>
+<li><strong>计算中值</strong>：在当前搜索范围内计算 <span class="arithmatex">\( c \)</span> 的中值 <span class="arithmatex">\( c_{\text{mid}} = \frac{c_{\text{min}} + c_{\text{max}}}{2} \)</span>。</li>
+<li><strong>评估中值</strong>：令 <span class="arithmatex">\( c = c_{\text{mid}} \)</span>，求解公式 3. 中的优化问题生成对抗样本，并评估其是否成功欺骗模型。</li>
+<li><strong>更新搜索范围</strong>：<ul>
+<li>如果对抗样本攻击成功，则减小 <span class="arithmatex">\( c \)</span> 的搜索上界，令 <span class="arithmatex">\( c_{\text{max}} = c_{\text{mid}} \)</span>。</li>
+<li>如果对抗样本攻击失败，则增加 <span class="arithmatex">\( c \)</span> 的搜索下界，令 <span class="arithmatex">\( c_{\text{min}} = c_{\text{mid}} \)</span>。</li>
+</ul>
+</li>
+<li><strong>重复步骤 2-4</strong>：直到满足特定的结束条件。</li>
+</ol>
+<p>而对公式 3. 中优化问题的求解可以使用梯度下降法，算法流程如下：</p>
+<ol>
+<li><strong>初始化对抗样本</strong>：初始化对抗样本 <span class="arithmatex">\(\mathbf{x}^{adv}_0\)</span>，通常设置为原始样本 <span class="arithmatex">\(\mathbf{x}^{ori}\)</span>。</li>
+<li><strong>计算梯度</strong>：计算损失函数 <span class="arithmatex">\(c \mathcal{L}_{adv} + \mathcal{L}_{dis}\)</span> 关于 <span class="arithmatex">\(\mathbf{x}^{adv}\)</span> 的梯度 <span class="arithmatex">\(\nabla_{\mathbf{x}} (c \mathcal{L}_{adv} + \mathcal{L}_{dis})\)</span>。</li>
+<li>
+<p><strong>更新对抗样本</strong>：根据梯度下降的更新规则，更新对抗样本：</p>
+<div class="arithmatex">\[
+\mathbf{x}^{adv}_{t+1} = \mathbf{x}^{adv}_t - \eta \cdot \nabla_{\mathbf{x}} (c \cdot \mathcal{L}_{adv} + \mathcal{L}_{dis})
+\]</div>
+<p>其中，<span class="arithmatex">\(\eta\)</span> 是学习率，控制着更新的步长。</p>
+</li>
+<li>
+<p><strong>重复步骤 2-3</strong>：直到满足特定的结束条件。</p>
+</li>
+</ol>
+<h2 id="cw-attack_2">C&amp;W Attack 代码剖析<a class="headerlink" href="#cw-attack_2" title="Permanent link">¶</a></h2>
+<p>现在我们走出单个样本输入带来的舒适区，考虑多个样本的情况。实际上，C&amp;W Attack 的<a href="https://github.com/carlini/nn_robust_attacks/tree/master">代码实现</a>就考虑了 batch 输入，这也是其复杂性的来源之一。下面结合代码仓库下 <code>l2_attack.py</code> 的代码(见 <code class="language-python highlight"><span class="n">attack_batch</span><span class="p">()</span></code> 方法) 进一步的剖析 C&amp;W Attack。 </p>
+<h3 id="_8">双循环<a class="headerlink" href="#_8" title="Permanent link">¶</a></h3>
+<p>C&amp;W Attack 由内外两个循环组成：内循环固定 <span class="arithmatex">\(c\)</span> 的值对公式 3. 中的优化问题进行求解（梯度下降法）。外循环进行超参数搜索，依据内循环的求解结果调整 <span class="arithmatex">\(c\)</span> 的值（二分搜索）。如下所示：</p>
+<p></p><div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-172">172</a></span>
+<span class="normal"><a href="#__codelineno-0-173">173</a></span>
+<span class="normal"><a href="#__codelineno-0-174">174</a></span>
+<span class="normal"><a href="#__codelineno-0-175">175</a></span>
+<span class="normal"><a href="#__codelineno-0-176">176</a></span>
+<span class="normal"><a href="#__codelineno-0-177">177</a></span>
+<span class="normal"><a href="#__codelineno-0-178">178</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-172"><a id="__codelineno-0-172" name="__codelineno-0-172"></a><span class="hll">        <span class="k">for</span> <span class="n">outer_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BINARY_SEARCH_STEPS</span><span class="p">):</span>
+</span></span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">o_bestl2</span><span class="p">)</span>
+</span><span id="__span-0-174"><a id="__codelineno-0-174" name="__codelineno-0-174"></a>            <span class="c1"># completely reset adam's internal state.</span>
+</span><span id="__span-0-175"><a id="__codelineno-0-175" name="__codelineno-0-175"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+</span><span id="__span-0-176"><a id="__codelineno-0-176" name="__codelineno-0-176"></a>            <span class="n">batch</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-0-177"><a id="__codelineno-0-177" name="__codelineno-0-177"></a>            <span class="n">batchlab</span> <span class="o">=</span> <span class="n">labs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-0-178"><a id="__codelineno-0-178" name="__codelineno-0-178"></a>            <span class="c1"># ......</span>
+</span></code></pre></div></td></tr></tbody></table></div>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-192">192</a></span>
+<span class="normal"><a href="#__codelineno-1-193">193</a></span>
+<span class="normal"><a href="#__codelineno-1-194">194</a></span>
+<span class="normal"><a href="#__codelineno-1-195">195</a></span>
+<span class="normal"><a href="#__codelineno-1-196">196</a></span>
+<span class="normal"><a href="#__codelineno-1-197">197</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-192"><a id="__codelineno-1-192" name="__codelineno-1-192"></a><span class="hll">            <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_ITERATIONS</span><span class="p">):</span>
+</span></span><span id="__span-1-193"><a id="__codelineno-1-193" name="__codelineno-1-193"></a>                <span class="c1"># perform the attack </span>
+</span><span id="__span-1-194"><a id="__codelineno-1-194" name="__codelineno-1-194"></a>                <span class="n">_</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">l2s</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">nimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> 
+</span><span id="__span-1-195"><a id="__codelineno-1-195" name="__codelineno-1-195"></a>                                                         <span class="bp">self</span><span class="o">.</span><span class="n">l2dist</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> 
+</span><span id="__span-1-196"><a id="__codelineno-1-196" name="__codelineno-1-196"></a>                                                         <span class="bp">self</span><span class="o">.</span><span class="n">newimg</span><span class="p">])</span>
+</span><span id="__span-1-197"><a id="__codelineno-1-197" name="__codelineno-1-197"></a>            <span class="c1"># ......</span>
+</span></code></pre></div></td></tr></tbody></table></div><p></p>
+<p>这里，<code>MAX_ITERATIONS</code> 参数控制梯度下降的迭代次数，<code>BINARY_SEARCH_STEPS</code> 参数控制超参搜索的搜索次数。</p>
+<p>为了后续表述方便，这里下两个定义：</p>
+<ol>
+<li>
+<p><strong>全局最优解</strong>：全局最优解是指在所有可能的解中，满足对抗性目标的前提下，不可感知性（通常通过 <span class="arithmatex">\(L_2\)</span> 距离衡量）最佳的解。在 C&amp;W Attack 的上下文中，全局最优解是指在整个二分搜索过程中，所有尝试的权重系数 <span class="arithmatex">\(c\)</span> 下生成的对抗样本中，具有最小 <span class="arithmatex">\(L_2\)</span> 距离且成功欺骗模型的样本。</p>
+</li>
+<li>
+<p><strong>局部最优解</strong>：局部最优解是指在特定的权重系数 <span class="arithmatex">\(c\)</span> 下，通过梯度下降法在当前搜索空间内找到的，满足对抗性目标的前提下，不可感知性最佳的解。在 C&amp;W Attack 的上下文中，局部最优解是指在每个固定的 <span class="arithmatex">\(c\)</span> 值下，通过梯度下降法生成的对抗样本中，具有最小 <span class="arithmatex">\(L_2\)</span> 距离且成功欺骗模型的样本。</p>
+</li>
+</ol>
+<p>C&amp;W Attack 的目标是获得全局最优解，而为了获得全局最优解，C&amp;W Attack 维护了两部分记录：<strong>全局最优解记录</strong>和<strong>局部最优解记录</strong>。</p>
+<h3 id="_9">外循环：维护全局最优解<a class="headerlink" href="#_9" title="Permanent link">¶</a></h3>
+<p>外循环维护了全局最优解，即在整个搜索过程中找到的最佳对抗样本。这包含两部分逻辑：</p>
+<ol>
+<li><strong>记录初始化</strong>：在开始二分搜索之前，初始化全局最优解记录，包括最优的 <span class="arithmatex">\(L_2\)</span> 距离（<code>o_bestl2</code>）、模型预测分数（<code>o_bestscore</code>）和对抗样本（<code>o_bestattack</code>）。</li>
+</ol>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-167">167</a></span>
+<span class="normal"><a href="#__codelineno-2-168">168</a></span>
+<span class="normal"><a href="#__codelineno-2-169">169</a></span>
+<span class="normal"><a href="#__codelineno-2-170">170</a></span>
+<span class="normal"><a href="#__codelineno-2-171">171</a></span>
+<span class="normal"><a href="#__codelineno-2-172">172</a></span>
+<span class="normal"><a href="#__codelineno-2-173">173</a></span>
+<span class="normal"><a href="#__codelineno-2-174">174</a></span>
+<span class="normal"><a href="#__codelineno-2-175">175</a></span>
+<span class="normal"><a href="#__codelineno-2-176">176</a></span>
+<span class="normal"><a href="#__codelineno-2-177">177</a></span>
+<span class="normal"><a href="#__codelineno-2-178">178</a></span>
+<span class="normal"><a href="#__codelineno-2-179">179</a></span>
+<span class="normal"><a href="#__codelineno-2-180">180</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-167"><a id="__codelineno-2-167" name="__codelineno-2-167"></a>        <span class="c1"># the best l2, score, and image attack</span>
+</span><span id="__span-2-168"><a id="__codelineno-2-168" name="__codelineno-2-168"></a><span class="hll">        <span class="n">o_bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></span><span id="__span-2-169"><a id="__codelineno-2-169" name="__codelineno-2-169"></a><span class="hll">        <span class="n">o_bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></span><span id="__span-2-170"><a id="__codelineno-2-170" name="__codelineno-2-170"></a><span class="hll">        <span class="n">o_bestattack</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></span><span id="__span-2-171"><a id="__codelineno-2-171" name="__codelineno-2-171"></a>
+</span><span id="__span-2-172"><a id="__codelineno-2-172" name="__codelineno-2-172"></a>        <span class="k">for</span> <span class="n">outer_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BINARY_SEARCH_STEPS</span><span class="p">):</span>
+</span><span id="__span-2-173"><a id="__codelineno-2-173" name="__codelineno-2-173"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">o_bestl2</span><span class="p">)</span>
+</span><span id="__span-2-174"><a id="__codelineno-2-174" name="__codelineno-2-174"></a>            <span class="c1"># completely reset adam's internal state.</span>
+</span><span id="__span-2-175"><a id="__codelineno-2-175" name="__codelineno-2-175"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+</span><span id="__span-2-176"><a id="__codelineno-2-176" name="__codelineno-2-176"></a>            <span class="n">batch</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-2-177"><a id="__codelineno-2-177" name="__codelineno-2-177"></a>            <span class="n">batchlab</span> <span class="o">=</span> <span class="n">labs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-2-178"><a id="__codelineno-2-178" name="__codelineno-2-178"></a>
+</span><span id="__span-2-179"><a id="__codelineno-2-179" name="__codelineno-2-179"></a>            <span class="n">bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span><span id="__span-2-180"><a id="__codelineno-2-180" name="__codelineno-2-180"></a>            <span class="n">bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></code></pre></div></td></tr></tbody></table></div>
+<ol>
+<li><strong>最优解更新</strong>：对于每个固定的 <span class="arithmatex">\(c\)</span>，内循环会生成一个对抗样本。如果这个样本的 <span class="arithmatex">\(L_2\)</span> 距离小于当前全局最优解的 <span class="arithmatex">\(L_2\)</span> 距离，并且成功欺骗了模型，则更新全局最优解记录。</li>
+</ol>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-213">213</a></span>
+<span class="normal"><a href="#__codelineno-3-214">214</a></span>
+<span class="normal"><a href="#__codelineno-3-215">215</a></span>
+<span class="normal"><a href="#__codelineno-3-216">216</a></span>
+<span class="normal"><a href="#__codelineno-3-217">217</a></span>
+<span class="normal"><a href="#__codelineno-3-218">218</a></span>
+<span class="normal"><a href="#__codelineno-3-219">219</a></span>
+<span class="normal"><a href="#__codelineno-3-220">220</a></span>
+<span class="normal"><a href="#__codelineno-3-221">221</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-213"><a id="__codelineno-3-213" name="__codelineno-3-213"></a>                <span class="c1"># adjust the best result found so far</span>
+</span><span id="__span-3-214"><a id="__codelineno-3-214" name="__codelineno-3-214"></a>                <span class="k">for</span> <span class="n">e</span><span class="p">,(</span><span class="n">l2</span><span class="p">,</span><span class="n">sc</span><span class="p">,</span><span class="n">ii</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l2s</span><span class="p">,</span><span class="n">scores</span><span class="p">,</span><span class="n">nimg</span><span class="p">)):</span>
+</span><span id="__span-3-215"><a id="__codelineno-3-215" name="__codelineno-3-215"></a>                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span><span id="__span-3-216"><a id="__codelineno-3-216" name="__codelineno-3-216"></a>                        <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-3-217"><a id="__codelineno-3-217" name="__codelineno-3-217"></a>                        <span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span><span id="__span-3-218"><a id="__codelineno-3-218" name="__codelineno-3-218"></a><span class="hll">                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span></span><span id="__span-3-219"><a id="__codelineno-3-219" name="__codelineno-3-219"></a><span class="hll">                        <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span></span><span id="__span-3-220"><a id="__codelineno-3-220" name="__codelineno-3-220"></a><span class="hll">                        <span class="n">o_bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span></span><span id="__span-3-221"><a id="__codelineno-3-221" name="__codelineno-3-221"></a><span class="hll">                        <span class="n">o_bestattack</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+</span></span></code></pre></div></td></tr></tbody></table></div>
+<p>代码中 <code>e</code> 表示当前样本的序号，<code>l2</code> 表示当前样本的 <span class="arithmatex">\(L_2\)</span> 距离，<code>sc</code> 表示模型对当前样本的预测结果，<code>ii</code> 表示当前样本的对抗样本。<code class="language-python highlight"><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">]</span></code> 表示当前样本的标签，<code>compare(sc, np.argmax(batchlab[e]))</code> 判断模型对当前样本的预测结果是否与当前样本的标签相同。</p>
+<h3 id="_10">内循环：维护局部最优解<a class="headerlink" href="#_10" title="Permanent link">¶</a></h3>
+<details class="question">
+<summary>为什么要维护局部最优解</summary>
+<p>维护局部最优解是二分搜索的需要，在二分搜索时会依据本轮内循环得到的局部最优解是否攻击成功来更新搜索区间。</p>
+</details>
+<p>内循环维护了局部最优解，即在当前 <span class="arithmatex">\(c\)</span> 值下找到的最佳对抗样本。同样包含两部分逻辑：</p>
+<ol>
+<li><strong>记录初始化</strong>：在本轮梯度下降迭代开始前，初始化局部最优解记录，包括最优的 <span class="arithmatex">\(L_2\)</span> 距离（<code>bestl2</code>）和模型预测分数（<code>bestscore</code>）。对抗样本本身就是在内循环中迭代更新的，因此不需要额外记录。</li>
+</ol>
+<p></p><div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-167">167</a></span>
+<span class="normal"><a href="#__codelineno-4-168">168</a></span>
+<span class="normal"><a href="#__codelineno-4-169">169</a></span>
+<span class="normal"><a href="#__codelineno-4-170">170</a></span>
+<span class="normal"><a href="#__codelineno-4-171">171</a></span>
+<span class="normal"><a href="#__codelineno-4-172">172</a></span>
+<span class="normal"><a href="#__codelineno-4-173">173</a></span>
+<span class="normal"><a href="#__codelineno-4-174">174</a></span>
+<span class="normal"><a href="#__codelineno-4-175">175</a></span>
+<span class="normal"><a href="#__codelineno-4-176">176</a></span>
+<span class="normal"><a href="#__codelineno-4-177">177</a></span>
+<span class="normal"><a href="#__codelineno-4-178">178</a></span>
+<span class="normal"><a href="#__codelineno-4-179">179</a></span>
+<span class="normal"><a href="#__codelineno-4-180">180</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-167"><a id="__codelineno-4-167" name="__codelineno-4-167"></a>        <span class="c1"># the best l2, score, and image attack</span>
+</span><span id="__span-4-168"><a id="__codelineno-4-168" name="__codelineno-4-168"></a>        <span class="n">o_bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span><span id="__span-4-169"><a id="__codelineno-4-169" name="__codelineno-4-169"></a>        <span class="n">o_bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span><span id="__span-4-170"><a id="__codelineno-4-170" name="__codelineno-4-170"></a>        <span class="n">o_bestattack</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span><span class="o">*</span><span class="n">batch_size</span>
+</span><span id="__span-4-171"><a id="__codelineno-4-171" name="__codelineno-4-171"></a>
+</span><span id="__span-4-172"><a id="__codelineno-4-172" name="__codelineno-4-172"></a>        <span class="k">for</span> <span class="n">outer_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BINARY_SEARCH_STEPS</span><span class="p">):</span>
+</span><span id="__span-4-173"><a id="__codelineno-4-173" name="__codelineno-4-173"></a>            <span class="nb">print</span><span class="p">(</span><span class="n">o_bestl2</span><span class="p">)</span>
+</span><span id="__span-4-174"><a id="__codelineno-4-174" name="__codelineno-4-174"></a>            <span class="c1"># completely reset adam's internal state.</span>
+</span><span id="__span-4-175"><a id="__codelineno-4-175" name="__codelineno-4-175"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+</span><span id="__span-4-176"><a id="__codelineno-4-176" name="__codelineno-4-176"></a>            <span class="n">batch</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-4-177"><a id="__codelineno-4-177" name="__codelineno-4-177"></a>            <span class="n">batchlab</span> <span class="o">=</span> <span class="n">labs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-4-178"><a id="__codelineno-4-178" name="__codelineno-4-178"></a>
+</span><span id="__span-4-179"><a id="__codelineno-4-179" name="__codelineno-4-179"></a><span class="hll">            <span class="n">bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></span><span id="__span-4-180"><a id="__codelineno-4-180" name="__codelineno-4-180"></a><span class="hll">            <span class="n">bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">batch_size</span>
+</span></span></code></pre></div></td></tr></tbody></table></div>
+2. <strong>最优解更新</strong>：在梯度下降的每一步，生成一个新的对抗样本。如果这个样本的 <span class="arithmatex">\(L_2\)</span> 距离小于当前局部最优解的 <span class="arithmatex">\(L_2\)</span> 距离，并且成功欺骗了模型，则更新局部最优解记录。<p></p>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-213">213</a></span>
+<span class="normal"><a href="#__codelineno-5-214">214</a></span>
+<span class="normal"><a href="#__codelineno-5-215">215</a></span>
+<span class="normal"><a href="#__codelineno-5-216">216</a></span>
+<span class="normal"><a href="#__codelineno-5-217">217</a></span>
+<span class="normal"><a href="#__codelineno-5-218">218</a></span>
+<span class="normal"><a href="#__codelineno-5-219">219</a></span>
+<span class="normal"><a href="#__codelineno-5-220">220</a></span>
+<span class="normal"><a href="#__codelineno-5-221">221</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-213"><a id="__codelineno-5-213" name="__codelineno-5-213"></a>                <span class="c1"># adjust the best result found so far</span>
+</span><span id="__span-5-214"><a id="__codelineno-5-214" name="__codelineno-5-214"></a>                <span class="k">for</span> <span class="n">e</span><span class="p">,(</span><span class="n">l2</span><span class="p">,</span><span class="n">sc</span><span class="p">,</span><span class="n">ii</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l2s</span><span class="p">,</span><span class="n">scores</span><span class="p">,</span><span class="n">nimg</span><span class="p">)):</span>
+</span><span id="__span-5-215"><a id="__codelineno-5-215" name="__codelineno-5-215"></a><span class="hll">                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span></span><span id="__span-5-216"><a id="__codelineno-5-216" name="__codelineno-5-216"></a><span class="hll">                        <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span></span><span id="__span-5-217"><a id="__codelineno-5-217" name="__codelineno-5-217"></a><span class="hll">                        <span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span></span><span id="__span-5-218"><a id="__codelineno-5-218" name="__codelineno-5-218"></a>                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span><span id="__span-5-219"><a id="__codelineno-5-219" name="__codelineno-5-219"></a>                        <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-5-220"><a id="__codelineno-5-220" name="__codelineno-5-220"></a>                        <span class="n">o_bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span><span id="__span-5-221"><a id="__codelineno-5-221" name="__codelineno-5-221"></a>                        <span class="n">o_bestattack</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+</span></code></pre></div></td></tr></tbody></table></div>
+<h3 id="_11">搜索区间的更新<a class="headerlink" href="#_11" title="Permanent link">¶</a></h3>
+<p>在 C&amp;W Attack 实施过程中，为了找到最佳的权重 <span class="arithmatex">\( c \)</span>，算法需要自适应地调整每个样本的搜索区间。初始时，所有样本的搜索区间均被统一设置为 [0, 1e10]，而权重 <span class="arithmatex">\( c \)</span> 则被初始化为 1。见代码 162 行：</p>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-162">162</a></span>
+<span class="normal"><a href="#__codelineno-6-163">163</a></span>
+<span class="normal"><a href="#__codelineno-6-164">164</a></span>
+<span class="normal"><a href="#__codelineno-6-165">165</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-162"><a id="__codelineno-6-162" name="__codelineno-6-162"></a>        <span class="c1"># set the lower and upper bounds accordingly</span>
+</span><span id="__span-6-163"><a id="__codelineno-6-163" name="__codelineno-6-163"></a><span class="hll">        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>
+</span></span><span id="__span-6-164"><a id="__codelineno-6-164" name="__codelineno-6-164"></a><span class="hll">        <span class="n">CONST</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_const</span>
+</span></span><span id="__span-6-165"><a id="__codelineno-6-165" name="__codelineno-6-165"></a><span class="hll">        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span><span class="o">*</span><span class="mf">1e10</span>
+</span></span></code></pre></div></td></tr></tbody></table></div>
+<p>这里 <code>lower_bound</code>, <code>upper_bound</code>, <code>CONST</code> 三个变量记录了当前 batch 中每个样本的搜索区间和本轮权重值。</p>
+<p>在每轮外循环结束时，算法会基于本轮内循环的攻击结果对搜索区间进行更新。前面讨论过这个更新过程，不过实际代码实现中的更新规则略有不同。具体如下：</p>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-223">223</a></span>
+<span class="normal"><a href="#__codelineno-7-224">224</a></span>
+<span class="normal"><a href="#__codelineno-7-225">225</a></span>
+<span class="normal"><a href="#__codelineno-7-226">226</a></span>
+<span class="normal"><a href="#__codelineno-7-227">227</a></span>
+<span class="normal"><a href="#__codelineno-7-228">228</a></span>
+<span class="normal"><a href="#__codelineno-7-229">229</a></span>
+<span class="normal"><a href="#__codelineno-7-230">230</a></span>
+<span class="normal"><a href="#__codelineno-7-231">231</a></span>
+<span class="normal"><a href="#__codelineno-7-232">232</a></span>
+<span class="normal"><a href="#__codelineno-7-233">233</a></span>
+<span class="normal"><a href="#__codelineno-7-234">234</a></span>
+<span class="normal"><a href="#__codelineno-7-235">235</a></span>
+<span class="normal"><a href="#__codelineno-7-236">236</a></span>
+<span class="normal"><a href="#__codelineno-7-237">237</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-223"><a id="__codelineno-7-223" name="__codelineno-7-223"></a>            <span class="c1"># adjust the constant as needed</span>
+</span><span id="__span-7-224"><a id="__codelineno-7-224" name="__codelineno-7-224"></a>            <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+</span><span id="__span-7-225"><a id="__codelineno-7-225" name="__codelineno-7-225"></a><span class="hll">                <span class="k">if</span> <span class="n">compare</span><span class="p">(</span><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">]))</span> <span class="ow">and</span> <span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+</span></span><span id="__span-7-226"><a id="__codelineno-7-226" name="__codelineno-7-226"></a>                    <span class="c1"># success, divide const by two</span>
+</span><span id="__span-7-227"><a id="__codelineno-7-227" name="__codelineno-7-227"></a>                    <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">],</span><span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+</span><span id="__span-7-228"><a id="__codelineno-7-228" name="__codelineno-7-228"></a><span class="hll">                    <span class="k">if</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e9</span><span class="p">:</span>
+</span></span><span id="__span-7-229"><a id="__codelineno-7-229" name="__codelineno-7-229"></a>                        <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+</span><span id="__span-7-230"><a id="__codelineno-7-230" name="__codelineno-7-230"></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-7-231"><a id="__codelineno-7-231" name="__codelineno-7-231"></a>                    <span class="c1"># failure, either multiply by 10 if no solution found yet</span>
+</span><span id="__span-7-232"><a id="__codelineno-7-232" name="__codelineno-7-232"></a>                    <span class="c1">#          or do binary search with the known upper bound</span>
+</span><span id="__span-7-233"><a id="__codelineno-7-233" name="__codelineno-7-233"></a>                    <span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">],</span><span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+</span><span id="__span-7-234"><a id="__codelineno-7-234" name="__codelineno-7-234"></a><span class="hll">                    <span class="k">if</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e9</span><span class="p">:</span>
+</span></span><span id="__span-7-235"><a id="__codelineno-7-235" name="__codelineno-7-235"></a>                        <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+</span><span id="__span-7-236"><a id="__codelineno-7-236" name="__codelineno-7-236"></a>                    <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-7-237"><a id="__codelineno-7-237" name="__codelineno-7-237"></a>                        <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">10</span>
+</span></code></pre></div></td></tr></tbody></table></div>
+<p>先看 225 行，<code>bestscore</code> 记录了模型对每个解的预测结果，<code>batchlab</code> 记录了每个样本的标签，<code class="language-python highlight"><span class="n">compare</span><span class="p">(</span><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">]))</span></code> 比较将模型的预测结果与真值标签进行比较，判断是否攻击成功。这里额外判断 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span></code> 的原因是，如果梯度下降中每一步都没有攻击成功，则有 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span></code> 的值为 -1，这会导致 <code class="language-python highlight"><span class="n">compre</span><span class="p">()</span></code> 误判攻击成功。</p>
+<details class="note">
+<summary>225 行可以使用更简单的条件</summary>
+<p>实际上 225 行只需要判断 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span></code> 就足够了。因为如果条件成立，就说明本轮有进入过 217 行的更新（内循环中只有这一处更新），而每次进入时必然有 <code class="language-python highlight"><span class="n">l2</span> <span class="o">&lt;</span> <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">]))</span></code> 成立，因此 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span></code> 成立时，225 行的中左半边的条件一定也成立。</p>
+<p><strong>补充</strong>：记命题 <span class="arithmatex">\(A\)</span> 为 <code class="language-python highlight"><span class="n">compare</span><span class="p">(</span><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">]))</span></code>, 命题 <span class="arithmatex">\(B\)</span> 为 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span></code>，依据上面的分析，我们有 <span class="arithmatex">\(A \rightarrow B\)</span> 因此有 <span class="arithmatex">\(A \land B \equiv A\)</span>。也即 225 行使用的条件与 <code class="language-python highlight"><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span></code> 等价。</p>
+<div class="language-python highlight"><table class="highlighttable"><tbody><tr><th colspan="2" class="filename"><span class="filename">l2_attack.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-213">213</a></span>
+<span class="normal"><a href="#__codelineno-8-214">214</a></span>
+<span class="normal"><a href="#__codelineno-8-215">215</a></span>
+<span class="normal"><a href="#__codelineno-8-216">216</a></span>
+<span class="normal"><a href="#__codelineno-8-217">217</a></span>
+<span class="normal"><a href="#__codelineno-8-218">218</a></span>
+<span class="normal"><a href="#__codelineno-8-219">219</a></span>
+<span class="normal"><a href="#__codelineno-8-220">220</a></span>
+<span class="normal"><a href="#__codelineno-8-221">221</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-213"><a id="__codelineno-8-213" name="__codelineno-8-213"></a>                <span class="c1"># adjust the best result found so far</span>
+</span><span id="__span-8-214"><a id="__codelineno-8-214" name="__codelineno-8-214"></a>                <span class="k">for</span> <span class="n">e</span><span class="p">,(</span><span class="n">l2</span><span class="p">,</span><span class="n">sc</span><span class="p">,</span><span class="n">ii</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l2s</span><span class="p">,</span><span class="n">scores</span><span class="p">,</span><span class="n">nimg</span><span class="p">)):</span>
+</span><span id="__span-8-215"><a id="__codelineno-8-215" name="__codelineno-8-215"></a>                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span><span id="__span-8-216"><a id="__codelineno-8-216" name="__codelineno-8-216"></a>                        <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-8-217"><a id="__codelineno-8-217" name="__codelineno-8-217"></a><span class="hll">                        <span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span></span><span id="__span-8-218"><a id="__codelineno-8-218" name="__codelineno-8-218"></a>                    <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])):</span>
+</span><span id="__span-8-219"><a id="__codelineno-8-219" name="__codelineno-8-219"></a>                        <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-8-220"><a id="__codelineno-8-220" name="__codelineno-8-220"></a>                        <span class="n">o_bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span><span id="__span-8-221"><a id="__codelineno-8-221" name="__codelineno-8-221"></a>                        <span class="n">o_bestattack</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+</span></code></pre></div></td></tr></tbody></table></div>
+</details>
+<p>读者如果有兴趣的话，不妨带着上面的认识把下面带注释版本的 <code>attack_batch()</code> 过一遍（建议复制到自己的 IDE 中查看），应该会有更深刻的理解。</p>
+<details class="note">
+<summary>attack_batch 代码(带注释)</summary>
+<p><strong>TODO: 加上注释</strong> </p>
+<div class="language-python highlight"><span class="filename">l2_attack.py</span><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">attack_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imgs</span><span class="p">,</span> <span class="n">labs</span><span class="p">):</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="sd">"""</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="sd">    对一批输入图像执行 C&amp;W L2 对抗攻击。</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="sd">    参数:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="sd">        imgs: 原始输入数据（如图像），形状为 [batch_size, ...]，值域通常为 [0, 1] 或 [-1, 1]</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="sd">        labs: 对应的真实标签（one-hot 或整数形式）</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="sd">    返回:</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="sd">        o_bestattack: 成功生成的对抗样本列表，每个样本在满足攻击成功的前提下具有最小 L2 扰动</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="sd">    """</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">        </span><span class="sd">"""</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="sd">        判断模型输出 x 是否满足攻击成功条件（针对目标类 y）。</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="sd">        - 若为非目标攻击（默认）：要求预测结果 ≠ 真实标签</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="sd">        - 若为目标攻击（TARGETED=True）：要求预测结果 == 目标标签</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="sd">        此外，若启用了 CONFIDENCE（置信度 margin），则需确保预测分数差超过该阈值。</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="sd">        """</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)):</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>            <span class="c1"># x 是 logits 向量（未经过 softmax）</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TARGETED</span><span class="p">:</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>                <span class="c1"># 目标攻击：目标类得分需比其他所有类高至少 CONFIDENCE</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>                <span class="n">x</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONFIDENCE</span>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-9-29"><a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>                <span class="c1"># 非目标攻击：真实类得分需比次高类低至少 CONFIDENCE</span>
+</span><span id="__span-9-30"><a id="__codelineno-9-30" name="__codelineno-9-30" href="#__codelineno-9-30"></a>                <span class="n">x</span><span class="p">[</span><span class="n">y</span><span class="p">]</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONFIDENCE</span>
+</span><span id="__span-9-31"><a id="__codelineno-9-31" name="__codelineno-9-31" href="#__codelineno-9-31"></a>            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># 取 argmax 作为最终预测</span>
+</span><span id="__span-9-32"><a id="__codelineno-9-32" name="__codelineno-9-32" href="#__codelineno-9-32"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">TARGETED</span><span class="p">:</span>
+</span><span id="__span-9-33"><a id="__codelineno-9-33" name="__codelineno-9-33" href="#__codelineno-9-33"></a>            <span class="k">return</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span>
+</span><span id="__span-9-34"><a id="__codelineno-9-34" name="__codelineno-9-34" href="#__codelineno-9-34"></a>        <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-9-35"><a id="__codelineno-9-35" name="__codelineno-9-35" href="#__codelineno-9-35"></a>            <span class="k">return</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">y</span>
+</span><span id="__span-9-36"><a id="__codelineno-9-36" name="__codelineno-9-36" href="#__codelineno-9-36"></a>
+</span><span id="__span-9-37"><a id="__codelineno-9-37" name="__codelineno-9-37" href="#__codelineno-9-37"></a>    <span class="n">batch_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+</span><span id="__span-9-38"><a id="__codelineno-9-38" name="__codelineno-9-38" href="#__codelineno-9-38"></a>
+</span><span id="__span-9-39"><a id="__codelineno-9-39" name="__codelineno-9-39" href="#__codelineno-9-39"></a>    <span class="c1"># === 步骤1：将输入映射到 tanh 空间 ===</span>
+</span><span id="__span-9-40"><a id="__codelineno-9-40" name="__codelineno-9-40" href="#__codelineno-9-40"></a>    <span class="c1"># C&amp;W 使用 tanh 变换约束输出在合法像素/坐标范围内（如 [0,1]）</span>
+</span><span id="__span-9-41"><a id="__codelineno-9-41" name="__codelineno-9-41" href="#__codelineno-9-41"></a>    <span class="c1"># 公式反推：x = boxmul * tanh(w) + boxplus，其中 w 是优化变量</span>
+</span><span id="__span-9-42"><a id="__codelineno-9-42" name="__codelineno-9-42" href="#__codelineno-9-42"></a>    <span class="n">imgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctanh</span><span class="p">((</span><span class="n">imgs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxplus</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">boxmul</span> <span class="o">*</span> <span class="mf">0.999999</span><span class="p">)</span>
+</span><span id="__span-9-43"><a id="__codelineno-9-43" name="__codelineno-9-43" href="#__codelineno-9-43"></a>
+</span><span id="__span-9-44"><a id="__codelineno-9-44" name="__codelineno-9-44" href="#__codelineno-9-44"></a>    <span class="c1"># === 初始化二分搜索边界 ===</span>
+</span><span id="__span-9-45"><a id="__codelineno-9-45" name="__codelineno-9-45" href="#__codelineno-9-45"></a>    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>          <span class="c1"># 每个样本的 c 下界</span>
+</span><span id="__span-9-46"><a id="__codelineno-9-46" name="__codelineno-9-46" href="#__codelineno-9-46"></a>    <span class="n">CONST</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_const</span>  <span class="c1"># 当前轮次使用的权重 c</span>
+</span><span id="__span-9-47"><a id="__codelineno-9-47" name="__codelineno-9-47" href="#__codelineno-9-47"></a>    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e10</span>    <span class="c1"># 每个样本的 c 上界</span>
+</span><span id="__span-9-48"><a id="__codelineno-9-48" name="__codelineno-9-48" href="#__codelineno-9-48"></a>
+</span><span id="__span-9-49"><a id="__codelineno-9-49" name="__codelineno-9-49" href="#__codelineno-9-49"></a>    <span class="c1"># === 全局最优解记录（跨所有 outer_step）===</span>
+</span><span id="__span-9-50"><a id="__codelineno-9-50" name="__codelineno-9-50" href="#__codelineno-9-50"></a>    <span class="n">o_bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span> <span class="o">*</span> <span class="n">batch_size</span>              <span class="c1"># 最小 L2 距离（全局）</span>
+</span><span id="__span-9-51"><a id="__codelineno-9-51" name="__codelineno-9-51" href="#__codelineno-9-51"></a>    <span class="n">o_bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">batch_size</span>             <span class="c1"># 对应的模型预测结果（-1 表示尚未成功）</span>
+</span><span id="__span-9-52"><a id="__codelineno-9-52" name="__codelineno-9-52" href="#__codelineno-9-52"></a>    <span class="n">o_bestattack</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">imgs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span> <span class="o">*</span> <span class="n">batch_size</span>  <span class="c1"># 对抗样本本身</span>
+</span><span id="__span-9-53"><a id="__codelineno-9-53" name="__codelineno-9-53" href="#__codelineno-9-53"></a>
+</span><span id="__span-9-54"><a id="__codelineno-9-54" name="__codelineno-9-54" href="#__codelineno-9-54"></a>    <span class="c1"># === 外层循环：二分搜索最优权重 c ===</span>
+</span><span id="__span-9-55"><a id="__codelineno-9-55" name="__codelineno-9-55" href="#__codelineno-9-55"></a>    <span class="k">for</span> <span class="n">outer_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">BINARY_SEARCH_STEPS</span><span class="p">):</span>
+</span><span id="__span-9-56"><a id="__codelineno-9-56" name="__codelineno-9-56" href="#__codelineno-9-56"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"当前全局最优 L2 距离:"</span><span class="p">,</span> <span class="n">o_bestl2</span><span class="p">)</span>
+</span><span id="__span-9-57"><a id="__codelineno-9-57" name="__codelineno-9-57" href="#__codelineno-9-57"></a>
+</span><span id="__span-9-58"><a id="__codelineno-9-58" name="__codelineno-9-58" href="#__codelineno-9-58"></a>        <span class="c1"># 重置优化器（如 Adam）的状态，避免历史梯度干扰</span>
+</span><span id="__span-9-59"><a id="__codelineno-9-59" name="__codelineno-9-59" href="#__codelineno-9-59"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">)</span>
+</span><span id="__span-9-60"><a id="__codelineno-9-60" name="__codelineno-9-60" href="#__codelineno-9-60"></a>
+</span><span id="__span-9-61"><a id="__codelineno-9-61" name="__codelineno-9-61" href="#__codelineno-9-61"></a>        <span class="c1"># 获取当前 batch 数据（支持动态 batch）</span>
+</span><span id="__span-9-62"><a id="__codelineno-9-62" name="__codelineno-9-62" href="#__codelineno-9-62"></a>        <span class="n">batch</span> <span class="o">=</span> <span class="n">imgs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-9-63"><a id="__codelineno-9-63" name="__codelineno-9-63" href="#__codelineno-9-63"></a>        <span class="n">batchlab</span> <span class="o">=</span> <span class="n">labs</span><span class="p">[:</span><span class="n">batch_size</span><span class="p">]</span>
+</span><span id="__span-9-64"><a id="__codelineno-9-64" name="__codelineno-9-64" href="#__codelineno-9-64"></a>
+</span><span id="__span-9-65"><a id="__codelineno-9-65" name="__codelineno-9-65" href="#__codelineno-9-65"></a>        <span class="c1"># === 局部最优解记录（仅限当前 c 值下的 inner loop）===</span>
+</span><span id="__span-9-66"><a id="__codelineno-9-66" name="__codelineno-9-66" href="#__codelineno-9-66"></a>        <span class="n">bestl2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e10</span><span class="p">]</span> <span class="o">*</span> <span class="n">batch_size</span>
+</span><span id="__span-9-67"><a id="__codelineno-9-67" name="__codelineno-9-67" href="#__codelineno-9-67"></a>        <span class="n">bestscore</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">batch_size</span>
+</span><span id="__span-9-68"><a id="__codelineno-9-68" name="__codelineno-9-68" href="#__codelineno-9-68"></a>
+</span><span id="__span-9-69"><a id="__codelineno-9-69" name="__codelineno-9-69" href="#__codelineno-9-69"></a>        <span class="c1"># 特殊处理：最后一轮使用上界 c 再尝试一次（提高成功率）</span>
+</span><span id="__span-9-70"><a id="__codelineno-9-70" name="__codelineno-9-70" href="#__codelineno-9-70"></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">repeat</span> <span class="ow">and</span> <span class="n">outer_step</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">BINARY_SEARCH_STEPS</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="__span-9-71"><a id="__codelineno-9-71" name="__codelineno-9-71" href="#__codelineno-9-71"></a>            <span class="n">CONST</span> <span class="o">=</span> <span class="n">upper_bound</span>
+</span><span id="__span-9-72"><a id="__codelineno-9-72" name="__codelineno-9-72" href="#__codelineno-9-72"></a>
+</span><span id="__span-9-73"><a id="__codelineno-9-73" name="__codelineno-9-73" href="#__codelineno-9-73"></a>        <span class="c1"># 将当前 batch、标签、c 值注入计算图</span>
+</span><span id="__span-9-74"><a id="__codelineno-9-74" name="__codelineno-9-74" href="#__codelineno-9-74"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">,</span> <span class="p">{</span>
+</span><span id="__span-9-75"><a id="__codelineno-9-75" name="__codelineno-9-75" href="#__codelineno-9-75"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assign_timg</span><span class="p">:</span> <span class="n">batch</span><span class="p">,</span>
+</span><span id="__span-9-76"><a id="__codelineno-9-76" name="__codelineno-9-76" href="#__codelineno-9-76"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assign_tlab</span><span class="p">:</span> <span class="n">batchlab</span><span class="p">,</span>
+</span><span id="__span-9-77"><a id="__codelineno-9-77" name="__codelineno-9-77" href="#__codelineno-9-77"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">assign_const</span><span class="p">:</span> <span class="n">CONST</span>
+</span><span id="__span-9-78"><a id="__codelineno-9-78" name="__codelineno-9-78" href="#__codelineno-9-78"></a>        <span class="p">})</span>
+</span><span id="__span-9-79"><a id="__codelineno-9-79" name="__codelineno-9-79" href="#__codelineno-9-79"></a>
+</span><span id="__span-9-80"><a id="__codelineno-9-80" name="__codelineno-9-80" href="#__codelineno-9-80"></a>        <span class="n">prev_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>  <span class="c1"># 用于早停判断</span>
+</span><span id="__span-9-81"><a id="__codelineno-9-81" name="__codelineno-9-81" href="#__codelineno-9-81"></a>
+</span><span id="__span-9-82"><a id="__codelineno-9-82" name="__codelineno-9-82" href="#__codelineno-9-82"></a>        <span class="c1"># === 内层循环：固定 c，用梯度下降优化对抗样本 ===</span>
+</span><span id="__span-9-83"><a id="__codelineno-9-83" name="__codelineno-9-83" href="#__codelineno-9-83"></a>        <span class="k">for</span> <span class="n">iteration</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_ITERATIONS</span><span class="p">):</span>
+</span><span id="__span-9-84"><a id="__codelineno-9-84" name="__codelineno-9-84" href="#__codelineno-9-84"></a>            <span class="c1"># 执行一次优化步，返回：</span>
+</span><span id="__span-9-85"><a id="__codelineno-9-85" name="__codelineno-9-85" href="#__codelineno-9-85"></a>            <span class="c1"># - train: 优化操作（如 Adam 更新）</span>
+</span><span id="__span-9-86"><a id="__codelineno-9-86" name="__codelineno-9-86" href="#__codelineno-9-86"></a>            <span class="c1"># - loss: 总损失 c*L_adv + L_dist</span>
+</span><span id="__span-9-87"><a id="__codelineno-9-87" name="__codelineno-9-87" href="#__codelineno-9-87"></a>            <span class="c1"># - l2s: 当前扰动的 L2 范数</span>
+</span><span id="__span-9-88"><a id="__codelineno-9-88" name="__codelineno-9-88" href="#__codelineno-9-88"></a>            <span class="c1"># - scores: 模型 logits 输出</span>
+</span><span id="__span-9-89"><a id="__codelineno-9-89" name="__codelineno-9-89" href="#__codelineno-9-89"></a>            <span class="c1"># - nimg: 当前对抗样本（已从 tanh 空间映射回原始空间）</span>
+</span><span id="__span-9-90"><a id="__codelineno-9-90" name="__codelineno-9-90" href="#__codelineno-9-90"></a>            <span class="n">_</span><span class="p">,</span> <span class="n">total_loss</span><span class="p">,</span> <span class="n">l2s</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">nimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span>
+</span><span id="__span-9-91"><a id="__codelineno-9-91" name="__codelineno-9-91" href="#__codelineno-9-91"></a>                <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2dist</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">newimg</span>
+</span><span id="__span-9-92"><a id="__codelineno-9-92" name="__codelineno-9-92" href="#__codelineno-9-92"></a>            <span class="p">])</span>
+</span><span id="__span-9-93"><a id="__codelineno-9-93" name="__codelineno-9-93" href="#__codelineno-9-93"></a>
+</span><span id="__span-9-94"><a id="__codelineno-9-94" name="__codelineno-9-94" href="#__codelineno-9-94"></a>            <span class="c1"># === 安全检查：确保输入的是 logits（而非 softmax 概率）===</span>
+</span><span id="__span-9-95"><a id="__codelineno-9-95" name="__codelineno-9-95" href="#__codelineno-9-95"></a>            <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">scores</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="mf">0.0001</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">scores</span> <span class="o">&lt;=</span> <span class="mf">1.0001</span><span class="p">)</span> <span class="ow">and</span>
+</span><span id="__span-9-96"><a id="__codelineno-9-96" name="__codelineno-9-96" href="#__codelineno-9-96"></a>                <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)):</span>
+</span><span id="__span-9-97"><a id="__codelineno-9-97" name="__codelineno-9-97" href="#__codelineno-9-97"></a>                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK</span><span class="p">:</span>
+</span><span id="__span-9-98"><a id="__codelineno-9-98" name="__codelineno-9-98" href="#__codelineno-9-98"></a>                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+</span><span id="__span-9-99"><a id="__codelineno-9-99" name="__codelineno-9-99" href="#__codelineno-9-99"></a>                        <span class="s2">"模型输出应为 softmax 前的 logits！</span><span class="se">\n</span><span class="s2">"</span>
+</span><span id="__span-9-100"><a id="__codelineno-9-100" name="__codelineno-9-100" href="#__codelineno-9-100"></a>                        <span class="s2">"当前输出看起来是概率分布（post-softmax）。若确定要这样，请设置：</span><span class="se">\n</span><span class="s2">"</span>
+</span><span id="__span-9-101"><a id="__codelineno-9-101" name="__codelineno-9-101" href="#__codelineno-9-101"></a>                        <span class="s2">"attack.I_KNOW_WHAT_I_AM_DOING_AND_WANT_TO_OVERRIDE_THE_PRESOFTMAX_CHECK = True"</span>
+</span><span id="__span-9-102"><a id="__codelineno-9-102" name="__codelineno-9-102" href="#__codelineno-9-102"></a>                    <span class="p">)</span>
+</span><span id="__span-9-103"><a id="__codelineno-9-103" name="__codelineno-9-103" href="#__codelineno-9-103"></a>
+</span><span id="__span-9-104"><a id="__codelineno-9-104" name="__codelineno-9-104" href="#__codelineno-9-104"></a>            <span class="c1"># 每 10% 的迭代打印一次损失（调试用）</span>
+</span><span id="__span-9-105"><a id="__codelineno-9-105" name="__codelineno-9-105" href="#__codelineno-9-105"></a>            <span class="k">if</span> <span class="n">iteration</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_ITERATIONS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-9-106"><a id="__codelineno-9-106" name="__codelineno-9-106" href="#__codelineno-9-106"></a>                <span class="n">loss1</span><span class="p">,</span> <span class="n">loss2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">loss1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss2</span><span class="p">])</span>  <span class="c1"># L_adv 和 L_dist</span>
+</span><span id="__span-9-107"><a id="__codelineno-9-107" name="__codelineno-9-107" href="#__codelineno-9-107"></a>                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"迭代 </span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">: 总损失=</span><span class="si">{</span><span class="n">total_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, 对抗损失=</span><span class="si">{</span><span class="n">loss1</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, 距离损失=</span><span class="si">{</span><span class="n">loss2</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-9-108"><a id="__codelineno-9-108" name="__codelineno-9-108" href="#__codelineno-9-108"></a>
+</span><span id="__span-9-109"><a id="__codelineno-9-109" name="__codelineno-9-109" href="#__codelineno-9-109"></a>            <span class="c1"># === 早停机制：若损失不再显著下降，则提前终止 ===</span>
+</span><span id="__span-9-110"><a id="__codelineno-9-110" name="__codelineno-9-110" href="#__codelineno-9-110"></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ABORT_EARLY</span> <span class="ow">and</span> <span class="n">iteration</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">MAX_ITERATIONS</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-9-111"><a id="__codelineno-9-111" name="__codelineno-9-111" href="#__codelineno-9-111"></a>                <span class="k">if</span> <span class="n">total_loss</span> <span class="o">&gt;</span> <span class="n">prev_loss</span> <span class="o">*</span> <span class="mf">0.9999</span><span class="p">:</span>
+</span><span id="__span-9-112"><a id="__codelineno-9-112" name="__codelineno-9-112" href="#__codelineno-9-112"></a>                    <span class="k">break</span>
+</span><span id="__span-9-113"><a id="__codelineno-9-113" name="__codelineno-9-113" href="#__codelineno-9-113"></a>                <span class="n">prev_loss</span> <span class="o">=</span> <span class="n">total_loss</span>
+</span><span id="__span-9-114"><a id="__codelineno-9-114" name="__codelineno-9-114" href="#__codelineno-9-114"></a>
+</span><span id="__span-9-115"><a id="__codelineno-9-115" name="__codelineno-9-115" href="#__codelineno-9-115"></a>            <span class="c1"># === 更新局部与全局最优解 ===</span>
+</span><span id="__span-9-116"><a id="__codelineno-9-116" name="__codelineno-9-116" href="#__codelineno-9-116"></a>            <span class="k">for</span> <span class="n">e</span><span class="p">,</span> <span class="p">(</span><span class="n">l2</span><span class="p">,</span> <span class="n">sc</span><span class="p">,</span> <span class="n">ii</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">l2s</span><span class="p">,</span> <span class="n">scores</span><span class="p">,</span> <span class="n">nimg</span><span class="p">)):</span>
+</span><span id="__span-9-117"><a id="__codelineno-9-117" name="__codelineno-9-117" href="#__codelineno-9-117"></a>                <span class="n">current_label</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">batchlab</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+</span><span id="__span-9-118"><a id="__codelineno-9-118" name="__codelineno-9-118" href="#__codelineno-9-118"></a>                <span class="n">is_success</span> <span class="o">=</span> <span class="n">compare</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">current_label</span><span class="p">)</span>
+</span><span id="__span-9-119"><a id="__codelineno-9-119" name="__codelineno-9-119" href="#__codelineno-9-119"></a>
+</span><span id="__span-9-120"><a id="__codelineno-9-120" name="__codelineno-9-120" href="#__codelineno-9-120"></a>                <span class="c1"># 更新局部最优（当前 c 下的最佳）</span>
+</span><span id="__span-9-121"><a id="__codelineno-9-121" name="__codelineno-9-121" href="#__codelineno-9-121"></a>                <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">is_success</span><span class="p">:</span>
+</span><span id="__span-9-122"><a id="__codelineno-9-122" name="__codelineno-9-122" href="#__codelineno-9-122"></a>                    <span class="n">bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-9-123"><a id="__codelineno-9-123" name="__codelineno-9-123" href="#__codelineno-9-123"></a>                    <span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span><span id="__span-9-124"><a id="__codelineno-9-124" name="__codelineno-9-124" href="#__codelineno-9-124"></a>
+</span><span id="__span-9-125"><a id="__codelineno-9-125" name="__codelineno-9-125" href="#__codelineno-9-125"></a>                <span class="c1"># 更新全局最优（所有 c 中的最佳）</span>
+</span><span id="__span-9-126"><a id="__codelineno-9-126" name="__codelineno-9-126" href="#__codelineno-9-126"></a>                <span class="k">if</span> <span class="n">l2</span> <span class="o">&lt;</span> <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="ow">and</span> <span class="n">is_success</span><span class="p">:</span>
+</span><span id="__span-9-127"><a id="__codelineno-9-127" name="__codelineno-9-127" href="#__codelineno-9-127"></a>                    <span class="n">o_bestl2</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">l2</span>
+</span><span id="__span-9-128"><a id="__codelineno-9-128" name="__codelineno-9-128" href="#__codelineno-9-128"></a>                    <span class="n">o_bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</span><span id="__span-9-129"><a id="__codelineno-9-129" name="__codelineno-9-129" href="#__codelineno-9-129"></a>                    <span class="n">o_bestattack</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+</span><span id="__span-9-130"><a id="__codelineno-9-130" name="__codelineno-9-130" href="#__codelineno-9-130"></a>
+</span><span id="__span-9-131"><a id="__codelineno-9-131" name="__codelineno-9-131" href="#__codelineno-9-131"></a>        <span class="c1"># === 根据本轮攻击结果更新二分搜索区间 ===</span>
+</span><span id="__span-9-132"><a id="__codelineno-9-132" name="__codelineno-9-132" href="#__codelineno-9-132"></a>        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+</span><span id="__span-9-133"><a id="__codelineno-9-133" name="__codelineno-9-133" href="#__codelineno-9-133"></a>            <span class="c1"># 判断本轮是否成功（注意：bestscore[e] == -1 表示从未成功）</span>
+</span><span id="__span-9-134"><a id="__codelineno-9-134" name="__codelineno-9-134" href="#__codelineno-9-134"></a>            <span class="n">attack_succeeded</span> <span class="o">=</span> <span class="p">(</span><span class="n">bestscore</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-9-135"><a id="__codelineno-9-135" name="__codelineno-9-135" href="#__codelineno-9-135"></a>
+</span><span id="__span-9-136"><a id="__codelineno-9-136" name="__codelineno-9-136" href="#__codelineno-9-136"></a>            <span class="k">if</span> <span class="n">attack_succeeded</span><span class="p">:</span>
+</span><span id="__span-9-137"><a id="__codelineno-9-137" name="__codelineno-9-137" href="#__codelineno-9-137"></a>                <span class="c1"># 攻击成功：尝试减小 c（追求更小扰动）</span>
+</span><span id="__span-9-138"><a id="__codelineno-9-138" name="__codelineno-9-138" href="#__codelineno-9-138"></a>                <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+</span><span id="__span-9-139"><a id="__codelineno-9-139" name="__codelineno-9-139" href="#__codelineno-9-139"></a>                <span class="k">if</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e9</span><span class="p">:</span>
+</span><span id="__span-9-140"><a id="__codelineno-9-140" name="__codelineno-9-140" href="#__codelineno-9-140"></a>                    <span class="c1"># 已有有效上界，进行标准二分</span>
+</span><span id="__span-9-141"><a id="__codelineno-9-141" name="__codelineno-9-141" href="#__codelineno-9-141"></a>                    <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+</span><span id="__span-9-142"><a id="__codelineno-9-142" name="__codelineno-9-142" href="#__codelineno-9-142"></a>                <span class="c1"># 否则保持 CONST 不变（但上界已更新）</span>
+</span><span id="__span-9-143"><a id="__codelineno-9-143" name="__codelineno-9-143" href="#__codelineno-9-143"></a>            <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-9-144"><a id="__codelineno-9-144" name="__codelineno-9-144" href="#__codelineno-9-144"></a>                <span class="c1"># 攻击失败：需增大 c（放宽扰动限制）</span>
+</span><span id="__span-9-145"><a id="__codelineno-9-145" name="__codelineno-9-145" href="#__codelineno-9-145"></a>                <span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">],</span> <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">])</span>
+</span><span id="__span-9-146"><a id="__codelineno-9-146" name="__codelineno-9-146" href="#__codelineno-9-146"></a>                <span class="k">if</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1e9</span><span class="p">:</span>
+</span><span id="__span-9-147"><a id="__codelineno-9-147" name="__codelineno-9-147" href="#__codelineno-9-147"></a>                    <span class="c1"># 已知上界，进行二分</span>
+</span><span id="__span-9-148"><a id="__codelineno-9-148" name="__codelineno-9-148" href="#__codelineno-9-148"></a>                    <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">+</span> <span class="n">upper_bound</span><span class="p">[</span><span class="n">e</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+</span><span id="__span-9-149"><a id="__codelineno-9-149" name="__codelineno-9-149" href="#__codelineno-9-149"></a>                <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-9-150"><a id="__codelineno-9-150" name="__codelineno-9-150" href="#__codelineno-9-150"></a>                    <span class="c1"># 尚未找到成功案例，指数级放大 c</span>
+</span><span id="__span-9-151"><a id="__codelineno-9-151" name="__codelineno-9-151" href="#__codelineno-9-151"></a>                    <span class="n">CONST</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">10</span>
+</span><span id="__span-9-152"><a id="__codelineno-9-152" name="__codelineno-9-152" href="#__codelineno-9-152"></a>
+</span><span id="__span-9-153"><a id="__codelineno-9-153" name="__codelineno-9-153" href="#__codelineno-9-153"></a>    <span class="c1"># === 返回最终结果 ===</span>
+</span><span id="__span-9-154"><a id="__codelineno-9-154" name="__codelineno-9-154" href="#__codelineno-9-154"></a>    <span class="n">o_bestl2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">o_bestl2</span><span class="p">)</span>
+</span><span id="__span-9-155"><a id="__codelineno-9-155" name="__codelineno-9-155" href="#__codelineno-9-155"></a>    <span class="k">return</span> <span class="n">o_bestattack</span>
+</span></code></pre></div>
+</details>
+<h2 id="_12">总结<a class="headerlink" href="#_12" title="Permanent link">¶</a></h2>
+<p>C&amp;W Attack 作为一种经典的对抗攻击方法，通过将对抗样本的生成问题建模为双目标优化问题，并引入超参数搜索技术，有效地平衡了对抗性和不可感知性之间的关系。本文从算法设计的角度详细剖析了 C&amp;W Attack 的设计思想和代码实现，旨在帮助读者清晰理解其核心思想和实现细节。后续我将从算法框架的角度分析 C&amp;W Attack 在点云对抗领域的应用，并介绍一些常见的改进。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
+  回到页面顶部
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/the-full" target="_blank" rel="noopener" title="zhazi on github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"></path></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["content.action.edit", "content.action.view", "content.code.copy", "content.tooltips", "navigation.tabs", "navigation.instant", "navigation.indexes", "navigation.top", "navigation.tracking"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../_static/js/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>
