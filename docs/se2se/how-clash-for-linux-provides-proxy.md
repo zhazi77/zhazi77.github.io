@@ -1,5 +1,5 @@
 ---
-draft: true
+draft: false
 date:
   created: 2025-12-27
 categories:
