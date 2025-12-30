@@ -127,7 +127,7 @@ nav:
   - Home: index.md
   - 浅入浅出:
     - 为什么有的下载能接着下，有的断了就得重来？: se2se/why-some-downloads-resume-and-others-dont.md
-    - Clash for Linux 是怎么提供代理的？: se2se/how-clash-for-linux-provides-proxy.md
+    - Clash for Linux 是怎么提供网关代理的？: se2se/how-clash-for-linux-provides-proxy.md
   - 实践记录:
     - 导览: record/index.md
     - 普通问题归档: record/common_problem.md
