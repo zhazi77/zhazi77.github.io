@@ -59,6 +59,11 @@ plugins:
       draft: false
   - tags
   - glightbox
+  - mkdocs-plugin-open-external-links-in-new-tab:
+      # Optional config. Default values are these:
+      external_extensions:
+        - ".pdf"
+        - ".zip"
   # - git-committers:
   #     repository: the-full/the-full.github.io
   #     branch: main
@@ -126,6 +131,7 @@ extra_javascript:
 nav:
   - Home: index.md
   - 浅入浅出:
+    - 为什么 Linux 下安装一些软件时需要做额外的步骤？: se2se/why-installing-some-software-requires-extra-steps.md.md
     - 为什么有的下载能接着下，有的断了就得重来？: se2se/why-some-downloads-resume-and-others-dont.md
     - Clash for Linux 是怎么提供网关代理的？: se2se/how-clash-for-linux-provides-proxy.md
   - 实践记录:

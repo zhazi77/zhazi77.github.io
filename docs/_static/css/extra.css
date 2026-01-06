@@ -105,7 +105,7 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 }
 
 .md-typeset p a, .md-typeset ul a { 
-  color: black; /* 设置链接颜色 */ 
+  color: #3884fe; /* 设置链接颜色 */ 
   text-decoration: underline; /* 保留下划线 */ 
 }
 
@@ -125,4 +125,10 @@ div.md-typeset__scrollwrap:has(table[data-review-enabled]) {
 .md-typeset ul li {
     margin-top: 0.0em;    /* 顶部间距 */
     margin-bottom: 0.0em; /* 底部间距 */
-  }
+}
+
+/* 把图标放在文本后面，将 ::before 改为 ::after */
+.md-typeset a.plugin_open_external_links_in_new_tab::after {
+        content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+        margin: 0 3px 0 5px;
+}
