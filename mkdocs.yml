@@ -6,6 +6,7 @@ site_description: A personal knowledge base for storing notes, research, and tec
 site_author: Zhazi
 repo_name: Memo
 repo_url: https://github.com/zhazi77/zhazi77.github.io
+site_url: https://zhazi77.github.io
 
 
 theme:
